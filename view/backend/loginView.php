@@ -36,9 +36,9 @@ ob_start(); ?>
 //echo  $actionmessage ;
 if(isset($actionmessage) && ($alert_flag == 0 || $alert_flag == 1)) {
 ?>
-<div class="alert <?= $classe ?>" alert-dismissible fade show role="alert">
-  <?= $actionmessage ?>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="alert <?= $classe ?> my-2" alert-dismissible fade show role="alert">
+  <em><?= $actionmessage ?></em>
+  <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 <?php
 unset($_SESSION['actionmessage']);
@@ -53,53 +53,34 @@ unset($_SESSION['alert_flag']);
         <form action="index.php?action=verifylogin" method="post">
           <div class="form-group">
             <label for="email">identifiant</label>
-            <input class="form-control" type="text" placeholder="Entrer votre identifiant" name="email" required>
+            <input type="email" class="form-control" type="text" placeholder="Entrer votre identifiant" name="email" required>
           </div>
           <div class="form-group">
             <label for="password">Password</label>
             <input class="form-control" type="password" placeholder="Mot de passe" name="password" required>
           </div>
           <button type="submit" class="btn btn-primary my-3">Se connecter</button>
+		  <div class="content-fluid alert-info  py-1 px-1 ">
+		  <p><small><a class="text-secondary mx-2 " href="index.php?action=passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="index.php?action=signinview">Inscrivez Vous</a></small></p>
+
+		   </div>
+
+
         </form>
+	<!-- 	<div class="row  col-6 py-2 px-2 justify-content-right"> -->
+<!-- </div> -->
       </div>
     </div>
   </div>
-    <!-- <form enctype="multipart/form-data" action="index.php?action=useradd" method="post">
-	<div class="form-group">
-        <label for="pseudo" class="form-label">Pseudo</label><br />
-        <input type="text"  class="form-control" id="pseudo" name="pseudo" value="" />
-    </div>
-    <div class="form-group" class="form-label">
-	<label for="email">Email</label><br />
-        <input type="text" class="form-control" id="email" name="email" value="" />
-    </div>
-	<div class="form-group" class="form-label">
-	<label for="password">Mot de Passe</label><br />
-        <input type="text" class="form-control" id="password" name="password" value="" />
-    </div >
-	<div class="form-group" class="form-label">
-	<label for="usertype_id">Rôle Utilisateur</label><br />
-		<select class="form-select" name="usertype_id" aria-label="Default select example">
-			<option selected>choisir le rôle Utilisateur</option>
-			<option value="1">Administrateur</option>
-			<option value="2">Editeur</option>
-		  <option value="3">Visiteur</option>
-		</select>
-	</div > -->
+ <!--  <div class="content-fluid alert-info my-3">
+<div class="row col-2 py-2 px-2 justify-content-right">
+<a class="btn btn-primary " href="index.php?action=loginview">Se Connecter</a>
+</div>
+<div class="row  col-6 py-2 px-2 justify-content-right">
+<em>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="index.php?action=signinview">Inscrivez Vous</a></em>
+</div>
+</div> -->
 
-   <!--  <div class="form-group">
-        <label for="content" class="form-label">Article</label><br />
-        <textarea class="form-control" id="content" name="content"></textarea>
-    </div >
-	<div class="form-group">
-        <label for="pimage" class="form-label">Image</label>
-        <input type="file" class="form-control" id="pimage" name="pimage" />
-    </div> 
-    <div class="form-group my-3">
-        <input   type="submit" class="btn btn-primary" />
-    </div>
- </form>
--->
 
 <?php $content = ob_get_clean(); 
 require('template.php');

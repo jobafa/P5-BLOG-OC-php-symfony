@@ -2,8 +2,29 @@
 session_start();
 
 //$_SESSION['actionmessage'] = 1;
-require('config/config.php');
-require('controller/frontend.php');
+require_once __DIR__.'/config/config.php';
+//require('config/config.php');
+//require('controller/frontend.php');
+require_once __DIR__.'/controller/frontend.php';
+
+
+
+/* ECRIRE FONCTION POUR NETTOYER TOUTES LES DONNNES RECUES PAR _GET OU _POST ET VERIFIER SI LES CHAMPS SONT RENSEIGNES*/
+
+
+//var_dump($_SERVER['REQUEST_URI']);
+if (isset($_POST) && ! empty($_POST)){
+	
+	$post = $_POST;
+	
+}
+
+
+if (isset($_GET['action'])){
+	
+	$action = strtolower($_GET['action']);
+	$_SESSION['ACTION'] = $action;
+}
 
 if (isset($_SESSION['PSEUDO'])){
 	
@@ -13,35 +34,99 @@ if (isset($_SESSION['PSEUDO'])){
 if (isset($_GET['id']) && ($_GET['id'] > 0)){
 	
 	$id =  $_GET['id'];
+	//var_dump($id);
+		
 }
+
+if (isset($_GET['email'])){
+	
+	$link_email =  $_GET['email'];
+	//var_dump($id);
+		
+}
+
+if (isset($_GET['token'])){
+	
+	$link_token =  $_GET['token'];
+	//var_dump($id);
+		
+}
+
+if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
+	
+	$usertypeid =  $_GET['usertypeid'];
+	//var_dump($id);
+		
+}
+
+if (isset($_GET['from'])){
+
+	
+	$_SESSION['FROM'] =  $_GET['from'];
+	$from = $_SESSION['FROM'];
+	
+	//var_dump($id);
+		
+}
+
+if (isset($_GET['idcomment']) && ($_GET['idcomment'] > 0)){
+	
+	$id =  $_GET['idcomment'];
+	//var_dump($id);
+	//var_dump($action);
+			//exit;
+}
+
+if (isset($_GET['idpost']) && ($_GET['idpost'] > 0)){
+	
+	$id =  $_GET['idpost'];
+	//var_dump($id);
+	//var_dump($action);
+			//exit;
+}
+
+
 
 //echo $id;
 //exit;
 
 
 try {
-    if (isset($_GET['action'])) 
+    if ( isset($action) )
 		{
 
-				$_GET['action']=strtolower($_GET['action']);
-				$action = $_GET['action'];
+				//$_GET['action']=strtolower($_GET['action']);
+				//$action = $_GET['action'];
 
-				if ($_GET['action'] == 'listPosts') {
-					listPosts();
+				if ($action == 'listposts') {
+
+					listPosts($from);
 				}
-				elseif ($_GET['action'] == 'post') {
-					if (isset($_GET['id']) && $_GET['id'] > 0) {
-						post();
+				elseif (($action == 'frontpost')) {
+					if (isset($id) && $id > 0) {
+						$is_published = '1';
+						post($id, $is_published );
 					}
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
-				elseif ($_GET['action'] == 'addcomment') {
+				elseif ( ($action == 'post')) {
+					if (isset($id) && $id > 0) {
+						$is_published = null;
+						post($id, $is_published );
+					}
+					else {
+						throw new Exception('Aucun identifiant de billet envoyé');
+					}
+				}
+				elseif ($action == 'addcomment') {
 					
-					if (isset($_GET['id']) && $_GET['id'] > 0) {
+					if (isset($id) && $id > 0) {
+
 						if (!empty($pseudo) && !empty($_POST['comment'])) {
-							addComment($_GET['id'], $pseudo, $_POST['comment']);
+							$userid = $_SESSION['USERID'] ;
+							addComment($id, $pseudo, $_POST['comment'],$userid );
 						}
 						else {
 							throw new Exception('Tous les champs ne sont pas remplis !');
@@ -51,12 +136,12 @@ try {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
-				elseif ($_GET['action'] == 'modifycomment') {
-					 if (isset($_GET['id']) && $_GET['id'] > 0) {
+				elseif ($action == 'modifycomment') {
+					 if (isset($id) && $id > 0) {
 						// $commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
 						
-						  // $comment= $commentManager->getComment($_GET['id']);
-						  modifyComment($_GET['id']);
+						  // $comment= $commentManager->getComment($id);
+						  modifyComment($id);
 						   //require('view/frontend/commenteditView.php');
 						  
 					}
@@ -65,19 +150,19 @@ try {
 					}
 				}
 
-				elseif ($_GET['action'] == 'updatecomment') {
-					 if (isset($_GET['id']) && $_GET['id'] > 0) {
+				elseif ($action == 'updatecomment') {
+					 if (isset($id) && $id > 0) {
 
 							$commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
 						
 						   
 						
-							$affectedLines = $commentManager->updateComment($_POST['comment'], $_GET['id']  );
+							$affectedLines = $commentManager->updateComment($_POST['comment'], $id  );
 							 if ($affectedLines === false) {
 								throw new Exception('Impossible de mettre à jour le commentaire !');
 							}
 							else{
-								//header('Location: index.php?action=post&id=' . $_GET['id'] .'&post_id='.$_GET['post_id'] );
+								//header('Location: index.php?action=post&id=' . $id .'&post_id='.$_GET['post_id'] );
 								header('Location: index.php?action=post&id=' . $_GET['post_id'] );
 							}
 					 }
@@ -88,22 +173,36 @@ try {
 				/*****************************************************/ 
 						/*********** Backend Routing **************/
 						/*****************************************************/
-
-				elseif ($_GET['action'] == 'backblogmanage') {
+				
+				// GET USER'S COMMENTS BY ID
+				elseif ($action == 'mycomments') {
+					//echo ' ENTRE INDEX';
+					
+						listCommentsValidate();
+				}
+				elseif ($action == 'backblogmanage') {
 					//echo ' ENTRE INDEX';
 					
 						verifytype();
 				}
-				elseif ($_GET['action'] == 'adminposts') {
+				elseif ($action == 'adminposts') {
+					//verifytype();
 					listPostsUpdate();
 				}
-				elseif ($_GET['action'] == 'addpostview') {
+				elseif ($action == 'adminmyposts') {
+						if(! isset($id)){
+						$userid = $_SESSION['USERID'];
+					}
+
+					listPostsUpdate($userid);
+				}
+				elseif ($action == 'addpostview') {
 					addPostView();
 				}
-				elseif ($_GET['action'] == 'postsupdate') {
+				elseif ($action == 'postsupdate') {
 					listPostsUpdate();
 				}
-				elseif ($_GET['action'] == 'addpost') {
+				elseif ($action == 'addpost') {
 					 if (isset($_POST) && !empty($_POST)) {
 
 							doAdd();
@@ -114,90 +213,156 @@ try {
 					 }
 				}
 
-				elseif ($_GET['action'] == 'modifypost') {
-					if (isset($_GET['id']) && $_GET['id'] > 0) {
-						modifyPost($_GET['id']);
+				elseif ($action == 'modifypost') {
+					if (isset($id) && $id > 0) {
+						modifyPost($id);
 					}
 					else {
 						throw new Exception('Aucun identifiant de post envoyé');
 					}
 				}
-				elseif ($_GET['action'] == 'updatepost') {
-					 if (isset($_GET['id']) && $_GET['id'] > 0) {
+				elseif ($action == 'updatepost') {
+					 if (isset($id) && $id > 0) {
 
-							$postManager = new \OC\PhpSymfony\Blog\Model\PostManager();
-
-							$action = $_GET['action'];
-							$id = $_GET['id'];
-							$post = $_POST;
-
-							$affectedLines = $postManager->updatePost($id, $post);
-							//echo $action;
-							//gerate a message according to the action process
-							initmessage($action,$affectedLines);
-//echo 'init '.$action.' '.$_SESSION['actionmessage'].' '.$_SESSION['alert_flag'];
-//exit;
-							/*if (isset($id) && (! $affectedLines )) {
-								//$message = 0;
-								$_SESSION['updatemessage'] = 0;
-							}else if (isset($id) && ($affectedLines )) {
-								//$message = 1;
-								$_SESSION['updatemessage'] = 1;
-							}*/
-
-							 if ($affectedLines === false) {
-								throw new Exception('Impossible de mettre à jour le post !');
-							 }
-							 else{
-								//header('Location: index.php?action=post&id=' . $_GET['id'] .'&post_id='.$_GET['post_id'] );
-								header('Location: index.php?action=postsupdate');// REVOYER SUR LISTE DES POSTS ADMIN
-							 }
-					 }
-					 else {
+							updatePost($id);
+					 }else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					 }
-				
 
 				}
-				elseif ($_GET['action'] == 'deletepost') {
+				elseif ($action == 'postactivation') {
+						$ispublished = $_GET['ispublished'];
+						if($ispublished == 'on'){
+							$ispublished = '0';
+						}else{
+							$ispublished = '1';
+						}
+						postpublish($id, $ispublished);
+				}
+				elseif ($action == 'postactivation') {
 					
 						deletepost($id);
 				}
-				elseif ($_GET['action'] == 'adduserview') {
-					
-						adduserView();
+				elseif ($action == 'commentdelete') {
+
+						//$commentid = $id;
+						deleteComment($id);
 				}
-				elseif ($_GET['action'] == 'useradd') {
+				elseif (($action == 'adduserview') || ($action == 'signinview')) {
 					
-						addUser();
+						adduserView($action);
 				}
-				elseif ($_GET['action'] == 'loginview') {
+				elseif (($action == 'useradd') || ($action == 'usersignin')) {
+					
+					
+						addUser($_POST);
+				}
+				elseif ($action == 'useractivation') {
+						
+						$id = $_GET['id'];
+						if (isset($_GET['token'])){
+							$token = $_GET['token'];
+							$isactivated = null;
+						}elseif(isset($_GET['isactivated'])){
+							$isactivated = $_GET['isactivated'];		
+							$token  = null;
+						}
+
+						userActivation($id,$token,$isactivated);
+				}
+				elseif ($action == 'loginview') {
 					
 						loginView();
 				}
-				elseif ($_GET['action'] == 'verifylogin') {
+				elseif ($action == 'verifylogin') {
 					//echo ' ENTRE INDEX';
 					
 						verifyLogin();
 				}
-				elseif ($_GET['action'] == 'userlogout') {
+				elseif ($action == 'userlogout') {
 					//echo ' ENTRE INDEX';
 					
 						userLogout();
 				}
 
-				elseif ($_GET['action'] == 'commentsadmin') {
+				elseif ($action == 'passresetrequest') {
+					//echo ' ENTRE INDEX';
+					
+						passresetRequest();
+				}
+
+				elseif ($action == 'passreset') {
+					//echo ' ENTRE INDEX';
+					if(isset($_POST['password-reset']) && isset($_POST['email'])){
+						$postemail = $_POST['email'];
+					
+						passReset($postemail);
+					}
+				}
+
+				elseif ($action == 'passreinitialisation') {
+//echo $action.' ENTRE INDEX';
+					if(isset($link_token) && isset($link_email)){
+						verifyPassresetToken($link_email,$link_token);
+						//$postemail = $_POST['email'];
+					}
+					
+						
+				}
+
+				elseif ($action == 'newpass') {
+//echo $action.' ENTRE INDEX';
+					if(isset($post)){
+						getNewPass($post);
+						//$postemail = $_POST['email'];
+					}
+					
+						
+				}
+
+
+				elseif ($action == 'usersadmin') {
+					//echo ' ENTRE INDEX';
+						//$userid = $_SESSION['USERID'];
+						usersAdmin();
+				}
+
+				elseif ($action == 'myprofile') {
+					//echo ' ENTRE INDEX';
+					if(! isset($id)){
+						$userid = $_SESSION['USERID'];
+					}else{
+						$userid = $id;
+					}
+						userProfile($userid);
+				}
+
+				elseif ($action == 'userupdate') {
+					//echo ' ENTRE INDEX';
+						
+						$post = $_POST;
+						userupdate($post,$id);
+				}
+
+				elseif ($action == 'userdelete') {
+					
+						userdelete($id, $usertypeid);
+				}
+
+				elseif ($action == 'commentsadmin') {
 					listCommentsValidate();
 				}
 
-				elseif ($_GET['action'] == 'commentvalidate') {
-					 if (isset($_GET['id']) && $_GET['id'] > 0) {
-					     CommentValidate($_GET['id']);
+				elseif ($action == 'commentvalidate') {
+					 if (isset($id) && $id > 0) {
+					     CommentValidate($id);
 					 }
 				}
 	
 	}else {
-					listPosts();
+					//listPosts();
+					//$action = $_SESSION['ACTION'];
+					header('Location: home.php');
 			}
 }
 catch(Exception $e) {
