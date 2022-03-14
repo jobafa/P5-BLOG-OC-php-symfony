@@ -5,15 +5,17 @@ session_start();
 require_once __DIR__.'/config/config.php';
 //require('config/config.php');
 //require('controller/frontend.php');
-require_once __DIR__.'/controller/frontend.php';
 
+
+require_once __DIR__.'/controller/backend.php';
+require_once __DIR__.'/controller/frontend.php';
 
 
 /* ECRIRE FONCTION POUR NETTOYER TOUTES LES DONNNES RECUES PAR _GET OU _POST ET VERIFIER SI LES CHAMPS SONT RENSEIGNES*/
 
 
 //var_dump($_SERVER['REQUEST_URI']);
-if (isset($_POST) && ! empty($_POST)){
+if (isset($_POST)){
 	
 	$post = $_POST;
 	
@@ -119,6 +121,12 @@ try {
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
+				}
+				// CONTACT FORM
+				elseif ( ($action == 'contactform')) {
+					$contact_post = $post;
+					
+						sendcontactemail($contact_post);
 				}
 				elseif ($action == 'addcomment') {
 					
@@ -268,7 +276,7 @@ try {
 							$token  = null;
 						}
 
-						userActivation($id,$token,$isactivated);
+						userActivation($id, $link_email, $token, $isactivated);
 				}
 				elseif ($action == 'loginview') {
 					
