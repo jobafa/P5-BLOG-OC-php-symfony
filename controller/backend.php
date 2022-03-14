@@ -1550,7 +1550,5 @@ exit;*/
                 break;
 			 
 			}
-			//echo 'init '.$action.' '.$_SESSION['actionmessage'].' '.$_SESSION['alert_flag'];
-			//exit;
-            
+			
         }

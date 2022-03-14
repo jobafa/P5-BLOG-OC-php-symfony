@@ -1,7 +1,6 @@
 ﻿<?php
 session_start();
 
-//$_SESSION['actionmessage'] = 1;
 require_once __DIR__.'/config/config.php';
 //require('config/config.php');
 //require('controller/frontend.php');
