@@ -1,5 +1,5 @@
 ﻿<?php
-
+//require_once __DIR__.'/inc/functions.php';
 
 // Chargement des classes
 
@@ -80,13 +80,20 @@ function addComment($postId, $author, $comment, $userid)
 	function sendcontactemail($post)
 
 	{
+		$name= $post['name'];
 		$email = $post['email'];
 		$subject = $post['subject'];
-		$message = $post['message'];
+		$message = "<div style=width: 100%; text-align: center; font-weight: bold>Bonjour ".$name. "</div>\r\n";
+		$message .= $post['message'];
 		//$subject = "Réinitialisation de votre Mot de Passe";
-		$headers = "From: Blog Abderrahim Fathi" . $email . "\r\n";
-		$headers .= "MIME-Version: 1.0\r\n";
-		$headers .= "Content-type: text; charset=UTF-8\r\n";
+		//$headers = "From: Blog Abderrahim Fathi\r\n";
+		$headers = "Reply-To: " . $email . "\r\n";
+		$headers .= 'From: Mon Blog <'.$email.'>'."\n"; // Expediteur
+		//$headers .= "MIME-Version: 1.0\r\n";
+		$headers .= "X-Mailer: PHP/".phpversion();
+
+		$headers .= 'MIME-Version: 1.0' . "\n"; // Version MIME
+		$headers .= "Content-type: text/html; charset=UTF-8\r\n";
 		//$message = ;
 
 		//$message = wordwrap($message, 70, "\r\n");
@@ -104,10 +111,23 @@ function addComment($postId, $author, $comment, $userid)
 			//generate a message according to the action processed
 			
 		initmessage($action,$email_ok);
-		header('location: home.php');
+		header('location: home.php#contact');
+		//header('location: home.php');
 		//echo $activation_code;
 		
 	}
+
+	# **************
+        # Display user Login form
+        # **************
+
+
+
+        function loginView() {
+
+			require('view/frontend/loginView.php');
+
+        }
 
 // EXERCICE TP COURS A SUPPRIMER
 

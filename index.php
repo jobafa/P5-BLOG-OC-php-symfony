@@ -1,7 +1,8 @@
 ﻿<?php
-session_start();
-
+if( ! isset($_SESSION) ) session_start();
+require_once __DIR__.'/inc/functions.php';
 require_once __DIR__.'/config/config.php';
+
 //require('config/config.php');
 //require('controller/frontend.php');
 
@@ -123,9 +124,34 @@ try {
 				}
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
-					$contact_post = $post;
-					
-						sendcontactemail($contact_post);
+					$check_token = check_token(300, $URL .'home.php', 'blogcontact');
+					if($check_token)
+						{
+						
+						//echo '<BR>'.$URL .'home.php';
+							if($check_token == "ras"){
+								//var_dump($check_token);
+						//exit;
+								unset($_SESSION['blogcontact_token']);
+								unset($_SESSION['blogcontact_token_time']);
+								$contact_post = $post;
+						
+								sendcontactemail($contact_post);
+							}else{//echo $check_token.'check<BR>'.$_SESSION['blogcontact_token'].'<BR>'.$_POST['token'].'<BR>'.$_SESSION['blogcontact_token_time'].'<BR>'.$_SESSION['expired_time'] ;
+
+						//exit;
+								$action = "tokenlife";
+								
+								//echo  $URL.'home.php';
+								//echo $_SERVER["SERVER_NAME"];
+								//exit;
+							}
+						}
+						
+						initmessage($action,$check_token);
+						unset($_SESSION['blogcontact_token']);
+						unset($_SESSION['blogcontact_token_time']);
+						header('location: home.php#contact');
 				}
 				elseif ($action == 'addcomment') {
 					

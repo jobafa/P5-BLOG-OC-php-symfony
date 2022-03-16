@@ -879,7 +879,7 @@ function addImage($post_image){
 				$_SESSION['alert_flag'] = 0;
 			}
 			if(! isset($isactivated)){
-				require('view/backend/loginView.php');
+				require('view/frontend/loginView.php');
 			}else{
 				//require('view/backend/listusersView.php');	
 				header('Location: index.php?action=usersadmin');
@@ -935,7 +935,7 @@ function addImage($post_image){
 				$_SESSION['alert_flag'] = 0;
 			}
 
-			require('view/backend/loginView.php');	
+			require('view/frontend/loginView.php');	
 	 }
 
 
@@ -947,11 +947,11 @@ function addImage($post_image){
 
 
 
-        function loginView() {
+       /* function loginView() {
 
 			require('view/backend/loginView.php');
 
-        }
+        }*/
 
 		# **************
         # Display user's password reset Requesting form
@@ -1075,7 +1075,7 @@ function addImage($post_image){
 				if ($insertNewPass) 
 				{ 
 				
-					require('view/backend/loginView.php');
+					require('view/frontend/loginView.php');
 
 				}
 			
@@ -1328,7 +1328,7 @@ exit;*/
 
 				$result = 'account_not_activated';
 				initmessage($action,$result);
-				require('view/backend/loginView.php');
+				require('view/frontend/loginView.php');
 			}elseif (($result) &&  ($result != 'not_activated')){
 			//var_dump($result);
 				initmessage($action,$result);
@@ -1353,7 +1353,7 @@ exit;*/
 			}*/
 			}else{
 				initmessage($action,$result);
-				require('view/backend/loginView.php');
+				require('view/frontend/loginView.php');
 			}
 
 		}
@@ -1546,6 +1546,28 @@ exit;*/
 					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
 					$_SESSION['alert_flag'] = 0;
 				 }
+                
+                break;
+
+				case 'tokenlife':
+				if ( $result ) {
+					if(($result == 'token') || ($result == 'referer') ){
+						$content =  'Vous ne pouvez pas faire cela !';
+						require('view/frontend/template.php');
+						exit;
+					}elseif($result == 'expiredtoken'){
+						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci de recommencer !';
+						$_SESSION['alert_flag'] = 0;
+					}
+					
+				 }else{
+						$_SESSION['actionmessage'] = ' Probl&egrave;me de token .  Merci de recommencer !';
+						$_SESSION['alert_flag'] = 0;
+				 }
+				/*else{
+					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
+					$_SESSION['alert_flag'] = 0;
+				 }*/
                 
                 break;
 			 
