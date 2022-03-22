@@ -4693,8 +4693,7 @@ textarea.form-control-lg {
 
 .profile-card{
 	
-	max-width:325px;
-            max-height: 270px;
+	
             position:relative;
             overflow: hidden;
             margin-bottom:10px;
@@ -4709,15 +4708,14 @@ textarea.form-control-lg {
 			/*border-radius: 1px;*/
         }
         .profile-card .profile-img img{
-            max-width:325px;
-            max-height: 270px;
+            
 			object-fit: cover;
             transition: transform 1s;
 			/*border:1px solid #333;
 			border-radius: 1px;*/
         }
 
-@media (min-width: 1400px) {
+/*@media (min-width: 1400px) {
  .profile-card{
 	
 	min-width:325px;
@@ -4729,7 +4727,7 @@ textarea.form-control-lg {
             min-height: 315px;
 			
         }
-}
+}*/
 
         .profile-card .profile-content::before{
             content: "";
@@ -11669,3 +11667,4 @@ header.masthead h1, header.masthead .h1 {
    color: #ccc;
    text-decoration:underline;
 }
+

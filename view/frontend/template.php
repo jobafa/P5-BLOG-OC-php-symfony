@@ -1,23 +1,28 @@
-﻿<?php require('header.php'); ?>
+﻿<?php require('header.php'); 
+ // IF NO USER PICTURE USE DEFAULT PICTURE
+
+	  if( isset($_SESSION['PHOTO']) && (null !== $_SESSION['PHOTO']) ){
+		  $photo = $_SESSION['PHOTO'];
+
+  }else{
+		 $photo = "undraw_profile.svg";
+  }
+?>
     <body id="page-top">
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-light fixed-top py-3" id="mainNav">
             <div class="container px-4 px-lg-5">
                 <a class="navbar-brand" href="#page-top"><IMG SRC="public/images/LOGO-P5-F.png" width="168" height="70" ALT=""></a>
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php">Blog</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
                     </ul>
                 </div>
 
-<?php
 
-
-if(isset($_SESSION['USERTYPEID']) ){
-	?>
 
 				<!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -27,22 +32,35 @@ if(isset($_SESSION['USERTYPEID']) ){
                      
 
                         <div class="topbar-divider d-none d-sm-block"></div>
+<?php
 
+
+if(isset($_SESSION['USERTYPEID']) ){
+	?>
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_SESSION['PSEUDO']) ?></span>
-                                <img class="img-profile rounded-circle"
-                                    src="public/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg">
+                                <img class="user_snippet_small_profile_image_rounded_geo mx-1"
+								src="uploads/images/<?= htmlspecialchars($photo) ?>">
+                                   <!-- src="public/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg"> -->
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="index.php?action=myprofile">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
+								 <?php
+	//if((isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1))){?>
+								 <a class="dropdown-item" href="index.php?action=backblogmanage&from=dropdown">
+                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Tableau de Bord
+                                </a>
+								<?php
+								//}?>
                                 <!-- <a class="dropdown-item" href="#">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
@@ -59,14 +77,20 @@ if(isset($_SESSION['USERTYPEID']) ){
                             </div>
                         </li>
 
-                    </ul>
+                    
+<?php
+		}else{
+		?>
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
 
-                </nav>
-                <!-- End of Topbar -->
-				<?php
+		<?php
 		}
 		?>
-            </div>
+               </div>  
+			   </ul>
+                <!-- End of Topbar -->
+				
+           
         </nav>
         <!-- Masthead-->
         <header class="masthead">
@@ -88,7 +112,7 @@ if(isset($_SESSION['USERTYPEID']) ){
         <section class="page-section portfolio" id="portfolio">
 <div class="container">
                 <!-- Portfolio Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Mon Blog</h2>
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Mon Blog Formation</h2>
                 <!-- Icon Divider-->
                 <!-- <div class="divider-custom">
                     <div class="divider-custom-line"></div>
@@ -112,7 +136,7 @@ if(isset($_SESSION['USERTYPEID']) ){
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">&Ecirc;tes vous s&ucirc;r ?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">Ã—</span>
+                        <!-- <span aria-hidden="true">Ã—</span> -->
                     </button>
                 </div>
                 <div class="modal-body">Cliquer sur Se Déconnecter pour vous déconnecter</div>
@@ -128,8 +152,8 @@ if(isset($_SESSION['USERTYPEID']) ){
 
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="public/js/scripts.js"></script>
+        <!-- Core theme JS
+        <script src="public/js/scripts.js"></script>-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <!-- * *                               SB Forms JS                               * *-->
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
