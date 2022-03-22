@@ -42,8 +42,8 @@ require_once('model/UserManager.php');
 						//var_dump($_SESSION['POSTID']);exit;
 					}else{
 						// IF GUSET AND DOES NOT COME FROM A POST PAGE : SEND TO DASHBOARD PAGE
-						
-						header('Location: index.php?action=adminposts');
+						//var_dump($_SESSION['USERTYPEID']);exit;
+						header('Location: index.php?action=mycomments');
 						
 						//require('view/backend/backblogmanage_OK.php');
 
@@ -290,14 +290,15 @@ function addImage($post_image){
         function listPostsUpdate($userid = null)
 			{
 				$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
-				$posts = $postManager->getPosts($userid,$from = null, $is_published = null); // Appel d'une fonction de cet objet
+				$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); // Appel d'une fonction de cet objet
 
 				//var_dump($posts); 
 //$posts = listPostsUpdate($userid);
 //exit;
 				if(! isset($action)){	
 					
-					$posts = $postManager->getPosts($userid,$is_published = null); // Appel d'une fonction de cet objet
+					$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); // Appel d'une fonction de cet objet
+
 					
 					require('view/backend/backblogmanage_OK.php');
 					
@@ -336,7 +337,7 @@ function addImage($post_image){
         # **************
 
         function listCommentsValidate()
-			{
+			{//var_dump($_SESSION['USERTYPEID']);exit;
 				//$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
 				//$commentsvalidate = $CommentManager->getComments($postId = null,'0'); // Appel d'une fonction de cet objet
 				
@@ -344,7 +345,7 @@ function addImage($post_image){
 				
 				// CHEKS IF USER IS A GUEST
 				if(isset( $_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 3)){
-					
+					//var_dump($_SESSION['USERTYPEID']);exit;
 					$userid= $_SESSION['USERID'];
 					$commentsvalidate = $CommentManager->getComments( $postId = null, $isenabled = null,$userid ); // Appel d'une fonction de cet objet
 
@@ -795,7 +796,7 @@ function addImage($post_image){
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.technowebdev.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
@@ -971,7 +972,7 @@ function addImage($post_image){
 	 * 
 	 */
 
-        function passreset($postemail ) {
+        function passReset($postemail ) {
 
 			$action =$_SESSION['ACTION'];
 
@@ -1104,7 +1105,7 @@ function addImage($post_image){
 		$subject = "R&eacute;initialisation de votre Mot de Passe";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", Pour R&eacute;initialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.technowebdev.com/index.php?action=passreinitialisation&email=". $email."&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		$message = "Bonjour " . $pseudo. ", Pour R&eacute;initialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.capdeco.com/index.php?action=passreinitialisation&email=". $email."&token=" . $passreset_token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
@@ -1122,7 +1123,7 @@ function addImage($post_image){
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.technowebdev.com/index.php?action=useractivation&id=" . $id . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
@@ -1306,18 +1307,100 @@ exit;*/
 
 
 
-        function verifyLogin() {
+        function verifyLogin($method) {
+
+			$email =  $method['email'];
+			$password =  $method['password'];
+			
+			$inputs = [
+				'email' => $email,
+				'password' => $password
+				];
+
+			$fields = [
+				'email' => 'email',
+				'password' => 'string'
+				
+			];
+
+			$data = sanitize_inputs($inputs,$fields);
+//$errors=array();
+			// initialize errors messages variables
+			foreach($data as $key=>$value){
+				//$($key.'Err') = $value;
+				$$Err = $key.'Err';
+				$errors[$key] = $$Err;
+				//$$Err = $value;
+				//echo $errors[$key];
+				
+			}
+			var_dump($errors);
+			/**/foreach($errors as $key=>$value){
+				
+				//echo '<BR>'.$key.' = '.$value;
+				
+			}
+			//ECHO '<BR>'.$passwordErr.'<BR>'.$emailErr;
+			//exit;
+			//$passwordErr = $emailErr = "";
+			// initialize errors messages variables
+			if($data){
+				foreach($data as $key=>$value){
+					
+					if (!empty($value)){
+					
+						// check if email address is a correct format
+						if($key == 'email'){
+						   if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+
+								foreach($errors as $key=>$value){
+
+									if($key == 'email'){
+
+										$$value = "Format Email Invalid"; 
+
+									}
+								}
+								ECHO '<BR>'.$emailErr;
+								exit;
+							//echo '<BR>'.$key.' = '.$value;
+					
+						   }
+							  //$emailErr = "Format Email Invalid"; 
+							 
+						}
+						//}
+					
+					//echo $$Err;
+					}else{
+
+						$$Err = $key.' Requis !';
+					}
+					
+				}// end foreach data
+			}// if  $data
+			//echo '<BR>'.$emailErr.'<BR>'.$passwordErr;
+
+			//exit;
+			
+
+			$post_email =  $data['email'];
+			$post_password =  $data['password'];
 
 			
+			if(($emailErr != '') || ($passErr != '')){
+				require('view/frontend/loginView.php');
+				exit;
+			}
+
 			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Création d'un objet
 
-            $post = $_POST;
+            $post = $method;
 			$action = $_SESSION['ACTION'];
 
 			// TESTER LES VARIABLES RECUE DEPUIS LE FORM
 
-			$post_email =  $post['email'];
-			$post_password =  $post['password'];
+			
 
 			$result=$userManager->loginUser($post_email, $post_password) ;	
 			
@@ -1345,8 +1428,12 @@ exit;*/
 				exit;*/
 				//require('view/backend/loginView.php');
 				
-				 verifytype();
-				header('Location: index.php?action=adminposts');
+				 //verifytype();
+				 if($_SESSION['USERTYPEID'] == 3){
+					header('Location: index.php?action=mycomments');
+				 }elseif($_SESSION['USERTYPEID'] == 1){
+					header('Location: index.php?action=adminposts');
+				 }
 
 			/*}else{
 					header('Location: index.php?action=loginview');
