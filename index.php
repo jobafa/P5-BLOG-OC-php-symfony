@@ -1,7 +1,11 @@
 ﻿<?php
 if( ! isset($_SESSION) ) session_start();
+
+//if(isset($_SESSION['errors'] )) unset($_SESSION['errors']) ;
+
 require_once __DIR__.'/inc/functions.php';
 require_once __DIR__ .'/inc/sanitization.php';
+require_once __DIR__ . '/inc/validation.php';
 require_once __DIR__.'/config/config.php';
 
 //require('config/config.php');
@@ -27,17 +31,17 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
 
 	$data_inputs = $_GET;
 	$method = 'GET';
-var_dump($data_inputs);
+//var_dump($data_inputs);
 	$data_inputs = sanitize_get_data( $data_inputs);
 	$_GET = $data_inputs;
-	echo '<BR>';
-var_dump($_GET);
-exit;
+	/*echo '<BR>';
+var_dump($_GET);*/
+//exit;
 }elseif (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')){
 
 	$post = $_POST;
 	$method = 'POST';
-
+//var_dump($post);
 	//sanitize_my_data($method, $data_inputs);
 
 }
@@ -202,36 +206,7 @@ try {
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
 
-					$check_token = check_token(60,  __DIR__.'/home.php', 'blogcontact');
-					if($check_token)
-						{
-						$data  = sanitize_my_data($post);
-						//var_dump($data);
-						//exit;
-						//echo '<BR>'.$URL .'home.php';
-							if($check_token == "ras"){
-								//var_dump($check_token);
-						//exit;
-								unset($_SESSION['blogcontact_token']);
-								unset($_SESSION['blogcontact_token_time']);
-								$contact_post = $post;
-						
-								sendcontactemail($contact_post);
-							}else{//echo $check_token.'check<BR>'.$_SESSION['blogcontact_token'].'<BR>'.$_POST['token'].'<BR>'.$_SESSION['blogcontact_token_time'].'<BR>'.$_SESSION['expired_time'] ;
-
-						//exit;
-								$action = "tokenlife";
-								
-								//echo  $URL.'home.php';
-								//echo $_SERVER["SERVER_NAME"];
-								//exit;
-							}
-						}
-						
-						initmessage($action,$check_token);
-						unset($_SESSION['blogcontact_token']);
-						unset($_SESSION['blogcontact_token_time']);
-						header('location: home.php#contact');
+					checkContactdata($post, $URL, 'blogcontact');
 				}
 				elseif ($action == 'addcomment') {
 					
@@ -367,8 +342,8 @@ try {
 				}
 				elseif (($action == 'useradd') || ($action == 'usersignin')) {
 					
-					
-						addUser($method);
+						
+						addUser($post, $URL, 'newuser');
 				}
 				elseif ($action == 'useractivation') {
 						
@@ -390,7 +365,7 @@ try {
 				elseif ($action == 'verifylogin') {
 					//echo ' ENTRE INDEX';
 					
-						verifyLogin($post);
+						verifyLogin($post, $URL, 'login');
 				}
 				elseif ($action == 'userlogout') {
 					//echo ' ENTRE INDEX';
@@ -406,11 +381,11 @@ try {
 
 				elseif ($action == 'passreset') {
 					//echo ' ENTRE INDEX';
-					if(isset($_POST['password-reset']) && isset($_POST['email'])){
-						$postemail = $_POST['email'];
+					//if(isset($_POST['password-reset']) && isset($_POST['email'])){
+					//	$postemail = $_POST['email'];
 					
-						passReset($postemail);
-					}
+						passReset($post, $URL, 'passreset');
+					//}
 				}
 
 				elseif ($action == 'passreinitialisation') {
@@ -422,11 +397,23 @@ try {
 					
 						
 				}
+				
+				elseif ($action == 'passreinitview') {
+					//echo ' ENTRE INDEX';
+					
+						passreinitVew();
+				}
+
+				elseif ($action == 'passreinitnew') {
+					//echo ' ENTRE INDEX';
+					
+						passreinitNew();
+				}
 
 				elseif ($action == 'newpass') {
 //echo $action.' ENTRE INDEX';
 					if(isset($post)){
-						getNewPass($post);
+						getNewPass($post, $URL, 'newpass');
 						//$postemail = $_POST['email'];
 					}
 					
