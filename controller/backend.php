@@ -98,89 +98,7 @@ require_once('model/UserManager.php');
 		}
         
 	
-function addImage($post_image){
 
-	if (isset($post_image) && ($post_image['error'] == 0))
-			{
-//echo $post_image["name"];
-//exit;
-				$allowed_image_extension = array(	"png","jpg","jpeg");
-				
-				// Get image file extension
-				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
-				//echo $file_extension;
-				
-//exit;
-			//try{
-				// Validate file input to check if is not empty
-				if (! file_exists($post_image["tmp_name"])) {
-					//throw new Exception('Choose image file to upload!');
-					$response = array(
-						"type" => "error",
-						"message" => "Choose image file to upload."
-					);
-				}   
-				
-				// Validate file input to check if is with valid extension
-				else if (! in_array($file_extension, $allowed_image_extension)) {
-
-					//throw new Exception('Upload valiid images. Only PNG, JPG and JPEG are allowed!');
-					$message = "File upload stopped by extension";
-					$_SESSION['actionmessage'] = 'File upload stopped by extension';
-					$_SESSION['alert_flag'] = 0;
-					require('view/backend/addpostView.php');
-					//header('Location: index.php?action=addpostview');
-					//exit;
-					//echo $result;
-				}   
-				
-				// Validate image file size
-				else if (($post_image["size"] > 2000000)) {
-					//throw new Exception('Image size exceeds 2MB!');
-					$_SESSION['actionmessage'] = 'File upload stopped Size issue';
-					$_SESSION['alert_flag'] = 0;
-					//$message = "File upload Size issue";
-					//header('Location: index.php?action=addpostview');
-					require('view/backend/addpostView.php');
-					//exit;
-				}   
-				
-				else {
-					$dossier = "uploads/images/" ;
-					$file_name = basename($post_image["name"]);
-					$target = $dossier.$file_name;
-					if (file_exists($target)) {
-						//$message =  'The image '.$post_image["name"].'  already exists in '.$dossier;
-						$timestamp=time();
-						$file_name = $timestamp.'-'.$file_name;
-						$target = $dossier.$file_name;
-//echo $target ;
-						//header('Location: index.php?action=addpostview&message='.$message);
-					//exit;
-					    //header('Location: index.php?action=addpostview&message='.$message);
-				    }
-					if (! empty($message)){
-						$_SESSION['actionmessage'] = $message;
-						$_SESSION['alert_flag'] = 0;
-						require('view/backend/addpostView.php');
-						//header('Location: index.php?action=addpostview&message='.$message);
-						//exit;
-					}else{
-								if (move_uploaded_file($post_image["tmp_name"], $target)) {
-									return $file_name;
-								} else {
-									echo 'Upload issue :';
-									print_r($_FILES);
-								}
-					}
-				}
-			/*}
-			catch(Exception $e) {
-    $errorMessage = $e->getMessage();
-    require('view/errorView.php');
-}*/
-			}
-}
 
         function doAdd() {
 
@@ -493,9 +411,11 @@ function addImage($post_image){
 		function userLogout() {        
 			
 			if( isset($_SESSION) ){
+				unset( $_SESSION['USERID']);
+				unset( $_SESSION['USERTYPEID']);
 				unset( $_SESSION );
 				session_destroy();
-				header('Location: home.php');
+				header('Location: accueil.html');
 			}
 			
         }
@@ -597,14 +517,104 @@ function addImage($post_image){
 
 
 
-        function addUser($post) {
+        function addUser($post, $URL, $token_name) {
+			
+			//  errors is the array that contains data input validation errors
+			unset($_SESSION['errors']);
 
 			$action =$_SESSION['ACTION'];
+			if($action == 'usersignin'){
 
-			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Création d'un objet
+				$check_token = check_token(600,  $URL.'signinview.html?inscription', $token_name);
 
-          			
-			$email = htmlspecialchars(trim($post['email']));
+			}if($action == 'useradd'){ // for admin user
+
+				$check_token = "ras";
+			}
+			
+			if($check_token)
+			 {
+				if($check_token == "ras"){
+					
+					unset($_SESSION[$token_name.'_token']);
+					unset($_SESSION[$token_name.'_token_time']);
+
+					$pseudo =  $post['pseudo'];
+					$email =  $post['email'];
+					$password =  $post['password'];
+
+					$inputs = [
+						'pseudo' => $pseudo,
+						'email' => $email,
+						'password' => $password
+						];
+
+					$fields = [
+						'pseudo' => 'string',
+						'email' => 'email',
+						'password' => 'string'
+						
+					];
+
+					$data = sanitize_inputs($inputs,$fields);
+
+					/*$data = [
+						'email' => $email,
+						'password' => $password
+					];*/
+
+					$fields = [
+						'pseudo' => 'required',
+						'email' => 'required',
+						//'email' => 'required|email|unique:user,email',
+						'password' => 'required'
+						//'password' => 'required | secure'
+					];
+					//$data = sanitize_inputs($inputs,$fields);
+					$errors = validate($data, $fields);	
+					/*$errors = validate($data, $fields, [
+						'required' => 'Le champ %s est requis',
+						'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
+					);
+					*/
+
+					if(!empty($errors)){
+						$_SESSION['errors'] = $errors;
+						header('location: usersignin.html?inscription');
+						//var_dump($errors);
+					}/*else{
+						echo 'clean';
+					}
+					exit;*/
+				}else{
+var_dump($check_token);
+var_dump($data );
+var_dump($_SERVER['HTTP_REFERER']  );
+
+exit;
+
+					$action = "tokenlife";
+						
+				
+			
+			
+					 initmessage($action,$check_token);
+
+					 unset($_SESSION[$token_name.'_token']);
+					 unset($_SESSION[$token_name.'_token_time']);
+
+					 header('location: usersignin.html?inscription');
+					 }
+			 }
+			
+			// NO ERRORS GO ON PROCESS
+			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Objet creation
+			
+			// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
+
+          	$pseudo =  $data['pseudo'];
+			$email =  $data['email'];
+			$password =  $data['password'];
 			
 			// TESTS IF EMAIL ALREADY EXISTS
 			$verifyemail = $userManager->VerifyUserEmail($email);
@@ -618,20 +628,20 @@ function addImage($post_image){
 					
 					initmessage($action,$emailexists);
 
-					if( isset($_SESSION['USERTYPEID'])){ 
+					if( isset($_SESSION['USERTYPEID'])){ // USER IS CONNECTED
 						
-						if($_SESSION['USERTYPEID'] == '3'){
+						if($_SESSION['USERTYPEID'] == '3'){ // USER IS A GUEST
 							
 							header('Location: index.php?action=signinview');
 
-						}elseif($_SESSION['USERTYPEID'] == '1'){
+						}elseif($_SESSION['USERTYPEID'] == '1'){ // USER IS AN ADMIN
 							
 							header('Location: index.php?action=adduserview');
 						}
 
-					}else{
+					}else{ // USER IS NOT CONNECTED
 
-						header('Location: index.php?action=signinview');
+						header('Location: signinview.html?inscription');
 					}
 
 				}else{// EMAIL DOES NOT EXIST IN DB
@@ -642,87 +652,15 @@ function addImage($post_image){
 					if(isset($_FILES)){
 						
 						$status = $_FILES['photo']['error'];
-
-						// an error occurs
-						if($status == UPLOAD_ERR_OK){
-						   
-								//echo 'fichier  '.$_FILES['pimage']['name'];
-								//exit;
-
-								$post_image = $_FILES["photo"];
-								
-								$photo=addImage($post_image);
-									//}
-						//else exit;
-						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
-								$photo = 'undraw_profile.svg';
-						}else {// THERE ARE UPLOAD ERRORS : CHECKING ERRORS
-								
-								switch ($status) {
-
-									case UPLOAD_ERR_INI_SIZE:
-   
-										//$message = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-										$_SESSION['actionmessage'] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_FORM_SIZE:
-										//$message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-										$_SESSION['actionmessage'] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-										$_SESSION['alert_flag'] = 0;
-										
-										break;
-									case UPLOAD_ERR_PARTIAL:
-										//$message = "The uploaded file was only partially uploaded";
-										$_SESSION['actionmessage'] = "The uploaded file was only partially uploaded";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_NO_FILE:
-										//$message = "No file was uploaded";
-									 $_SESSION['actionmessage'] = "No file was uploaded";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_NO_TMP_DIR:
-										//$message = "Missing a temporary folder";
-										$_SESSION['actionmessage'] = "Missing a temporary folder";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_CANT_WRITE:
-										//$message = "Failed to write file to disk";
-										$_SESSION['actionmessage'] = "Failed to write file to disk";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_EXTENSION:
-										//$message = "File upload stopped by extension";
-										$_SESSION['actionmessage'] = "File upload stopped by extension";
-										$_SESSION['alert_flag'] = 0;
-										break;
-
-									default:
-										//$message = "Unknown upload error";
-										$_SESSION['actionmessage'] = "Unknown upload error";
-										$_SESSION['alert_flag'] = 0;
-										break;
-								}// END OF SWITCH
-
-									
-									 //header('Location: index.php?action=addpostview&message='.$message);
-
-									 if(isset($_SESSION['USERTYPEID'] ) && ($_SESSION['USERTYPEID']  == 1)){
-											//require('view/backend/addpostView.php');
-											require('view/backend/adduserView.php');
-											exit;
-									 }else{
-											require('view/frontend/signinView.php');
-											exit;
-									 }
-						} // END OF ULOADS ERRORS CHECKING
+						$photo = checkUploadStatus($status);
+						
+						
 					} // END OF  FILE UPLOAD CHECKING
 
 					try{
 			
 									/*****************
-									** Initialize $usertype_id according to wether we are comming from the frontend or the backend Add user Form		
+									** Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
 									**********************/
 
 									if($action == 'usersignin'){
@@ -731,30 +669,21 @@ function addImage($post_image){
 										$usertype_id = htmlspecialchars(trim($post['usertype_id']));
 									}
 									
-									// NO FILE UPLOADED : NO PHOTO 
-
-									/*if(! isset($photo)){
-										$photo = 'undraw_profile.svg';
-									}*/
-
-									//$usertype_id = htmlspecialchars(trim($post['usertype_id']));
 									$pseudo = htmlspecialchars(trim($post['pseudo']));
-									//$email = htmlspecialchars(trim($post['email']));
+									
 									$password = htmlspecialchars(trim($post['password']));
 									$is_enabled="1";
 
 									// MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
 
 									$token = password_hash($pseudo,PASSWORD_DEFAULT);
-								   // INSERT USER IN DB
-//var_dump($token);
+								   
 									$result = $userManager->registerUser($usertype_id, $pseudo, $email, $password, $photo,  $token);
 
 									if ($result ) {
 										
 										$id = $_SESSION['LASTUSERID'];
-										/*echo $id;
-										exit;*/
+										
 										 UserActivationEmail( $email,$pseudo, $id,  $token);
 										
 									 }
@@ -764,12 +693,11 @@ function addImage($post_image){
 									//gerate a message according to the action process
 									
 									initmessage($action,$result);
-									/*echo $action.' '.$result;
-									exit;*/
-									 
+									
 									 
 									 if($action == 'usersignin'){
-										 header('Location: index.php?action=signinview');
+										 //header('Location: index.php?action=signinview');
+										 header('Location: signinview.html?inscription');
 									}elseif($action == 'useradd'){
 										header('Location: index.php?action=adduserview');
 									}
@@ -796,7 +724,7 @@ function addImage($post_image){
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttp://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
@@ -960,66 +888,115 @@ function addImage($post_image){
 
 
 
-        function passresetRequest() {
+      /*  function passresetRequest() {
 
-			require('view/backend/passresetView.php');
+			require('view/frontend/passresetView.php');
 
-        }
+        }*/
 
 			/**
 	 * Get user's email 
 	 * @param  Parameter $email
 	 * 
-	 */
+	     function passReset($post, $URL, $token_name) {
 
-        function passReset($postemail ) {
-
-			$action =$_SESSION['ACTION'];
-
-			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Création d'un objet
-
-          			
-			//$email = htmlspecialchars(trim($post['email']));
+			// CHECK LOGIN CSRF TOKEN
+			$check_token = check_token(600,  $URL.'passresetview.html', $token_name);
+			//var_dump($check_token);
 			
-			// TESTS IF EMAIL  EXISTS
-			$verifyemail = $userManager->VerifyUserEmail($postemail);
-			
-
-			if ($verifyemail) 
-				{ 
-
-					$token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-					$token = password_hash($token,PASSWORD_DEFAULT);
-
-					$userid = $verifyemail['id'];
-						
-					$passreset = $userManager->resetPassTokenInsert($userid, $token);
+			if($check_token)
+			 {
+				if($check_token == "ras"){
 					
-					//var_dump($verifyemail);
+					unset($_SESSION[$token_name.'_token']);
+					unset($_SESSION[$token_name.'_token_time']);
+
+					$email =  $post['email'];
+					//$password =  $post['password'];
+
+					$data = [
+						'email' => $email
+					];
+
+					$fields = [
+						'email' => 'required | email | unique: users,email'
+						];
+
+				//	$errors = validate($data, $fields);	
+					//$errors = validate($data, $fields, [
+					//	'required' => 'Le champ %s est requis',
+					//	'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
+					//);
+					
+
+					if(!empty($errors)){
+						$_SESSION['errors'] = $errors;
+						header('location: passresetview.html');
 						
-					if ($passreset ) {//var_dump($passreset);exit;	
+					}
+				}else{
 
-						$pseudo = $verifyemail['pseudo'];
+					$action = "tokenlife";
 						
-						PassRestEmail( $postemail,$pseudo, $userid,  $token);
-									
-					}
-					$action = $_SESSION['ACTION'];
-					initmessage($action,$passreset);
+				
+			
+			
+					 initmessage($action,$check_token);
 
-					}
+					 unset($_SESSION[$token_name.'_token']);
+					 unset($_SESSION[$token_name.'_token_time']);
 
-					require('view/backend/passresetView.php');
+					 header('location: passresetview.html');
+					 }
+			 }
+			
+			if(empty($errors)){
+				$action =$_SESSION['ACTION'];
 
+				$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Création d'un objet
+
+						
+				//$email = htmlspecialchars(trim($post['email']));
+				
+				// TESTS IF EMAIL  EXISTS
+				$verifyemail = $userManager->VerifyUserEmail($postemail);
+				
+
+				if ($verifyemail) 
+					{ 
+
+						$token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+						$token = password_hash($token,PASSWORD_DEFAULT);
+
+						$userid = $verifyemail['id'];
+							
+						$passreset = $userManager->resetPassTokenInsert($userid, $token);
+						
+						//var_dump($verifyemail);
+							
+						if ($passreset ) {//var_dump($passreset);exit;	
+
+							$pseudo = $verifyemail['pseudo'];
+							
+							PassRestEmail( $postemail,$pseudo, $userid,  $token);
+										
+						}
+						$action = $_SESSION['ACTION'];
+						initmessage($action,$passreset);
+
+				}
+
+						require('view/backend/passresetView.php');
+			}
         }
-
+*/
 
 			/**
 	 * Get email and reset password token from users email link and verify if the same token in user's record and if it is not expired
 	 if OK displays reset password form
 	 * @param  Parameter $link_email $link_token
 	 * 
-	 */
+	 
 
         function verifyPassresetToken($link_email,$link_token){
 
@@ -1042,13 +1019,13 @@ function addImage($post_image){
 
 					require('view/backend/passreinitView.php');
 
-        }
+        }*/
 
 	/**
 	 * Get data of new password form and verify if password and confirmed password are equal
 	 * @param  Parameter $post
 	 * 
-	 */
+	 
 
         function getNewPass($post){
 
@@ -1093,12 +1070,12 @@ function addImage($post_image){
 					
 
         }
-
+*/
 			/**
 	 * Sending  reset password token email  to user after password forgot
 	 * @param  Parameter $email,$pseudo, $id, $token
 	 * 
-	 */
+	 
 
 	function PassRestEmail( $email,$pseudo, $id, $passreset_token)
 	{
@@ -1111,7 +1088,7 @@ function addImage($post_image){
 		mail($email, $subject, $message, $headers);
 		//echo $activation_code;
 	}
-
+*/
 		/**
 	 * Sending  account activation email  to user after inscription
 	 * @param  Parameter $post [pseudo, email]
@@ -1301,152 +1278,12 @@ exit;*/
             
         }
 
-		# **************
-        # Verify User  Login
-        # **************
-
-
-
-        function verifyLogin($method) {
-
-			$email =  $method['email'];
-			$password =  $method['password'];
-			
-			$inputs = [
-				'email' => $email,
-				'password' => $password
-				];
-
-			$fields = [
-				'email' => 'email',
-				'password' => 'string'
-				
-			];
-
-			$data = sanitize_inputs($inputs,$fields);
-//$errors=array();
-			// initialize errors messages variables
-			foreach($data as $key=>$value){
-				//$($key.'Err') = $value;
-				$$Err = $key.'Err';
-				$errors[$key] = $$Err;
-				//$$Err = $value;
-				//echo $errors[$key];
-				
-			}
-			var_dump($errors);
-			/**/foreach($errors as $key=>$value){
-				
-				//echo '<BR>'.$key.' = '.$value;
-				
-			}
-			//ECHO '<BR>'.$passwordErr.'<BR>'.$emailErr;
-			//exit;
-			//$passwordErr = $emailErr = "";
-			// initialize errors messages variables
-			if($data){
-				foreach($data as $key=>$value){
-					
-					if (!empty($value)){
-					
-						// check if email address is a correct format
-						if($key == 'email'){
-						   if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-
-								foreach($errors as $key=>$value){
-
-									if($key == 'email'){
-
-										$$value = "Format Email Invalid"; 
-
-									}
-								}
-								ECHO '<BR>'.$emailErr;
-								exit;
-							//echo '<BR>'.$key.' = '.$value;
-					
-						   }
-							  //$emailErr = "Format Email Invalid"; 
-							 
-						}
-						//}
-					
-					//echo $$Err;
-					}else{
-
-						$$Err = $key.' Requis !';
-					}
-					
-				}// end foreach data
-			}// if  $data
-			//echo '<BR>'.$emailErr.'<BR>'.$passwordErr;
-
-			//exit;
-			
-
-			$post_email =  $data['email'];
-			$post_password =  $data['password'];
-
-			
-			if(($emailErr != '') || ($passErr != '')){
-				require('view/frontend/loginView.php');
-				exit;
-			}
-
-			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Création d'un objet
-
-            $post = $method;
-			$action = $_SESSION['ACTION'];
-
-			// TESTER LES VARIABLES RECUE DEPUIS LE FORM
-
-			
-
-			$result=$userManager->loginUser($post_email, $post_password) ;	
-			
-			//$result_hash = password_hash($post_email,PASSWORD_DEFAULT);
-			
-
-			if( ($result) &&  ($result == 'not_activated') ){
-
-				$result = 'account_not_activated';
-				initmessage($action,$result);
-				require('view/frontend/loginView.php');
-			}elseif (($result) &&  ($result != 'not_activated')){
-			//var_dump($result);
-				initmessage($action,$result);
-
-			//gerate a message according to the action process
-			//if($result){
-
-				$_SESSION['USERID'] = $result['id'];
-				$_SESSION['USERTYPEID'] = $result['usertype_id'];
-				$_SESSION['PSEUDO'] = $result['pseudo'];
-				$_SESSION['PHOTO'] = $result['photo'];
-				$_SESSION['RESULT'] = $result;
-				/*echo 'ENTRE '.$_SESSION['PSEUDO'].'  '.$_SESSION['PHOTO'].'   '.$_SESSION['RESULT']['email'];
-				exit;*/
-				//require('view/backend/loginView.php');
-				
-				 //verifytype();
-				 if($_SESSION['USERTYPEID'] == 3){
-					header('Location: index.php?action=mycomments');
-				 }elseif($_SESSION['USERTYPEID'] == 1){
-					header('Location: index.php?action=adminposts');
-				 }
-
-			/*}else{
-					header('Location: index.php?action=loginview');
-			}*/
-			}else{
-				initmessage($action,$result);
-				require('view/frontend/loginView.php');
-			}
-
-		}
+		
 
 		# **************
-        # Dsplay Action Message
+        # Initialize Display Action Message
+		# @Param $action : user's action 
+		# @Param $result : user's action result
         # **************
 
 
@@ -1614,7 +1451,7 @@ exit;*/
 
 				case 'newpass':
 				if ( $result ) {
-					$_SESSION['actionmessage'] = ' Votre Mot de Passe a &eacute;t&eacute; r&eacute;initialisé .   !';
+					$_SESSION['actionmessage'] = ' Votre Mot de Passe a &eacute;t&eacute; r&eacute;initialis&eacute; .   !';
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
@@ -1639,11 +1476,14 @@ exit;*/
 				case 'tokenlife':
 				if ( $result ) {
 					if(($result == 'token') || ($result == 'referer') ){
-						$content =  'Vous ne pouvez pas faire cela !';
-						require('view/frontend/template.php');
-						exit;
-					}elseif($result == 'expiredtoken'){
-						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci de recommencer !';
+						$_SESSION['actionmessage'] = 'Vous ne pouvez pas faire cela !';
+						$_SESSION['alert_flag'] = 0;
+						//require('view/frontend/template.php');
+						//exit;
+					}elseif($result == 'expiredtoken' ){
+						//echo 'ici aussi';
+						//exit;
+						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci raffraîchir la page et de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 					}
 					
