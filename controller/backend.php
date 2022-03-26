@@ -7,11 +7,11 @@ require_once('model/PostManager.php');
 require_once('model/CommentManager.php');
 require_once('model/UserManager.php');
 
-# **************
+		# **************
         # BACK END
         # **************
 
-# **************
+		# **************
         # Verify type of user ( level ) : Admin or Guest 
         # **************
 
@@ -30,19 +30,17 @@ require_once('model/UserManager.php');
 					$result1 = 0;
 					initmessage($action,$result1);
 
-					//require('view/backend/backblogmanage_old.php');
-					//require('view/backend/loginView.php');
-
 					// IF GUSET AND COMES FROM A POST PAGE THEN SEND BACK TO THE POST PAGE
 
 					if(isset($_SESSION['POSTID'] )){
 						
 						header('Location: index.php?action=frontpost&id='.$_SESSION['POSTID']);
 						exit;
-						//var_dump($_SESSION['POSTID']);exit;
+						
 					}else{
+
 						// IF GUSET AND DOES NOT COME FROM A POST PAGE : SEND TO DASHBOARD PAGE
-						//var_dump($_SESSION['USERTYPEID']);exit;
+						
 						header('Location: index.php?action=mycomments');
 						
 						//require('view/backend/backblogmanage_OK.php');
@@ -63,6 +61,7 @@ require_once('model/UserManager.php');
 						
 						header('Location: index.php?action=post&id='.$_SESSION['POSTID']);
 					}else{
+
 						// IF GUSET AND DOES NOT COME FROM A POST PAGE : SEND TO DASHBOARD PAGE
 
 						header('Location: index.php?action=adminposts');
@@ -73,9 +72,7 @@ require_once('model/UserManager.php');
 						// require('view/backend/loginView.php');
 					}
 
-					//require('view/backend/backblogmanage_old.php');
-					//require('view/backend/backblogmanage_OK.php');
-					//header('Location: view/backend/backblogmanage_OK.php');
+					
 
 				}
 			
@@ -83,26 +80,25 @@ require_once('model/UserManager.php');
 			
 		}
 
-		# **************
-        # Add New Post 
-        # **************
+		# ********************
+        # DISPLAYS New Post VIEW
+        # ********************
 
 
 		function addPostView(){
 
-			
-
 			require('view/backend/addpostView.php');
-
-			
+		
 		}
         
 	
-
+		# **************
+        # Add New Post 
+        # **************
 
         function doAdd() {
 
-			$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
+			$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // CrEation of objet
 
             $post = $_POST;
 
@@ -118,7 +114,7 @@ require_once('model/UserManager.php');
 							
 					try{
 							
-							$post_userid = $_SESSION['USERID']; // A REPLACER PAR id_user DU USER AUTHENTIFIE STOQUE DANS $_SESSION
+							$post_userid = $_SESSION['USERID']; 
 							$post_title = htmlspecialchars(trim($post['title']));
 							$post_lede = htmlspecialchars(trim($post['lede']));
 							$post_author = htmlspecialchars(trim($post['author']));
@@ -201,31 +197,30 @@ require_once('model/UserManager.php');
 	        }
         }
 
-# **************
+		# *********************************************
         #  LISTS Posts  FOR Activate, disactivate, Update or DELETE
 		# @param userid or null if listing all posts
-        # **************
+        # *********************************************
+
         function listPostsUpdate($userid = null)
 			{
-				$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
-				$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); // Appel d'une fonction de cet objet
+				$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Creation of objet
+				$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); 
 
-				//var_dump($posts); 
-//$posts = listPostsUpdate($userid);
-//exit;
-				if(! isset($action)){	
+				/*if(! isset($action)){	
 					
-					$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); // Appel d'une fonction de cet objet
+					$posts = $postManager->getPosts($userid,$from = null, $is_published = null, $paginationStart = null, $limit = null); 
 
 					
 					require('view/backend/backblogmanage_OK.php');
 					
 					return $posts;
 				}
-				else{/**/
+				else{*/
 				
-				require('view/backend/backblogmanage_OK.php');
-				}
+					require('view/backend/backblogmanage_OK.php');
+
+				//}
 			}
 
 
@@ -302,7 +297,7 @@ require_once('model/UserManager.php');
 			}
 
 
-		function modifyPost($postId)
+		function modifyPostView($postId)
 			{
 
 				$postManager = new \OC\PhpSymfony\Blog\Model\PostManager();
@@ -317,71 +312,33 @@ require_once('model/UserManager.php');
 
 			function updatePost($id){
 				
+					$data = $_POST;
+					
 					// UPLOAD POST IMAGE
 
 					if(isset($_FILES)){
+
 						$status = $_FILES['pimage']['error'];
+						$post_image = $_FILES["pimage"];
+						
+						$pimage = checkUploadStatus($status,$post_image,$id);
+						
+				if($pimage == false){
+		
 
-						// an error occurs
-						if ($status == UPLOAD_ERR_OK) {
-						  
-								$post_image = $_FILES["pimage"];
-								$pimage=addImage($post_image);
-						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
-								$pimage = '';
-									
+							//$action = $_SESSION['ACTION'];
+							//initmessage($action,$pimage);
+
+							//$postManager = new \OC\PhpSymfony\Blog\Model\PostManager();
+
+							//$post = $postManager->getPost($id, $is_published = null);
+
+						//	require('view/backend/posteditView.php');
 							
-						}else{
-							
-									switch ($status) {
-										case UPLOAD_ERR_INI_SIZE:
-
-											//$message = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-											$_SESSION['actionmessage'] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-											$_SESSION['alert_flag'] = 0;
-											break;
-										case UPLOAD_ERR_FORM_SIZE:
-											//$message = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-											$_SESSION['actionmessage'] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-											$_SESSION['alert_flag'] = 0;
-											
-											break;
-										case UPLOAD_ERR_PARTIAL:
-											//$message = "The uploaded file was only partially uploaded";
-											$_SESSION['actionmessage'] = "The uploaded file was only partially uploaded";
-											$_SESSION['alert_flag'] = 0;
-											break;
-										case UPLOAD_ERR_NO_FILE:
-											//$message = "No file was uploaded";
-										 $_SESSION['actionmessage'] = "No file was uploaded";
-											$_SESSION['alert_flag'] = 0;
-											break;
-										case UPLOAD_ERR_NO_TMP_DIR:
-											//$message = "Missing a temporary folder";
-											$_SESSION['actionmessage'] = "Missing a temporary folder";
-											$_SESSION['alert_flag'] = 0;
-											break;
-										case UPLOAD_ERR_CANT_WRITE:
-											//$message = "Failed to write file to disk";
-											$_SESSION['actionmessage'] = "Failed to write file to disk";
-											$_SESSION['alert_flag'] = 0;
-											break;
-										case UPLOAD_ERR_EXTENSION:
-											//$message = "File upload stopped by extension";
-											$_SESSION['actionmessage'] = "File upload stopped by extension";
-											$_SESSION['alert_flag'] = 0;
-											break;
-
-										default:
-											//$message = "Unknown upload error";
-											$_SESSION['actionmessage'] = "Unknown upload error";
-											$_SESSION['alert_flag'] = 0;
-											break;
-									}
-								//$err_message = $status;     
-								 header('Location: index.php?action=modifypost&id='.$id);
-								 //require('view/backend/addpostView.php');
-						 } 
+							header('Location: index.php?action=modifypost&id=' . $id);
+							exit;
+						}
+						
 					}
 					try{
 						$post = $_POST;
@@ -394,7 +351,7 @@ require_once('model/UserManager.php');
 							throw new Exception('Impossible de mettre à jour le post !');
 						 }
 						 else{
-							//header('Location: index.php?action=post&id=' . $id .'&post_id='.$_GET['post_id'] );
+							//header('Location: index.php?action=modifypost&id=' . $id .'&post_id='.$_GET['post_id'] );
 							header('Location: index.php?action=postsupdate');// BACK TO  POSTS ADMIN
 						 }
 					}
@@ -495,13 +452,13 @@ require_once('model/UserManager.php');
         # **************
 		function adduserView($action){
 
-			//echo 'yes'.$action;
+			
 			if(isset($action) && ($action == "signinview")){
 						
 					require('view/frontend/signinView.php');
 
 			}elseif(isset($action) && ($action == "adduserview")){
-//echo 'yes';
+
 					require('view/backend/adduserView.php');
 
 			}
@@ -525,7 +482,13 @@ require_once('model/UserManager.php');
 			$action =$_SESSION['ACTION'];
 			if($action == 'usersignin'){
 
-				$check_token = check_token(600,  $URL.'signinview.html?inscription', $token_name);
+				$check_token = check_token(600,  $URL.'signinview.html', $token_name);
+/*var_dump($check_token);
+var_dump($post );
+var_dump($_SERVER['HTTP_REFERER']  );*/
+//exit;
+
+//exit;
 
 			}if($action == 'useradd'){ // for admin user
 
@@ -565,8 +528,8 @@ require_once('model/UserManager.php');
 
 					$fields = [
 						'pseudo' => 'required',
-						'email' => 'required',
-						//'email' => 'required|email|unique:user,email',
+						//'email' => 'required',
+						'email' => 'required|email|unique:user,email',
 						'password' => 'required'
 						//'password' => 'required | secure'
 					];
@@ -580,34 +543,38 @@ require_once('model/UserManager.php');
 
 					if(!empty($errors)){
 						$_SESSION['errors'] = $errors;
-						header('location: usersignin.html?inscription');
+
+						if( isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID']  == 1)){
+									
+									header('Location: index.php?action=adduserview');
+									//require('view/backend/adduserView.php');
+									//exit;
+							 }else{
+									header('location: signinview.html#inscription');
+									//require('view/frontend/signinview.html#inscription');
+									//exit;
+							 }
+						//header('location: signinview.html#inscription');
 						//var_dump($errors);
-					}/*else{
-						echo 'clean';
 					}
-					exit;*/
-				}else{
-var_dump($check_token);
-var_dump($data );
-var_dump($_SERVER['HTTP_REFERER']  );
-
-exit;
-
-					$action = "tokenlife";
 						
-				
-			
-			
-					 initmessage($action,$check_token);
+				}else{ // IN CASE OF CSRF ISSUE
 
-					 unset($_SESSION[$token_name.'_token']);
-					 unset($_SESSION[$token_name.'_token_time']);
 
-					 header('location: usersignin.html?inscription');
+						$action = "tokenlife";
+						
+						//  INITIATE DISPLAY MESSAGE
+						 initmessage($action,$check_token);
+
+						 unset($_SESSION[$token_name.'_token']);
+						 unset($_SESSION[$token_name.'_token_time']);
+
+						 header('location: signinview.html#inscription');
 					 }
 			 }
 			
-			// NO ERRORS GO ON PROCESS
+			if(empty($errors)){ // NO ERRORS GO ON PROCESS
+	
 			$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // Objet creation
 			
 			// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
@@ -616,13 +583,14 @@ exit;
 			$email =  $data['email'];
 			$password =  $data['password'];
 			
+			/*
 			// TESTS IF EMAIL ALREADY EXISTS
 			$verifyemail = $userManager->VerifyUserEmail($email);
 			
 
 			if ($verifyemail) 
 				{ 
-					$emailexists = 'email';
+					$emailexists = 'email'; 
 					$action = $_SESSION['ACTION'];
 					
 					
@@ -641,19 +609,32 @@ exit;
 
 					}else{ // USER IS NOT CONNECTED
 
-						header('Location: signinview.html?inscription');
+						header('Location: signinview.html#inscription');
 					}
 
 				}else{// EMAIL DOES NOT EXIST IN DB
-	 
+	 */
 				
 				// CHECKING FILE UPLOAD
 
 					if(isset($_FILES)){
 						
 						$status = $_FILES['photo']['error'];
-						$photo = checkUploadStatus($status);
+						$post_image = $_FILES["photo"];
+
+						$photo = checkUploadStatus($status, $post_image);
 						
+						if($photo == false){
+							if(isset($_SESSION['USERTYPEID'] ) && ($_SESSION['USERTYPEID']  == 1)){
+											//require('view/backend/addpostView.php');
+											require('view/backend/adduserView.php');
+											exit;
+							 }else{
+									header('Location: signinview.html#inscription');
+									//require('view/frontend/signinView.php');
+									//exit;
+							 }
+						}
 						
 					} // END OF  FILE UPLOAD CHECKING
 
@@ -669,16 +650,17 @@ exit;
 										$usertype_id = htmlspecialchars(trim($post['usertype_id']));
 									}
 									
-									$pseudo = htmlspecialchars(trim($post['pseudo']));
+									//$pseudo = htmlspecialchars(trim($post['pseudo']));
 									
-									$password = htmlspecialchars(trim($post['password']));
+									//$password = htmlspecialchars(trim($post['password']));
 									$is_enabled="1";
 
-									// MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
+									// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
+									$token = get_token('activation');
 
-									$token = password_hash($pseudo,PASSWORD_DEFAULT);
+									//$token = password_hash($pseudo,PASSWORD_DEFAULT);
 								   
-									$result = $userManager->registerUser($usertype_id, $pseudo, $email, $password, $photo,  $token);
+									$result = $userManager->registerUser($usertype_id, $pseudo, $email, $password, $photo, $token);
 
 									if ($result ) {
 										
@@ -690,14 +672,14 @@ exit;
 									 
 									$action = $_SESSION['ACTION'];
 
-									//gerate a message according to the action process
+									//generate a message according to the action 
 									
 									initmessage($action,$result);
 									
 									 
 									 if($action == 'usersignin'){
 										 //header('Location: index.php?action=signinview');
-										 header('Location: signinview.html?inscription');
+										 header('Location: signinview.html#inscription');
 									}elseif($action == 'useradd'){
 										header('Location: index.php?action=adduserview');
 									}
@@ -708,6 +690,7 @@ exit;
 									$errorMessage = $e->getMessage();
 									require('view/errorView.php');
 							}
+				//}// END  EMAIL not in db
 	}
 }
        // }
@@ -724,7 +707,9 @@ exit;
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		//$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		
+		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/useractivation-" . $id . "-" . $email . "-" . $token . ".html\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
@@ -1156,12 +1141,29 @@ exit;
 
 			if(isset($_FILES)){
 				$status = $_FILES['photo']['error'];
+				
+				$photo = checkUploadStatus($status);
 
 				// UOLOAD OK OR NO UPLOAD
 				if (($status == UPLOAD_ERR_OK) ||  ($status == UPLOAD_ERR_NO_FILE) ){
 				  
 						$post_image = $_FILES["photo"];
-						$photo=addImage($post_image);
+						$photo = addImage($post_image);
+
+						//$status = $_FILES['photo']['error'];
+						//$photo = checkUploadStatus($status);
+						
+						if($photo == false){
+									
+									$_SESSION['actionmessage'] = "Probl&egrave;me lors de la copie du fichier Photo !";
+									$_SESSION['alert_flag'] = 0;
+
+									header('Location: index.php?action=myprofile&id='.$userid);
+
+									/*require('view/backend/usereditView.php?action=myprofile&id='.$userid);
+									exit;*/
+							 
+						}
 						
 						try{
 								$updateprofile = $userManager->userUpdateProfile($userid, $post, $photo);
@@ -1379,7 +1381,7 @@ exit;*/
 					$_SESSION['actionmessage'] = 'Failed Bad Login Or Password !';
 					$_SESSION['alert_flag'] = 0;
 				 }elseif($result == 'account_not_activated') {
-					$_SESSION['actionmessage'] = 'Votre compte n\'est pas activé. Merci de verifier votre messagerie pour l\'activer !';
+					$_SESSION['actionmessage'] = 'Votre compte n\'est pas activ&eacute;. Merci de verifier votre messagerie pour l\'activer !';
 					$_SESSION['alert_flag'] = 0;
 				 }/**/
 				else {

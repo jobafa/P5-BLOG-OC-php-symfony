@@ -1,6 +1,6 @@
 <?php
 
-function addImage($post_image){
+function addImage_old($post_image){
 
 	if (isset($post_image) && ($post_image['error'] == 0))
 			{
@@ -10,6 +10,7 @@ function addImage($post_image){
 				
 				// Get image file extension
 				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
+	
 				//echo $file_extension;
 				
 //exit;
@@ -68,12 +69,14 @@ function addImage($post_image){
 						//header('Location: index.php?action=addpostview&message='.$message);
 						//exit;
 					}else{
-								if (move_uploaded_file($post_image["tmp_name"], $target)) {
-									return $file_name;
-								} else {
-									echo 'Upload issue :';
-									print_r($_FILES);
-								}
+						if (move_uploaded_file($post_image["tmp_name"], $target)) {
+							return $file_name;
+						} else {
+
+							return false;
+							//echo 'Upload issue :';
+							//print_r($_FILES);
+						}
 					}
 				}
 			/*}
@@ -84,19 +87,123 @@ function addImage($post_image){
 			}
 }
 
+/*****************************************
+#CHECK UPLOAD : IF OK MOVE TO UPLOADS FOLDER
+@PARAM : $post_image
+*****************************************/
 
-function checkUploadStatus($status){
+function addImage($post_image,$id = 0){
+
+	if (isset($post_image) && ($post_image['error'] == 0))
+			{
+
+				$allowed_image_extension = array(	"png","jpg","jpeg");
+				
+				// Get image file extension
+				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
 	
+				//echo $file_extension;
+				
+				
+				// Validate file input to check if is with valid extension
+				if (! in_array($file_extension, $allowed_image_extension)) {
+
+					$_SESSION['actionmessage'] = 'Echec de l\'upload : Extension non authoris&eacute; !';
+					$_SESSION['alert_flag'] = 0;
+					
+				}else if (($post_image["size"] > 2000000)) {// Validate  file size
+					
+					$_SESSION['actionmessage'] = 'Taille du fichier superieur &agrave; 2 Mo'; // ERROR MESSAGE
+					$_SESSION['alert_flag'] = 0;
+					
+				}else {
+					$dossier = "uploads/images/" ;
+					$file_name = basename($post_image["name"]);
+					$target = $dossier.$file_name;
+
+					if (file_exists($target)) {// RENAME FILE IF EXISTS IN TARGET
+						
+						$timestamp=time();
+						$file_name = $timestamp.'-'.$file_name;
+						$target = $dossier.$file_name;
+
+				    }
+				}
+
+
+					if (isset($_SESSION['alert_flag'])){
+						$action = $_SESSION['ACTION'];
+
+							switch ($action) {
+
+										case 'updatepost':
+
+											header('Location: index.php?action=modifypost&id=' . $id);
+											exit;
+	  
+											break;
+										case 'myprofile':
+											
+											header('Location: index.php?action=myprofile&id=' . $id);
+											exit;
+											
+											break;
+
+										case 'adduserview':
+										
+											header('Location: index.php?action=myprofile&id=' . $id);
+											exit;
+										
+										break;
+
+										case 'usersignin':
+										
+											//header('Location: index.php?action=myprofile&id=' . $id);
+											header('Location: signinview.html#inscription');
+											exit;
+										
+										break;
+
+										default:
+											
+											//header('Location: index.php?action=adminposts&from=dropdown');
+											
+											break;
+							}
+
+
+							//}
+						
+					}else{
+						if (move_uploaded_file($post_image["tmp_name"], $target)) {
+							return $file_name;
+						} else {
+
+							return false;
+							
+						}
+					}
+			
+			}
+}
+
+
+function checkUploadStatus($status,$post_image,$id = 0){
+
 	// an error occurs
 						if($status == UPLOAD_ERR_OK){
-						   
-								$post_image = $_FILES["photo"];
+							
+								//$post_image = $_FILES["photo"];
+								//var_dump($post_image);
 								
-								$photo=addImage($post_image);
+								$photo = addImage($post_image,$id);
+								
 								return $photo;
-									
-						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+							}else		
+						if	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+						
 								$photo = 'undraw_profile.svg';
+								return $photo;
 						}else {// THERE ARE UPLOAD ERRORS : CHECKING ERRORS
 								
 								switch ($status) {
@@ -106,6 +213,7 @@ function checkUploadStatus($status){
 										
 										$_SESSION['actionmessage'] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
 										$_SESSION['alert_flag'] = 0;
+										
 										break;
 									case UPLOAD_ERR_FORM_SIZE:
 										
@@ -135,7 +243,7 @@ function checkUploadStatus($status){
 										break;
 									case UPLOAD_ERR_EXTENSION:
 										
-										$_SESSION['actionmessage'] = "File upload stopped by extension";
+										$_SESSION['actionmessage'] = "Echec de l\'upload :Extension non authoris&eacute; !";
 										$_SESSION['alert_flag'] = 0;
 										break;
 
@@ -144,19 +252,14 @@ function checkUploadStatus($status){
 										$_SESSION['actionmessage'] = "Unknown upload error";
 										$_SESSION['alert_flag'] = 0;
 										break;
+
+
 								}// END OF SWITCH
 
-									
+								return false;	
 									 //header('Location: index.php?action=addpostview&message='.$message);
 
-									 if(isset($_SESSION['USERTYPEID'] ) && ($_SESSION['USERTYPEID']  == 1)){
-											//require('view/backend/addpostView.php');
-											require('view/backend/adduserView.php');
-											exit;
-									 }else{
-											require('view/frontend/signinView.php');
-											exit;
-									 }
+									 
 						} // END OF ULOADS ERRORS CHECKING
 }
 
@@ -168,15 +271,16 @@ function checkUploadStatus($status){
 
 function get_token($nom = '')
 {
-	//session_start();
-	 if (isset($_SESSION[$nom.'_token'])) {
-		//var_dump($nom);
-		// unset($_SESSION[$nom.'_token']);
-//unset($_SESSION[$nom.'_token_time']);
-		 //var_dump($_SESSION[$nom.'_token']);
-        return $_SESSION[$nom.'_token'];
+	
+	if (isset($_SESSION[$nom.'_token'])) {
+		return $_SESSION[$nom.'_token'];
     }
-	//$token = uniqid(rand(), true);
+
+	 if($nom == 'activation'){ // GENERATE TOKEN FOR ACCOUNT ACTIVATION
+		$token = bin2hex(random_bytes(35));
+		return $token;
+	 }
+	// GENERATE CSRF TOKEN 
 	$token = bin2hex(random_bytes(35));
 	$_SESSION[$nom.'_token'] = $token;
 	$_SESSION[$nom.'_token_time'] = time();
@@ -192,8 +296,7 @@ function get_token($nom = '')
 
 
 function check_token($temps, $referer, $nom = '')
-{//var_dump($nom);
-//session_start();
+{
 		$expiredtime = (time() - $temps);
 		$_SESSION['expired_time'] = $expiredtime;
 		$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);

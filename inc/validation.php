@@ -245,6 +245,7 @@ function db(): PDO
  */
 function is_unique(array $data, string $field, string $table, string $column): bool
 {
+
     if (!isset($data[$field])) {
         return true;
     }
@@ -255,8 +256,13 @@ function is_unique(array $data, string $field, string $table, string $column): b
     $stmt->bindValue(":value", $data[$field]);
 
     $stmt->execute();
-$res = $stmt->fetchColumn();
-//var_dump($res);
-    return $stmt->fetchColumn() === false;
+	$res = $stmt->fetchColumn();
+
+    //return $stmt->fetchColumn() === false;
+	if($res){
+		return false;
+	}else{
+		return true;
+	}
 }
 /**/
