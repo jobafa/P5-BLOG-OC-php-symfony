@@ -29,14 +29,22 @@ if(isset($_SESSION['PSEUDO'])){
 
 ?>
 
-<?php ob_start(); ?>
+<?php ob_start(); 
+
+
+	if($post['photo'] == Null){
+		$photo = "undraw_profile.svg";
+	}else{
+		$photo = $post['photo'];
+	}
+?>
 <!-- <h1>Mon super blog !</h1> -->
 <div class="row">
-<div class="card shadow mb-4">
+<div class="card shadow-bluedev mb-4">
 		<div class="card-header my-3 py-3">
 
-<h5><?= htmlspecialchars($post['title']) ?>	</h5>
-        <em>par <?= $post['author'] ?> le <?= $post['creation_date_fr'] ?></em><p><a href="index.php?action=listposts">Retour à la liste des billets</a></p>
+<h5 class="text-capitalize text-bluedev"><?= htmlspecialchars($post['title']) ?>	</h5>
+        <em class="text-sm-start text-muted">par <img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40"><span class="fw-bold"><?= $post['author'] ?></span> le <?= $post['update_date_fr'] ?></em><p><a class="text-secondary mx-2 " href="listposts.html?#posts"><!-- <a href="index.php?action=listposts">-->Retour à la liste des billets</a> </p>
 </div>
 		<div class="card-body ">
 
@@ -51,8 +59,11 @@ if(isset($_SESSION['PSEUDO'])){
 								
 									
 </div>
-</div><div class="font-weight-bold mt-3 pt-3">
-											<?= htmlspecialchars($post['lede']) ?>	
+</div><div class="fw-bold mt-3 pt-3">
+						<?= htmlspecialchars($post['lede']) ?>	
+						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
+					
+											
 										</div>
 <div class="news">
     
@@ -106,12 +117,13 @@ unset($_SESSION['alert_flag']);
 if(! isset($_SESSION['PSEUDO'])){
 ?>
 <div class="content-fluid alert-info my-3">
-<div class="row col-2 py-2 px-2 justify-content-right">
-<a class="btn btn-primary " href="index.php?action=loginview">Se Connecter</a>
-</div>
-<div class="row  col-6 py-2 px-2 justify-content-right">
-<em>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="index.php?action=signinview">Inscrivez Vous</a></em>
-</div>
+	<div class=" col py-2 px-2 justify-content-right">
+		<!-- <a class="text-secondary " href="index.php?action=loginview">Se Connecter</a> -->
+		<a class="text-secondary " href="loginview.html">Se Connecter</a>
+	<!-- </div>
+	<div class="  col-6 py-2 px-2 justify-content-right"> -->
+		<em>Vous n'avez pas encore de compte <!-- <a class=" text-secondary mx-2" href="index.php?action=signinview">Inscrivez Vous</a> --><a class=" text-secondary mx-2" href="signinview.html">Inscrivez Vous</a></em>
+	</div>
 </div>
 <div class="container mt-5">
 
@@ -160,8 +172,8 @@ while ($comment = $comments->fetch())
 </div>
 			
    
-			</div>
-        
+			</div >
+ <p class="my-3 mx-2"><a class="text-secondary  " href="listposts.html?#posts">Retour à la liste des billets</a><!-- <a href="index.php?action=listposts">Retour à la liste des "</a> --></p>       
 		</div>
     
 	</div>

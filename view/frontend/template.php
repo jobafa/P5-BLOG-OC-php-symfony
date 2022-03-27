@@ -7,18 +7,23 @@
   }else{
 		 $photo = "undraw_profile.svg";
   }
+
+
+
 ?>
     <body id="page-top">
         <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-light  bg-light fixed-top py-3" id="mainNav">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top " id="mainNav">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#page-top"><IMG SRC="public/images/LOGO-P5-F.png" width="168" height="70" ALT=""></a>
+                <a class="navbar-brand" href="#page-top"><IMG SRC="public/images/LOGO-BLOG.png" width="160" height="80" ALT=""></a>
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
+                    <ul class="navbar-nav ms-auto  ">
+						<!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front.html?#posts">Blog</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
                     </ul>
                 </div>
 
@@ -33,12 +38,17 @@
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 <?php
-
+  // IF USER IS LOGGED USE THE WRITE ACTION ACCORDING TO THE USER TYPE ID
 
 if(isset($_SESSION['USERTYPEID']) ){
+	if($_SESSION['USERTYPEID'] == 1){
+		$useraction = "adminposts";
+	}elseif($_SESSION['USERTYPEID'] == 3){
+		$useraction = "mycomments";
+	}
 	?>
                         <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
+                        <li class="nav-item dropdown ">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= htmlspecialchars($_SESSION['PSEUDO']) ?></span>
@@ -55,7 +65,7 @@ if(isset($_SESSION['USERTYPEID']) ){
                                 </a>
 								 <?php
 	//if((isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1))){?>
-								 <a class="dropdown-item" href="index.php?action=backblogmanage&from=dropdown">
+								 <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>
@@ -81,7 +91,9 @@ if(isset($_SESSION['USERTYPEID']) ){
 <?php
 		}else{
 		?>
-		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
+		<!-- <li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li> -->
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="loginview.html#login"><i class="fas fa-user-alt  mx-2  text-gray-400"></i><small>Se Connecter</small></a></li>
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
 
 		<?php
 		}
@@ -92,10 +104,12 @@ if(isset($_SESSION['USERTYPEID']) ){
 				
            
         </nav>
+
+		</div>
         <!-- Masthead-->
         <header class="masthead">
             <div class="container px-4 px-lg-1 h-100">
-                <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-left text-center">
+                <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
                     <div class="col-lg-8 align-self-end">
                         <h1 class="text-white font-weight-bold">Fathi abderrahim</h1>
                         <hr class="divider" />
@@ -110,9 +124,9 @@ if(isset($_SESSION['USERTYPEID']) ){
         <!-- Portfolio Section-->
 
         <section class="page-section portfolio" id="portfolio">
-<div class="container">
+<div class="container"  id="posts">
                 <!-- Portfolio Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Mon Blog Formation</h2>
+                <h2 class="page-section-heading text-center text-capitalize text-bluedev mb-0">Mon Blog Formation</h2>
                 <!-- Icon Divider-->
                 <!-- <div class="divider-custom">
                     <div class="divider-custom-line"></div>
