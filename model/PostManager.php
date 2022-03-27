@@ -134,6 +134,9 @@ exit;*/
 		 public function updatePost($idpost, $data, $postimage = '') {
 	
 			$db = $this->dbConnect();
+
+			try
+		{
             $sql = ('UPDATE posts SET title = :title, 
 													lede = :lede, 
 													author = :author, 
@@ -167,6 +170,11 @@ exit;*/
 					":postimage"=>$postimage
 				));
 			}
+		}
+			catch (Exception $e)
+		{
+			echo 'Connexion échouée : ' . $e->getMessage();
+		}	
 			return $resultat;
         }
 

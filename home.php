@@ -111,36 +111,20 @@ if(isset($_SESSION['alert_flag'])) {
 }
 </style>
     </head>    <body id="page-top">
-        <!-- Navigation
-
-
-        <nav class="navbar navbar-expand-lg   fixed-top" id="mainNav">
-            <div class="container">
-                <a class="navbar-brand" href="#page-top"><IMG SRC="public/images/LOGO-P5.png" width="120" height="120" ALT=""></a>
-                <button class="navbar-toggler text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php">Blog</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>-->
-
+       
 		   <!-- Navigation-->
-           <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top py-3" id="mainNav">
+           <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top " id="mainNav">
             <div class="container px-4 px-lg-5">
                 <a class="navbar-brand" href="#page-top"><IMG SRC="public/images/LOGO-BLOG.png" width="160" height="80" ALT=""></a>
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="#contact">Contact</a></li>
+                       <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
+						 <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front.html?#posts">Blog</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
+                       <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php?#contact">Contact</a></li> -->
                     </ul>
                 </div>
 
@@ -158,6 +142,11 @@ if(isset($_SESSION['alert_flag'])) {
 
 
 if(isset($_SESSION['USERTYPEID']) ){
+	if($_SESSION['USERTYPEID'] == 1){
+		$useraction = "backblogmanage";
+	}elseif($_SESSION['USERTYPEID'] == 3){
+		$useraction = "mycomments";
+	}
 	?>
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
@@ -176,7 +165,7 @@ if(isset($_SESSION['USERTYPEID']) ){
                                 </a>
 							<?php
 	//if((isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1))){?>
-								 <a class="dropdown-item" href="index.php?action=adminposts&from=dropdown">
+								 <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>
@@ -195,7 +184,9 @@ if(isset($_SESSION['USERTYPEID']) ){
 <?php
 		}else{
 		?>
-		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="loginview.html#login"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+		<!-- <li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li> -->
 
 		<?php
 		}
@@ -247,40 +238,38 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
         </section>
         <!-- Contact Section-->
         <section class="page-section" id="contact">
-            <div class="container">
+           <div class="container-fluid">
                 <!-- Contact Section Heading-->
-                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Contactez moi</h2>
-                <!-- Icon Divider-->
-                <div class="divider-custom">
-                    <div class="divider-custom-line"></div>
-                    <!-- <div class="divider-custom-icon"><i class="fas fa-star"></i></div> -->
-                    <div class="divider-custom-line"></div>
-                </div>
+<!--                 <h4 class="col-6-md col-8-lg page-section-heading text-center text-capitalize text-bluedev ml-5">Contactez moi</h4>
+ -->      <div class="row justify-content-center">
+              <div class="col-lg-8 "> 
+				<div class="card shadow mb-4">
+				<div class="card-header py-2">
+					<h3 class=" text-capitalize  m-0 font-weight-bold text-info">Contactez moi</h3>
+				</div>
                 <!-- Contact Section Form-->
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-xl-7">
+                
 					<?php
-	//if(isset($_GET['message']) && !empty($_GET['message'])){
-		if (isset($alert_flag) &&  ($alert_flag == 0)){
-			//$affichage = "Deleting post issue !";
-			$classe = "alert-danger";
-		}else if(isset($alert_flag) &&  ($alert_flag == 1)){
-			//$affichage = "Success ! Post was Deleted !";
-			$classe = "alert-success";
-		}
-    //}
-//echo  $actionmessage ;
-if(isset($actionmessage) && ($alert_flag == 0 || $alert_flag == 1)) {
-?>
-<div class="alert <?= $classe ?>" alert-dismissible fade show role="alert">
-  <?= $actionmessage ?>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-<?php
-unset($_SESSION['actionmessage']);
-unset($_SESSION['alert_flag']);
-}
-?>
+	
+						if (isset($alert_flag) &&  ($alert_flag == 0)){
+							
+							$classe = "alert-danger";
+						}else if(isset($alert_flag) &&  ($alert_flag == 1)){
+							
+							$classe = "alert-success";
+						}
+				   
+						if(isset($actionmessage) && ($alert_flag == 0 || $alert_flag == 1)) {
+					?>
+						<div class="alert <?= $classe ?> alert-dismissible fade show" role="alert">
+						  <?= $actionmessage ?>
+						  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+					<?php
+						unset($_SESSION['actionmessage']);
+						unset($_SESSION['alert_flag']);
+					}
+					?>
                         <!-- * * * * * * * * * * * * * * *-->
                         <!-- * * SB Forms Contact Form * *-->
                         <!-- * * * * * * * * * * * * * * *-->
@@ -288,7 +277,10 @@ unset($_SESSION['alert_flag']);
                         <!-- To make this form functional, sign up at-->
                         <!-- https://startbootstrap.com/solution/contact-forms-->
                         <!-- to get an API token!-->
-
+				
+    <!-- <div class="card card-login mx-auto px-0"> -->
+      <div class="card-body">
+			<div class="col-lg-10 "> 
                         <form action="index.php?action=contactform" method="post" id="contactForm" data-sb-form-api-token="API_TOKEN">
                             <!-- Name input-->
                             <div class="form-floating mb-3">
@@ -305,7 +297,7 @@ unset($_SESSION['alert_flag']);
                             </div>
                             <!-- Phone number input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="subject" type="text" name="subject" placeholder="objet du mail" pattern="^[A-Za-z '-]+$" required />
+                                <input class="form-control" id="subject" type="text" name="subject" placeholder="objet du mail" pattern="^[A-Za-zÀ-ÿ '-]+$" required />
                                 <label for="subject">Objet du mail</label>
                                 <div class="invalid-feedback" data-sb-feedback="subject:required">Merci de saisir votre numéro de téléphone.</div>
                             </div>
@@ -340,6 +332,10 @@ unset($_SESSION['alert_flag']);
                             <!-- Submit Button-->
                             <button class="btn btn-bluedev" type="submit">Envoyez</button>
                         </form>
+						</div>
+						</div>
+						</div>
+                <!-- </div> -->
                     </div>
                 </div>
             </div>
@@ -392,7 +388,7 @@ unset($_SESSION['alert_flag']);
             </div>
         </div>
     </div>
-? <footer class="footer text-center">
+<footer class="footer text-center">
             <div class="container">
                 <div class="row">
                     <!-- Footer Location-->
@@ -414,12 +410,11 @@ unset($_SESSION['alert_flag']);
                     </div>
                     <!-- Footer About Text-->
                     <div class="col-lg-4">
-                       <h6 class="text-uppercase mb-4">Administration</h6>
-                        <p class="lead mb-0">
-                            
-                            <a href="index.php?action=loginview">Se connecter</a>
-                            
-                        </p> <!--  -->
+					<nav class="navbar navbar-expand-lg navbar-light   " id="mainNav">
+					<li class="nav-item "><a class="nav-link py-3 px-0 px-lg-3 " href="loginview.html#login"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
+		<li class="nav-item "><a class="nav-link py-3 px-0 px-lg-1 " href="signinview.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+		</nav>
+                     
                     </div>
                 </div>
             </div>

@@ -18,7 +18,7 @@ class UserManager extends Manager {
 		public function registerUser($usertype_id, $pseudo, $email, $user_password, $photo, $token) {
 		$is_enabled = 1;
 		$db = $this->dbConnect();
-/*var_dump($token);
+/*var_dump($user_password);
 exit;*/
 		$userpassword = $user_password;
 
@@ -79,10 +79,12 @@ try
 
         $password = $post_password;
         $hash = $userEntry['password'];
-
+/*var_dump($password);
+var_dump($hash);
+exit;*/
         //Verify password
 
-        if (password_verify($password, $hash)){
+        if (password_verify($post_password, $hash)){
 			//echo 'oui';
 			return $userEntry;
 		}else{
@@ -104,9 +106,9 @@ try
 		 $db = $this->dbConnect();
 	try
 	{
-		 $req = $db->prepare('SELECT * FROM user WHERE  id = :id ');
+		 $req = $db->prepare('SELECT * FROM user WHERE  id = :userid ');
          
-		 $resultat =$req->execute(array(":id" => $userid)); 
+		 $resultat =$req->execute(array(":userid" => $userid)); 
 	}
 	catch (Exception $e)
 	{
@@ -123,25 +125,28 @@ try
 	 * @param  string $id 
 	 */
 
-	public function userActivate($id, $token = null)
+	public function userActivate($userid, $token = NULL)
 	{
 		$db = $this->dbConnect();
 	 try
 	{
 		
-		if($token != null){
+		if(isset($token) && ($token != null)){ // ADD TEST FOR TOKEN LIFETIME
 
-			$sql = 'UPDATE user SET is_activated = "'.$token.'" WHERE id = :id';
+			//$sql = 'UPDATE user SET is_activated = "'.$token.'" WHERE user.id = :userid';
+			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userid';
 
 		}else{
-
-			$sql = 'UPDATE user SET is_activated = NULL  WHERE id = :id';
+//var_dump($userid);exit;
+			$sql = 'UPDATE user SET is_activated = :token  WHERE user.id = :userid';
 
 		}
 
 		$req = $db->prepare($sql);
 
-        $resultat = $req->execute(array('id' => $id)); 
+        $resultat = $req->execute(array('userid' => $userid,
+															'token' => $token
+															)); 
 	}
 	catch (Exception $e)
 	{
@@ -217,10 +222,10 @@ try
 
         return $result;
 		}
-				catch (Exception $e)
-				{
-				echo 'Connexion échouée : ' . $e->getMessage();
-				}	
+		catch (Exception $e)
+		{
+			echo 'Connexion échouée : ' . $e->getMessage();
+		}	
     }
 
 	 /**
