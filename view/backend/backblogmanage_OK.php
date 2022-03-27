@@ -1,6 +1,10 @@
 ﻿<?php
 if( ! isset($_SESSION) ) session_start();
-
+$USERTYPEID = $_SESSION['USERTYPEID'] ?? NULL ;
+//ECHO $USERTYPEID;
+if($USERTYPEID == NULL){
+	header('Location: loginview.html');
+}
 //require('config/config.php');
 //require('controller/frontend.php');
 // Chargement des classes
@@ -88,12 +92,31 @@ if((isset($USERTYPEID) && ($USERTYPEID == 1))){
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h3 class="m-0 font-weight-bold text-info">Gestion Des Articles</h3>
-							<!-- <div class="col-auto">
-								<i class="fas fa-blog fa-2x text-info"></i>
-							</div> -->
+							
+										<?php
+											
+												if (isset($alert_flag) &&  ($alert_flag == 0)){
+													
+													$classe = "alert-danger";
+												}else if(isset($alert_flag) &&  ($alert_flag == 1)){
+													
+													$classe = "alert-success";
+												}
+											
+												if(isset($actionmessage) && ($alert_flag == 0 || $alert_flag == 1)) {
+												?>
+												<div class="alert <?= $classe ?>" role="alert">
+												  <?= $actionmessage ?>
+												  <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
+												</div>
+												<?php
+												unset($_SESSION['actionmessage']);
+												unset($_SESSION['alert_flag']);
+												}?>
                         </div>
 						
                         <div class="card-body">
+			
                             <div class="table-responsive">
                                  <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead align="center">
@@ -144,7 +167,7 @@ while ($data = $posts->fetch())
 <tr ><!-- <td width="5%" align="left"><?= htmlspecialchars($data['id']) ?></td> -->
 <td width="5%" align="left"><?= htmlspecialchars($data['title']) ?></td>
            <td width="42%" align="left"><?= htmlspecialchars($data['lede']) ?></td>
-           <td width="28%" align="center"><?= $data['creation_date_fr'] ?></td>
+           <td width="28%" align="center"><?= $data['update_date_fr'] ?></td>
 			<td width="25%" align="center">
 			<?php
 						

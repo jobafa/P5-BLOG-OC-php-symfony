@@ -9,6 +9,17 @@
   }else{
 		 $photo = "undraw_profile.svg";
   }
+
+  
+  // IF USER IS LOGGED USE THE WRITE ACTION ACCORDING TO THE USER TYPE ID
+
+if(isset($_SESSION['USERTYPEID']) ){
+	if($_SESSION['USERTYPEID'] == 1){
+		$useraction = "adminposts";
+	}elseif($_SESSION['USERTYPEID'] == 3){
+		$useraction = "mycomments";
+	}
+}
   ?>
 	<!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -36,7 +47,7 @@
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link " href="index.php" id="userDropdown">
+                            <a class="nav-link " href="listposts-front.html?#posts" id="userDropdown">
                                 <span class="mr-2 d-none d-lg-inline text-white-600 meduim">Aller sur le Site</span>
                                <!--  <img class="img-profile rounded-circle"
                                     src="public/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg"> -->
@@ -56,7 +67,7 @@
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
+                        <li class="nav-item dropdown ">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-white-600 meduim"><?= htmlspecialchars($_SESSION['PSEUDO']) ?></span>
@@ -70,7 +81,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="index.php?action=adminposts&from=dropdown">
+                                <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>

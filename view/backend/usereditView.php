@@ -103,7 +103,9 @@ if (! isset($profile)){
 						  <option value="3" <?php if($profile['usertype_id'] == 3){?> selected <?php } ?>>Visiteur</option>
 						</select>
 					</div >
-		
+		<?php
+}
+?>	
 				<div class="form-group my-3">
 					<input   type="submit" class="btn btn-info" />
 				</div>
@@ -111,9 +113,7 @@ if (! isset($profile)){
 </div>
     </div>
 
-<?php
-}
-?>	
+
   </div>
 </div>
 </div>

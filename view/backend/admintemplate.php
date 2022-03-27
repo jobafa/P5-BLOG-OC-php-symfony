@@ -1,6 +1,10 @@
 ﻿<?php
 if( ! isset($_SESSION) ) session_start();
-$USERTYPEID = $_SESSION['USERTYPEID'];
+$USERTYPEID = $_SESSION['USERTYPEID'] ?? NULL ;
+//ECHO $USERTYPEID;
+if($USERTYPEID == NULL){
+	header('Location: loginview.html');
+}
 $title = '';
 //echo $_SESSION['ACTION'] ;
 //require('config/config.php');
@@ -10,7 +14,7 @@ $title = '';
 
 //require_once('model/PostManager.php');
 //echo 'ENTRE '.$_SESSION['PSEUDO'].'  '.$_SESSION['RESULT']['email'];
-$USERTYPEID = $_SESSION['USERTYPEID'];
+//$USERTYPEID = $_SESSION['USERTYPEID'];
 //echo $USERTYPE_ID.' id';
 //exit;
 ?>
