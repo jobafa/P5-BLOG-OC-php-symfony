@@ -1,5 +1,4 @@
 ﻿<?php
-//require_once __DIR__.'/inc/functions.php';
 
 // Chargement des classes
 
@@ -8,89 +7,89 @@ require_once('model/PostManager.php');
 require_once('model/CommentManager.php');
 require_once('model/UserManager.php');
 
-/***DISPLAYS ALLE POSTS********************************
-**@PARAMS $from : front or back and $getpage : for pagination**
-****************************************************/
+	/***DISPLAYS ALLE POSTS********************************
+	**@PARAMS $from : front or back and $getpage : for pagination**
+	****************************************************/
 
-function listPosts($from, $getpage)
-{
-    $postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
+	function listPosts($from, $getpage)
+	{
+		$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
 
-	$totalRecrods = $postManager->gettotalPosts( $ispublished = '1'); 
-	
-	// PAGINAION
+		$totalRecrods = $postManager->gettotalPosts( $ispublished = '1'); 
+		
+		// PAGINAION
 
-	 
-	  $limit = 4;
-	
-	  $page = $getpage;
+		  $limit = 4;
+		  $page = $getpage;
+		  $paginationStart = ($page - 1) * $limit;
+		  
+		  // Calculate total pages
+		  $totoalPages = ceil($totalRecrods / $limit);
 
-	  $paginationStart = ($page - 1) * $limit;
+		  // Prev + Next
+		  $prev = $page - 1;
+		  $next = $page + 1;
 
-	 
-	  
-	  // Calculate total pages
-	  $totoalPages = ceil($totalRecrods / $limit);
+		  // end pagination
 
-	  // Prev + Next
-	  $prev = $page - 1;
-	  $next = $page + 1;
-
-	  // end pagination
-
-    $posts = $postManager->getPosts($userid = null, $from, $ispublished = '1', $paginationStart, $limit); 
-	
-    require('view/frontend/listPostsView.php');
-}
+		  $posts = $postManager->getPosts($userid = null, $from, $ispublished = '1', $paginationStart, $limit); 
+		
+		require('view/frontend/listPostsView.php');
+	}
 
 
-/***DISPLAYS ONE POST****************
-**@PARAMS $id : Post id and $is_published**
-************************************/
+	/***DISPLAYS ONE POST****************
+	**@PARAMS $id : Post id and $is_published**
+	************************************/
 
-function post($id, $is_published)
-{
-    $postManager = new \OC\PhpSymfony\Blog\Model\PostManager();
-    $commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
-	
-    $post = $postManager->getPost($id, $is_published );
+	function post($id, $is_published)
+	{
+		$postManager = new \OC\PhpSymfony\Blog\Model\PostManager();
+		$commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
+		
+		$post = $postManager->getPost($id, $is_published );
 
-	if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
-		if($_SESSION['ACTION'] != 'frontpost'){
-			require('view/backend/postView.php');
-			
+		if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
+			if($_SESSION['ACTION'] != 'frontpost'){
+				require('view/backend/postView.php');
+				
+			}else{
+
+				$comments = $commentManager->getComments($id,'1');
+				require('view/frontend/postView.php');
+				exit;
+			}
 		}else{
-
 			$comments = $commentManager->getComments($id,'1');
+
 			require('view/frontend/postView.php');
 			exit;
 		}
-	}else{
-		$comments = $commentManager->getComments($id,'1');
-
-		require('view/frontend/postView.php');
-		exit;
 	}
-}
 
-function addComment($postId, $author, $comment, $userid)
-{
-    $commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
 
-    $affectedLines = $commentManager->postComment($postId, $author, $comment, $userid);
+	/***ADD COMMENT****************
+	**@PARAMS $postId $author, $comment, $userid**
+	************************************/
 
-	$action = $_GET['action'];
+	function addComment($postId, $author, $comment, $userid)
+	{
+		$commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
 
-			//generate a message according to the action processed
-			initmessage($action,$affectedLines);
+		$affectedLines = $commentManager->postComment($postId, $author, $comment, $userid);
 
-    if ($affectedLines === false) {
-        throw new Exception('Impossible d\'ajouter le commentaire !');
-    }
-    else {
-        header('Location: index.php?action=frontpost&id=' . $postId);
-    }
-}
+		$action = $_GET['action'];
+
+				//generate a message according to the action processed
+				initmessage($action,$affectedLines);
+
+		if ($affectedLines === false) {
+			throw new Exception('Impossible d\'ajouter le commentaire !');
+		}
+		else {
+			header('Location: index.php?action=frontpost&id=' . $postId);
+		}
+	}
 
 	
 		/***********************************************
@@ -218,9 +217,10 @@ function addComment($postId, $author, $comment, $userid)
         }
 
 
-		# **************
+		# *********************************************
         # Verify User  Login
-        # **************
+		#$post : form data , $URL : to check referer , $token_name
+        # ***********************************************
 
 
 
@@ -303,7 +303,8 @@ function addComment($postId, $author, $comment, $userid)
 
 					$result = 'account_not_activated';
 					initmessage($action,$result);
-					require('view/frontend/loginView.php');
+					header('Location: loginview.html#login');
+					//require('view/frontend/loginView.php');
 
 				}elseif (($result) &&  ($result != 'not_activated')){ // LOGIN AND PASSWORD MATCH IN DB
 				
@@ -330,7 +331,7 @@ function addComment($postId, $author, $comment, $userid)
 				}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
 
 					initmessage($action,$result);
-					header('Location: loginview.html');
+					header('Location: loginview.html#login');
 					
 				}
 			}
@@ -364,11 +365,11 @@ function addComment($postId, $author, $comment, $userid)
 
         }
 
-			/**
+	/***************************************************
 	 * Get user's email 
-	 * @param  Parameter $email
-	 * 
-	 */
+	 * @param $post : form data, $URL to check referer, $token_name
+	 ************************************************** */
+	 
 
         function passReset($post, $URL, $token_name) {
 
@@ -533,7 +534,7 @@ function addComment($postId, $author, $comment, $userid)
 
 	/**
 	 * Get data of new password form and verify if password and confirmed password are equal
-	 * @param  Parameter $post
+	 * @param  Parameter $post : form data, $URL to check referer , $token_name
 	 * 
 	 */
 
@@ -591,7 +592,7 @@ function addComment($postId, $author, $comment, $userid)
 						if(!empty($errors)){var_dump($newpassword);
 						
 						$_SESSION['errors'] = $errors;
-						header('location: passreinitnew.html');
+						header('location: passreinitnew.html#newpass');
 						//require('passresetrequest.html');
 						
 						}
@@ -608,8 +609,8 @@ function addComment($postId, $author, $comment, $userid)
 						 unset($_SESSION[$token_name.'_token']);
 						 unset($_SESSION[$token_name.'_token_time']);
 
-						 require('view/frontend/passreinitView.php');
-						// header('location: newpass.html');
+						 //require('view/frontend/passreinitView.php');
+						 header('location: passreinitnew.html#newpass');
 						 //require('passresetrequest.html');
 						 }
 			 }

@@ -1,101 +1,33 @@
 ﻿<?php
 if( ! isset($_SESSION) ) session_start();
 
-//if(isset($_SESSION['errors'] )) unset($_SESSION['errors']) ;
-
 require_once __DIR__.'/inc/functions.php';
 require_once __DIR__ .'/inc/sanitization.php';
 require_once __DIR__ . '/inc/validation.php';
 require_once __DIR__.'/config/config.php';
-
-//require('config/config.php');
-//require('controller/frontend.php');
-
-
 require_once __DIR__.'/controller/backend.php';
 require_once __DIR__.'/controller/frontend.php';
 
-/*if (isset($_SERVER['REQUEST_METHOD'])){
 
-	$method  = $_SERVER['REQUEST_METHOD'];
-	$
-	var_dump($method);
-	$method  = '$_'.$method;
-	var_dump($$method);
-	//exit;
-	$data  = sanitize_my_data($method);
-
-}*/
-//var_dump($_SERVER['REQUEST_METHOD']);
+$id =  $_GET['id'];
 if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
 
 	$data_inputs = $_GET;
 	$method = 'GET';
-//var_dump($data_inputs);
+
 	$data_inputs = sanitize_get_data( $data_inputs);
 	$_GET = $data_inputs;
-	/*echo '<BR>';
-var_dump($_GET);*/
-//exit;
 }elseif (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')){
 
 	$post = $_POST;
 	$method = 'POST';
-//var_dump($post);
-	//sanitize_my_data($method, $data_inputs);
 
 }
-/* ECRIRE FONCTION POUR NETTOYER TOUTES LES DONNNES RECUES PAR _GET OU _POST ET VERIFIER SI LES CHAMPS SONT RENSEIGNES
 
-// TESTER LE REQUEST ET APPELER LA FONCTION  sanitize_my_data($_REQUEST) AVEC PARAMETRE _GET OU _POST
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET'){
-	$method = $_GET;
-}elseif ($_SERVER['REQUEST_METHOD'] == 'POST'){
-	$method = $_POST;
-}
-	//foreach ($_REQUEST as $key => $value) {
-
-		var_dump($method);
-
-			//$result[$key] = sanitize_my_data($value);
-
-		//}
+if (isset($_GET['action'])){
 	
-	$request = sanitize_my_data($method);
-
-	if( $_SERVER['REQUEST_METHOD'] == 'POST' ){
-
-		$_POST = $request;
-
-	}elseif( $_SERVER['REQUEST_METHOD'] == 'GET' ){ 
-		
-		ECHO 'OUI';
-		$_GET = $request;
-
-	}
-	var_dump($request);
-	exit;
-	
-*/
-
-/*
-var_dump($request);
-exit;*/
-
-
-//var_dump($_SERVER['REQUEST_URI']);
-
-/*if (isset($_POST)){
-	
-	
-	
-}*/
-
-
-if (isset($_REQUEST['action'])){
-	
-	$action = strtolower($_REQUEST['action']);
+	$action = strtolower($_GET['action']);
 	$_SESSION['ACTION'] = $action;
 }
 
@@ -108,29 +40,28 @@ if (isset($_GET['id']) && ($_GET['id'] > 0)){
 
 	
 	$id =  $_GET['id'];
-	//var_dump($id);
+	
 		
 }
 
 if (isset($_GET['email'])){
 	
 	$link_email =  $_GET['email'];
-	//var_dump($id);
+	
 		
 }
 
 if (isset($_GET['token'])){
 	
 	$link_token =  $_GET['token'];
-	//var_dump($id);
+	
 		
 }
 
 if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
 	
 	$usertypeid =  $_GET['usertypeid'];
-	//var_dump($id);
-		
+			
 }
 
 if (isset($_GET['from'])){
@@ -139,45 +70,30 @@ if (isset($_GET['from'])){
 	$_SESSION['FROM'] =  $_GET['from'];
 	$from = $_SESSION['FROM'];
 	
-	//var_dump($id);
 		
 }
 
 if (isset($_GET['idcomment']) && ($_GET['idcomment'] > 0)){
 	
 	$id =  $_GET['idcomment'];
-	//var_dump($id);
-	//var_dump($action);
-			//exit;
+	
 }
 
 if (isset($_GET['idpost']) && ($_GET['idpost'] > 0)){
 	
 	$id =  $_GET['idpost'];
-	//var_dump($id);
-	//var_dump($action);
-			//exit;
+
 }
-
-
-
-//echo $id;
-//exit;
-
 
 try {
     if ( isset($action) )
 		{
 
-				//$_GET['action']=strtolower($_GET['action']);
-				//$action = $_GET['action'];
-
 				if ($action == 'listposts') {
 					if (isset($_GET['page']) && ($_GET['page'] > 0)){
 	
 					$getpage =  $_GET['page'];
-	//var_dump($id);
-		
+	
 					}else{
 						$getpage =  1;
 					}
@@ -226,12 +142,9 @@ try {
 				}
 				elseif ($action == 'modifycomment') {
 					 if (isset($id) && $id > 0) {
-						// $commentManager = new \OC\PhpSymfony\Blog\Model\CommentManager();
 						
-						  // $comment= $commentManager->getComment($id);
 						  modifyComment($id);
-						   //require('view/frontend/commenteditView.php');
-						  
+						 						  
 					}
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
@@ -258,14 +171,16 @@ try {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					 }
 				}
+
+
 				/*****************************************************/ 
 						/*********** Backend Routing **************/
 						/*****************************************************/
 				
+
 				// GET USER'S COMMENTS BY ID
 				elseif ($action == 'mycomments') {
-					//echo ' ENTRE INDEX';
-					
+						
 						listCommentsValidate();
 				}
 				elseif ($action == 'backblogmanage') {
@@ -293,7 +208,7 @@ try {
 				elseif ($action == 'addpost') {
 					 if (isset($_POST) && !empty($_POST)) {
 
-							doAdd();
+							addPost();
 							
 					 }
 					 else {
@@ -302,8 +217,9 @@ try {
 				}
 
 				elseif ($action == 'modifypost') {
+
 					if (isset($id) && $id > 0) {
-						modifyPost($id);
+						modifyPostView($id);
 					}
 					else {
 						throw new Exception('Aucun identifiant de post envoyé');
@@ -347,13 +263,13 @@ try {
 				}
 				elseif ($action == 'useractivation') {
 						
-						$id = $_GET['id'];
-						if (isset($_GET['token'])){
+						//$id = $_GET['id'];
+						if (isset($_GET['token'])){var_dump($id);
 							$token = $_GET['token'];
-							$isactivated = null;
+							$isactivated = NULL;
 						}elseif(isset($_GET['isactivated'])){
 							$isactivated = $_GET['isactivated'];		
-							$token  = null;
+							$token  = NULL;
 						}
 
 						userActivation($id, $link_email, $token, $isactivated);
@@ -380,41 +296,36 @@ try {
 				}
 
 				elseif ($action == 'passreset') {
-					//echo ' ENTRE INDEX';
-					//if(isset($_POST['password-reset']) && isset($_POST['email'])){
-					//	$postemail = $_POST['email'];
 					
 						passReset($post, $URL, 'passreset');
-					//}
+					
 				}
 
 				elseif ($action == 'passreinitialisation') {
-//echo $action.' ENTRE INDEX';
+
 					if(isset($link_token) && isset($link_email)){
 						verifyPassresetToken($link_email,$link_token);
-						//$postemail = $_POST['email'];
+						
 					}
 					
 						
 				}
 				
 				elseif ($action == 'passreinitview') {
-					//echo ' ENTRE INDEX';
 					
 						passreinitVew();
 				}
 
 				elseif ($action == 'passreinitnew') {
-					//echo ' ENTRE INDEX';
 					
 						passreinitNew();
 				}
 
 				elseif ($action == 'newpass') {
-//echo $action.' ENTRE INDEX';
+
 					if(isset($post)){
 						getNewPass($post, $URL, 'newpass');
-						//$postemail = $_POST['email'];
+						
 					}
 					
 						
@@ -422,13 +333,12 @@ try {
 
 
 				elseif ($action == 'usersadmin') {
-					//echo ' ENTRE INDEX';
-						//$userid = $_SESSION['USERID'];
+					
 						usersAdmin();
 				}
 
 				elseif ($action == 'myprofile') {
-					//echo ' ENTRE INDEX';
+					
 					if(! isset($id)){
 						$userid = $_SESSION['USERID'];
 					}else{
@@ -438,10 +348,9 @@ try {
 				}
 
 				elseif ($action == 'userupdate') {
-					//echo ' ENTRE INDEX';
-						
+				
 						$post = $_POST;
-						userupdate($post,$id);
+						userUpdate($post,$id);
 				}
 
 				elseif ($action == 'userdelete') {
@@ -460,9 +369,8 @@ try {
 				}
 	
 	}else {
-					//listPosts();
-					//$action = $_SESSION['ACTION'];
-					header('Location: home.php');
+					
+					header('Location: accueil.html');
 			}
 }
 catch(Exception $e) {
