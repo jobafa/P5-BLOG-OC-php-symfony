@@ -8,22 +8,10 @@ require_once("model/Manager.php");
 class CommentManager extends Manager
 {
     
-	/*# **************
-        # GET ALL POST COMMENTS
-        # **************
-
-	 public function getComments($postId)
-    {
-        $db = $this->dbConnect();
-        $comments = $db->prepare('SELECT id, author, comment, DATE_FORMAT(comment_date, \'%d/%m/%Y à %Hh%imin%ss\') AS comment_date_fr FROM comments WHERE post_id = ? AND is_enabled = ? ORDER BY comment_date DESC');
-        $comments->execute(array($postId, '1'));
-
-        return $comments;
-    }*/
-
+	
 	# **************
         # GET ALL POST COMMENTS with params working for front and back end
-        # **************
+        # @ Params $postId $isenabled $userid**************
 	
 	public function getComments($postId = null, $isenabled = null, $userid = null)
     {
@@ -41,7 +29,7 @@ class CommentManager extends Manager
 													ORDER BY comments.comment_date DESC'
 													);
 													
-														//$query.= ' AND comments.post_id = ?  ORDER BY comments.comment_date DESC';
+														
 														$comments = $db->prepare($query);
 														$comments->execute(array($userid));
 		}else{
@@ -68,6 +56,11 @@ class CommentManager extends Manager
         return $comments;
     }
 
+	/**
+	 * Insert a comment **********************
+	 * @param   $postId $author, $comment and $userid
+	 */
+
     public function postComment($postId, $author, $comment, $userid)
     {
         $db = $this->dbConnect();
@@ -76,17 +69,26 @@ class CommentManager extends Manager
 
         return $affectedLines;
     }
+	
+	/**
+	 * Get single comment for modification**** TO BE DELETED
+	 * @param   $commentId**************************
+	 */
 
 	public function getComment($commentId)
     { 
-		//echo "TEST ENTRE3";
-
+	
         $db = $this->dbConnect();
         $comment = $db->prepare('SELECT id, post_id,  author, comment, DATE_FORMAT(comment_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS comment_date_fr FROM comments WHERE id = ? ');
         $comment->execute(array($commentId));
 
         return $comment;
     }
+	
+	/**
+	 * uPDATE comment **** TO BE DELETED
+	 * @paramS   $commentId, $comment***
+	 */
 
 	public function updateComment($comment, $commentId)
     { 
@@ -96,6 +98,11 @@ class CommentManager extends Manager
 
         return $commentupdate;
     }
+	
+	/**
+	 * Validate commentby admin
+	 * @param   $commentId**************************
+	 */
 
 	public function validateComment($commentId)
     { 

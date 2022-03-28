@@ -15,11 +15,16 @@ class UserManager extends Manager {
 		private $id;
 		private $is_enabled ;
 
+		/**
+	 * Register new user 
+	 * @param  post sign in  form  data
+	 * @return object User
+	 */
+
 		public function registerUser($usertype_id, $pseudo, $email, $user_password, $photo, $token) {
 		$is_enabled = 1;
 		$db = $this->dbConnect();
-/*var_dump($user_password);
-exit;*/
+
 		$userpassword = $user_password;
 
         $hash = password_hash($userpassword,PASSWORD_DEFAULT);
@@ -53,13 +58,7 @@ try
 
     public function loginUser($post_email, $post_password) {
 
-		//$db = $this->dbConnect();
-
-        //Get userEntry from DB
-
         $userEntry = $this->VerifyUserEmail($post_email);
-
-        //Check if user login does not exist return false
 
         if (!$userEntry){ 
 			return false;
@@ -79,9 +78,7 @@ try
 
         $password = $post_password;
         $hash = $userEntry['password'];
-/*var_dump($password);
-var_dump($hash);
-exit;*/
+
         //Verify password
 
         if (password_verify($post_password, $hash)){
@@ -133,11 +130,11 @@ exit;*/
 		
 		if(isset($token) && ($token != null)){ // ADD TEST FOR TOKEN LIFETIME
 
-			//$sql = 'UPDATE user SET is_activated = "'.$token.'" WHERE user.id = :userid';
+			
 			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userid';
 
 		}else{
-//var_dump($userid);exit;
+
 			$sql = 'UPDATE user SET is_activated = :token  WHERE user.id = :userid';
 
 		}
@@ -180,9 +177,7 @@ exit;*/
 				echo 'Connexion échouée : ' . $e->getMessage();
 				}	
         $result = $obj->fetch();
-		//var_dump($result);
-		//$result = $obj->fetch(PDO::FETCH_ASSOC);
-
+		
         return $result;
     }
 
@@ -217,8 +212,7 @@ exit;*/
 				}
 			}
 		}
-		//var_dump($result);
-		//$result = $obj->fetch(PDO::FETCH_ASSOC);
+		
 
         return $result;
 		}
@@ -249,20 +243,9 @@ exit;*/
 				 
 					$expDate = date("Y-m-d H:i:s",$expFormat);
  
-					
-					/*$time = date('Y-m-d H:i:s');
-
-					// expire the token after 1 hour
-
-					$token_life = '1 hours';
-					$token_expire = date("Y-m-d H:i:s", strtotime('+1 hours'));*/
-					
-/*echo $time.'  '.$expDate;*/
-//exit;
 					$req = $db->prepare($sql);
 					$resultat = $req->execute(array($token,$expDate,$userid));
-	//var_dump($resultat);
-						//exit;	
+	
 					return $resultat;
 			}
 			catch (Exception $e)
@@ -294,13 +277,13 @@ exit;*/
 															'link_email' => $link_email,
 															'link_token' => $link_token
 														)); 
-			//$result = $res->execute(array( $newpass));
+			
 		}
 		catch (Exception $e)
 		{
 			echo 'Connexion échouée : ' . $e->getMessage();
 		}	
-		//$result = $res->fetch();
+		
 		
 		return $result;
 		
@@ -311,7 +294,7 @@ exit;*/
 
 	public function getUser($userid = null)
 	{
-//echo $userid.'<BR>';
+
 		$db = $this->dbConnect();
 	try
 	{
@@ -342,8 +325,7 @@ exit;*/
 			$sql.= ' ORDER BY creation_date DESC ';
 			$req = $db->query($sql);
 			return $req;
-			//$req->execute();
-			//$result =  $req->fetch();
+			
 		}
 	}
 	catch (Exception $e)
@@ -351,9 +333,6 @@ exit;*/
 	echo 'Connexion échouée : ' . $e->getMessage();
 	}	
 		
-		
-		//var_dump($result);
-		//exit;
 		return $result;
 	}
 
@@ -363,6 +342,7 @@ exit;*/
 	 * @param  Parameter $post [pseudo, first_name, last_name, birth_date, home, mobile, website...]
 	 * @return void
 	 */
+
 	public function userUpdateProfile($userid, $post, $photo)
 	{
 			$db = $this->dbConnect();
@@ -388,8 +368,7 @@ exit;*/
 		{
 			echo 'Connexion échouée : ' . $e->getMessage();
 		}	
-		//$result = $res->fetch();
-		
+	
 		return $result;
 		
 	}
@@ -401,7 +380,7 @@ exit;*/
 	public function deleteUser($userid) {
 
             $db = $this->dbConnect();
-			//$sql = 'DELETE FROM posts WHERE id = :idpost LIMIT 1;';
+			
 		try
 		{
 			$query = 'DELETE FROM user WHERE user.id = ? ';

@@ -13,6 +13,12 @@ class PostManager extends Manager
 		private $post_content ;
 		private $is_enabled ;
 
+
+	/**
+	 * Get total of Posts for Pagination
+	 * @param   $ispublished = post is or not published
+	 */
+
 	  public function gettotalPosts( $ispublished = '1')
     {
 			$db = $this->dbConnect();
@@ -20,8 +26,7 @@ class PostManager extends Manager
 				{	
 					$sql = $db->query('SELECT count(id) AS id FROM posts WHERE is_published = "'.$ispublished.'"')->fetchAll();
 					$totalRecrods = $sql[0]['id'];
-/*var_dump($totalRecrods);
-exit;*/
+
 					return $totalRecrods;
 								
 				}
@@ -29,9 +34,13 @@ exit;*/
 				{
 					echo 'Connexion échouée : ' . $e->getMessage();
 				}					
-			//var_dump($result);
-		//return $result;			
+					
 	}									
+	
+	/**
+	 * Get Posts list
+	 * @param   $post_userid,  $ispublished = post is or not published
+	 */
 
     public function getPosts($post_userid = null, $from, $is_published = null, $paginationStart, $limit)
     {
@@ -47,44 +56,35 @@ exit;*/
 	
 							$req.= ' WHERE user_id = "'.$post_userid.'" ORDER BY creation_date DESC ';
 							$result = $db->query($req);
-							/* $req.= ;
-							$posts = $db->prepare($req);
-							$result = $posts->execute(array(':post_userid'=>$post_userid));*/
 							
-							//$result = $posts->fetch();
-							//var_dump($result);
-							//exit;
 						}elseif( isset($is_published) && ($is_published != null)){
 
-							
-							//$req.= ' ORDER BY creation_date DESC ';
 							$req.= ' WHERE is_published = '.$is_published.' ORDER BY update_date DESC LIMIT '.$paginationStart.', '.$limit;
-							//$req.= ' WHERE is_published = ? ';
+							
 							$result = $db->query($req);
-							//$result = $result->execute();
-							/*$resultat = $req->execute(array(
-								":is_published" => $is_published,
-								":paginationStart" => $paginationStart,
-								":limit" => $limit
-								));*/
-							//return $req;	
+						
 
 						}
 						else{
 							$req.= ' ORDER BY update_date DESC ';
 							$result = $db->query($req);
 							
-							//return $req;	
-
-						}/**/
+							
+						}
 		}
 		catch (Exception $e)
 		{
 			echo 'Connexion échouée : ' . $e->getMessage();
 		}					
-			//var_dump($result);
+			
 		return $result;			
 	}									
+
+
+	/**
+	 * Get one Post
+	 * @params  string $postid and $ispublished = post is or not published
+	 */
 
   public function getPost($postId, $is_published)
     {
@@ -105,23 +105,16 @@ exit;*/
         return $post;
     }
 
-//  ADD Post **************************************************
+		/**
+	 * Add Post
+	 * @params  post form data
+	 */
 
 	public function addPost( $post_userid,$post_title, $post_lede,$post_author,$post_content, $pimage_name,$is_published) 
 		{
 			$db = $this->dbConnect();
        
-            /*
-            $req = $db->prepare('INSERT INTO posts(user_id, title, lede, content, is_enabled, creation_date, update_date) VALUES (:user_id,:title, :lede, :content, :is_enabled, NOW(), NOW())');
-							$resultat = $req->execute(array(
-								":user_id" => $post_userid,
-								":title" => $post_title,
-								":lede" => $post_lede,
-								":content" => $post_content,
-								":is_enabled" => $is_enabled,
-							));*/ 
-		    //$sql = 'INSERT INTO posts(user_id, title, lede, content, is_enabled, creation_date, update_date) VALUES ( ?, ?, ? , ?, ?, NOW(), NOW())';
-				//if($db){
+           
 			$req = $db->prepare('INSERT INTO posts(user_id, title, lede, author, content,image, is_published, creation_date, update_date) VALUES( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
 			$resultat = $req->execute(array($post_userid,$post_title,$post_lede,$post_author,$post_content, $pimage_name,$is_published));
 							
@@ -193,12 +186,7 @@ exit;*/
 		$sql = 'UPDATE posts SET is_published = "'.$ispublished.'"  WHERE id = '.$id;
 		$resultat = $db->query($sql);
 		
-		//echo $sql.'  '.$id;
-		//exit;
 		
-		/*$req = $db->prepare($sql);
-
-        $resultat = $req->execute(array('id' => $postId)); */
 	}
 	catch (Exception $e)
 	{
@@ -207,13 +195,15 @@ exit;*/
 		return $resultat;
 	}
 
-	
+	/**
+	 * DELETE Post
+	 * @param  string $userid and $postid
+	 */
 
 		public function deletePost($postId, $userid) {
 
             $db = $this->dbConnect();
-			//$sql = 'DELETE FROM posts WHERE id = :idpost LIMIT 1;';
-
+			
 			$query = 'DELETE FROM posts';
 			if ($postId != null) {
 				$query.= ' WHERE posts.id = ? ';
