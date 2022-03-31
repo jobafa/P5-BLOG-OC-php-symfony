@@ -1,7 +1,6 @@
 <?php 
 
 ob_start(); ?>
-<!-- <h1>Mon super blog !</h1> -->
 
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -59,10 +58,7 @@ if (! isset($profile)){
 					<label for="email">Email</label><br />
 					<input type="text" class="form-control" id="email" name="email" value="<?=  htmlspecialchars($profile['email']) ?>" required />
 				</div>
-				<!-- <div class="form-group" class="form-label">
-					<label for="password">Mot de Passe</label><br />
-					<input type="text" class="form-control" id="password" name="password" value="" />
-				</div > -->
+				
 				<div class="form-group">
 					<label for="photo" class="form-label">Photo</label>
 					<input type="file" class="form-control py-1" id="photo" name="photo" />

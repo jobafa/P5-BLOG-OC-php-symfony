@@ -15,6 +15,7 @@ class UserManager extends Manager {
 		private $id;
 		private $is_enabled ;
 
+
 		/**
 	 * Register new user 
 	 * @param  post sign in  form  data

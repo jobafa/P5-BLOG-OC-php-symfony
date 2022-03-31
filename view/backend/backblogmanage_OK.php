@@ -1,22 +1,13 @@
 ﻿<?php
 if( ! isset($_SESSION) ) session_start();
 $USERTYPEID = $_SESSION['USERTYPEID'] ?? NULL ;
-//ECHO $USERTYPEID;
+
 if($USERTYPEID == NULL){
 	header('Location: loginview.html');
 }
-//require('config/config.php');
-//require('controller/frontend.php');
-// Chargement des classes
-
-
-//require_once('model/PostManager.php');
-//echo 'ENTRE '.$_SESSION['PSEUDO'].'  '.$_SESSION['RESULT']['email'];
 
 $USERTYPEID = $_SESSION['USERTYPEID'];
 
-//echo $USERTYPE_ID.' id';
-//exit;
 ?>
 <!DOCTYPE html>
 <html lang="FR">
@@ -57,9 +48,6 @@ $USERTYPEID = $_SESSION['USERTYPEID'];
 	<!-- Sidebar -->
 <?php
 
-
-//if((isset($USERTYPEID) && ($USERTYPEID == 1))){
-	
         
       require('sideBar.php');
 		
@@ -74,11 +62,7 @@ $USERTYPEID = $_SESSION['USERTYPEID'];
                    <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                   <!--  <h1 class="h3 mb-2 text-gray-800">Gestion Des Articles</h1> -->
-                   <!--  <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                        For more information about DataTables, please visit the <a target="_blank"
-                            href="https://datatables.net">official DataTables documentation</a>.</p> -->
+                 
 <?php
 
 
@@ -129,32 +113,18 @@ if((isset($USERTYPEID) && ($USERTYPEID == 1))){
                                             
                                         </tr>
                                     </thead>
-                                    <!-- <tfoot>
-                                        <tr>
-                                            <th>Auteur</th>
-                                            <th>Commentaire</th>
-                                            <th>Date</th>
-                                            <th>Actions</th>
-                                            
-                                        </tr>
-                                    </tfoot> -->
+                                  
                                     <tbody>
 
 
 <?php
 	
-   //$postManager = new \OC\PhpSymfony\Blog\Model\PostManager(); // Création d'un objet
-   //$posts = $postManager->listPostsUpdate(); // Appel d'une fonction de cet objet
-   //$posts = $postManager->getPosts($_SESSION['USERID']); 
-
-/*exit;*/
+   
 if(isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'adminmyposts')){
-//var_dump($posts); 
-//$posts = listPostsUpdate($userid);
-//exit;
+
 	$userid = $_SESSION['USERID'];
 }elseif(isset($_SESSION['ACTION']) && (($_SESSION['ACTION'] == 'backblogmanage') || ($_SESSION['ACTION'] == 'adminposts'))){
-	//var_dump($_SESSION['ACTION']);
+	
  $userid = null;
 
 }
@@ -179,9 +149,7 @@ while ($data = $posts->fetch())
 							$ispublished = "on";
 							$color = "success";
 						}
-				//var_dump($ispublished); 
-//$posts = listPostsUpdate($userid);
-//exit;
+				
 ?>
 				<a href="index.php?action=postactivation&amp;id=<?= $data['id'] ?>&amp;ispublished=<?= $ispublished ?>" class="btn btn-outline-<?= $color ?> btn-sm" title="Publier"><i class="fas fa-toggle-<?= $ispublished ?>"></i> </a>
 				<a href="index.php?action=post&amp;id=<?= $data['id'] ?>" class="btn btn-outline-info btn-sm mx-1" title="Voir">
@@ -219,7 +187,7 @@ while ($data = $posts->fetch())
 
 <?php
 }
-//$comment->closeCursor();
+
 ?>
 
                                        
@@ -238,9 +206,7 @@ while ($data = $posts->fetch())
 <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             <h3 class="m-0 font-weight-bold text-success">Mes Commentaires</h3>
-							<!-- <div class="col-auto">
-								<i class="fas fa-blog fa-2x text-info"></i>
-							</div> -->
+							
                         </div>
 					</div>
             </div>

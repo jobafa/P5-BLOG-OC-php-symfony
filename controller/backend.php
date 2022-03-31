@@ -446,13 +446,6 @@ require_once('model/UserManager.php');
 					//VALIDATE DATA
 					$errors = validate($data, $fields);	
 
-					/*$errors = validate($data, $fields, [
-						'required' => 'Le champ %s est requis',
-
-						'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
-
-					);
-					*/
 
 					if(!empty($errors)){
 						$_SESSION['errors'] = $errors;

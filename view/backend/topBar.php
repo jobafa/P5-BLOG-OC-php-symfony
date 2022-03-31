@@ -49,8 +49,7 @@ if(isset($_SESSION['USERTYPEID']) ){
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link " href="listposts-front.html?#posts" id="userDropdown">
                                 <span class="mr-2 d-none d-lg-inline text-white-600 meduim">Aller sur le Site</span>
-                               <!--  <img class="img-profile rounded-circle"
-                                    src="public/startbootstrap-sb-admin-2-gh-pages/img/undraw_profile.svg"> -->
+                              
                             </a>
                            
                         </li>
@@ -85,10 +84,7 @@ if(isset($_SESSION['USERTYPEID']) ){
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>
-                                <!-- <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a> -->
+                              
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
