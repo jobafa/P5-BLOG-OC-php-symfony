@@ -15,52 +15,56 @@ require_once('model/UserManager.php');
 
 		# ********************************
         # Verify type of user ( level ) : Admin or Guest 
+
+		# and redirect to Post view or dashboard
         # *********************************
 
-		function verifytype(){
+		function verifyType(){
+
+      
+
 
 			if(isset($_SESSION['FROM'])){
 				$from = $_SESSION['FROM'];
 			}
-					
 			$pseudo = $_SESSION['PSEUDO'];
 			$action = $_GET['action'];
 			$result = $_SESSION['RESULT'];
 
-			if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 3)){
 
-					$result1 = 0;
-					initmessage($action,$result1);
+			if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 3)){ // IF GUEST 
 
-					// IF GUSET AND COMES FROM A POST PAGE THEN SEND BACK TO THE POST PAGE
+					//$result1 = 0;
+					//initmessage($action,$result1);
 
-					if(isset($_SESSION['POSTID'] )){
+					if(isset($_SESSION['POSTID'] )){// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
 						
-						header('Location: index.php?action=frontpost&id='.$_SESSION['POSTID']);
+						//header('Location: index.php?action=frontpost&id='.$_SESSION['POSTID']);
+						header('Location: frontpost-'.$_SESSION['POSTID'].'.html#post');
 						exit;
 						
-					}else{
+					}else{// IF  DOES NOT COME FROM A POST VIEW : SEND TO GUEST DASHBOARD PAGE
 
-						// IF GUSET AND DOES NOT COME FROM A POST PAGE : SEND TO DASHBOARD PAGE
-						
 						header('Location: index.php?action=mycomments');
 						
 					}
 
-					
-				}elseif(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
 
-					$result1 = 1;
-					initmessage($action,$result1);
+				}elseif(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){ // IF ADMIN
 
-					// IF GUSET AND COMES FROM A POST PAGE THEN SEND BACK TO THE POST PAGE
+					//$result1 = 1;
+					//initmessage($action,$result1);
+
+					// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
 
 					if(isset($_SESSION['POSTID'] ) ){
 						
-						header('Location: index.php?action=post&id='.$_SESSION['POSTID']);
+						//header('Location: index.php?action=frontpost&id='.$_SESSION['POSTID']);
+						header('Location: frontpost-'.$_SESSION['POSTID'].'.html#post');
 					}else{
 
-						// IF GUSET AND DOES NOT COME FROM A POST PAGE : SEND TO DASHBOARD PAGE
+						// IF DOES NOT COME FROM A POST VIEW : SEND TO ADMIN DASHBOARD PAGE
+
 
 						header('Location: index.php?action=adminposts');
 						
@@ -177,7 +181,7 @@ require_once('model/UserManager.php');
 					$userid= $_SESSION['USERID'];
 				}
 				
-				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
+				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // CrÃ©ation d'un objet
 				$commentsvalidate = $CommentManager->getComments($postId = null, '0', $userid = null); // Appel d'une fonction de cet objet
 				
 				//require('view/backend/listCommentsView-old_OK.php');
@@ -190,7 +194,7 @@ require_once('model/UserManager.php');
 
         function listCommentsValidate()
 			{
-				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
+				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // CrÃ©ation d'un objet
 				
 				// CHEKS IF USER IS A GUEST
 				if(isset( $_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 3)){
@@ -267,7 +271,7 @@ require_once('model/UserManager.php');
 					initmessage($action,$affectedLines);
 
 					 if ($affectedLines === false) {
-						throw new Exception('Impossible de mettre à jour le post !');
+						throw new Exception('Impossible de mettre Ã  jour le post !');
 					 }
 					 else{
 						//header('Location: index.php?action=modifypost&id=' . $id .'&post_id='.$_GET['post_id'] );
@@ -443,7 +447,7 @@ require_once('model/UserManager.php');
 
 					/*$errors = validate($data, $fields, [
 						'required' => 'Le champ %s est requis',
-						'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
+						'password2' => ['same'=> 'Merci de saisir le mÃªme mot de passe']]
 					);
 					*/
 
@@ -579,22 +583,27 @@ require_once('model/UserManager.php');
 	}
 
 
-	/**
-	 * Get email and activation key from activation link and call userManager tocheck correspondance in database. Delete activation_code from database to activate user account.
-	 * @param  Parameter $get [email, activation_code]
+
+	/** FUNCTION USED TO ACTIVATE USER'S ACCOUNT FROM MAIL LINK
+	 *	  ALSO USED TO ACTIVATE OR DISACIVATE USER'S ACCOUNT FROM ADMIN DASHBOARD
+	 * Get email and activation key from activation link and call userManager tocheck correspondance in database.
+		Delete activation_code from database to activate user account.
+	 * @param  Parameters $userid, $email, $token, $isactivated
+
 	 * 
 	 */
 
 	function userActivation($userid, $email, $token, $isactivated)
 	 {
 		$userManager = new \OC\PhpSymfony\Blog\Model\UserManager(); // CrEation OF objet
+
+
+		//  USER ACTIVATION PROCESSED FROM ADMIN DASHBOARD
 		
-		if(isset($token) && ($token  != NULL)){
+		if(isset($isactivated) && ($isactivated  != NULL)){
+				
+				//$isadmin = is_admin(); // check if admin is logged
 
-				$result=$userManager->getUseractivationcode($userid);
-
-		}elseif(isset($isactivated)){// WE ARE NOT COMING FROM USER'S ACTIVATION EMAIL = COMING FROM ADMIN DASHBOARD
-							
 				$result = false;
 
 				if($isactivated == 'on'){
@@ -605,53 +614,80 @@ require_once('model/UserManager.php');
 				
 				}elseif($isactivated == 'off'){
 
-					$token == null;
+
+					$token = null;
 					
 				}
 
-			$result2 = $userManager->userActivate($userid, $token); 
-				
+			$adminactivation = $userManager->userActivate($userid, $token); 
+
+			header('Location: index.php?action=usersadmin');
+
+			// END OF USER' ACTIVATION FROM ADMIN DASHBOARD	
+
+		 
+		}elseif(isset($token) && ($token  != NULL)){ // USER ACTIVATION PROCESSED FROM USER'S MAIL LINK
+
+
+				$getactivationcode = $userManager->getUseractivationcode($userid);
+
 		}
-			// USING PARAMETER EMAIL ( INSTED OF USERID ) AND TOKEN = DELETE PARAMETER ID IN EMAIL LINK SENT TO USER FOR ACCOUNT ACTIVATION
 
-		// APPEL DE  getUseractivationcode AVEC L'ID  PUIS FAIRE LES TEST SUR $token AU RETOUR DE L'PPEL DE FONCTION
+			// TODO : USING PARAMETER EMAIL ( INSTED OF USERID ) AND TOKEN = DELETE PARAMETER ID IN EMAIL LINK SENT TO USER FOR ACCOUNT ACTIVATION
 
-		if ( $result)  {
+		// IF WE HAVE A MATCH : ACTIVATE ACCOUNT
 
-			if(($token == $result['is_activated']) || (($token == null) && (isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)))){
+		if ( ($getactivationcode) && ( $getactivationcode['is_activated'] == $token) )  {
 				
-				$result2 = $userManager->userActivate($userid);
-				
-			}
-			
-			// TEST ACTIVATION RESULT TO GENERATE ACTION MESSAGE TO BE DISPLAYAEDTO USER
+				//$action = $_SESSION['ACTION'];
 
-			if($result2){
-				$_SESSION['actionmessage'] = 'Félicitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
+				$activatedaccount = $userManager->userActivate($userid);
+
+				
+											
+		}		
+
+		DisplayActivationMessage($getactivationcode, $activatedaccount);
+
+				/*// TEST ACTIVATION RESULT TO GENERATE ACTION MESSAGE TO BE DISPLAYAED TO USER
+
+				if( $activatedaccount ){ // USER'ACTIVATION FROM MAIL LINK IS OK
+				
+					$_SESSION['actionmessage'] = 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
+					$_SESSION['alert_flag'] = 1;
+					header('Location: loginview.html#login');
+
+				}else{
+					$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
+					$_SESSION['alert_flag'] = 1;
+					header('Location: signinview.html#inscription');
+				}
+
+		}elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
+
+				$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&agrave;  activ&eacute;';
 				$_SESSION['alert_flag'] = 1;
-			}else{
-				$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&eacute;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
-				$_SESSION['alert_flag'] = 1;
-			}
-
-		}elseif($result['is_enabled'] == NULL){
-
-			$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&aacute;  activ&eacute;';
-			$_SESSION['alert_flag'] = 1;
+				header('Location: loginview.html#login');
 		}
-		elseif($result['is_enabled'] != NULL){
+		elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
 
-			$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
-			$_SESSION['alert_flag'] = 0;
-		}
+				$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
+				$_SESSION['alert_flag'] = 0;
+				header('Location: signinview.html#inscription');
+		}*/
 		
+		/*
 		if(! isset($isactivated)){ // Means we are coming from user's activation link = display login form
 			header('Location: loginview.html#login');
 			//require('view/frontend/loginView.php');
-		}else{
+
+		}else{// Means we are coming from admin  dashboard
+
 			//require('view/backend/listusersView.php');	
 			header('Location: index.php?action=usersadmin');
 		}
+		*/
+
 	 }
 
 
