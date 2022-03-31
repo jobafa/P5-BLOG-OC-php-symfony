@@ -115,14 +115,18 @@ if(isset($_SESSION['alert_flag'])) {
 		   <!-- Navigation-->
            <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top " id="mainNav">
             <div class="container px-4 px-lg-5">
+
                 <a class="navbar-brand" href="accueil.html"><IMG SRC="public/images/LOGO-BLOG.png" width="160" height="80" ALT=""></a>
+
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
                        <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
 						 <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front.html#posts">Blog</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
                        <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php?#contact">Contact</a></li> -->
                     </ul>
@@ -251,6 +255,7 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
                 
 					<?php
 
+
 					// CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
 					$message = is_alertMessage();
@@ -263,6 +268,7 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
 						unset($_SESSION['alert_flag']);
 					}
 					//}
+
 					?>
                         <!-- * * * * * * * * * * * * * * *-->
                         <!-- * * SB Forms Contact Form * *-->
