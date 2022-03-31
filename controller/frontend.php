@@ -490,16 +490,15 @@ require_once('model/UserManager.php');
 					];
 
 			$errors = validate($data, $fields);	
-			/*$errors = validate($data, $fields, [
-				'required' => 'Le champ %s est requis',
-				'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
-			);
-			*/
 
+			
 			if(!empty($errors)){
 				$_SESSION['errors'] = $errors;
 				header('location: passresetrequest.html');
-				//require('passresetrequest.html');
+				
+
+			
+
 				
 			}else{
 
@@ -541,6 +540,7 @@ require_once('model/UserManager.php');
 			if(isset($_SESSION['errors'] )) unset($_SESSION['errors']) ;
 			
 			$errors = array();
+          
 			// CHECK LOGIN CSRF TOKEN
 			$check_token = check_token(600,  $URL.'passreinitnew.html', $token_name);
 
@@ -580,13 +580,7 @@ require_once('model/UserManager.php');
 							];
 
 						$errors = validate($data, $fields);	
-						/*$errors = validate($data, $fields, [
-							'required' => 'Le champ %s est requis',
-							'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
-						);
-						*/
-						//var_dump($data);
-						
+
 						if(!empty($errors)){
 						
 						$_SESSION['errors'] = $errors;
