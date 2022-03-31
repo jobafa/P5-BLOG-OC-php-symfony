@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 $title = 'Gestion des Commentaires';
 $USERTYPE = $_SESSION['USERTYPEID'];
 ?>
@@ -8,6 +8,7 @@ $USERTYPE = $_SESSION['USERTYPEID'];
 -->
 
 <!-- Begin Page Content -->
+
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
@@ -16,6 +17,7 @@ $USERTYPE = $_SESSION['USERTYPEID'];
                     <!-- List of Comments to Validate   -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
+
 							<?php
 								if(isset( $USERTYPE) && ($USERTYPE == 1)){
 							 ?>
@@ -27,15 +29,18 @@ $USERTYPE = $_SESSION['USERTYPEID'];
 							 <?php
 							 }
 							 ?>
+
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
+
                                         <tr><th>Id User</th>
                                             <th>Auteur</th>
                                             <th>Commentaire</th>
 											<th>Id Article</th>
+
                                             <th>Date</th>
                                             <th>Actions</th>
                                             
@@ -55,6 +60,7 @@ $USERTYPE = $_SESSION['USERTYPEID'];
 
 <?php
 
+
 /************  GET THE LIST OF   COMMENTS  TO BE VALIDATED  *************/
 
 //$commentsvalidate = listCommentsValidate();
@@ -68,11 +74,13 @@ if( ! isset($commentsvalidate )){
 
 }
 */
+
 while ($comment = $commentsvalidate->fetch())
 {
 	
 ?>
 <tr>
+
 <td width="8%" align="left"><?= htmlspecialchars($comment['userid']) ?></td>
 
 <td width="8%" align="left"><?= htmlspecialchars($comment['author']) ?></td>
@@ -91,6 +99,7 @@ while ($comment = $commentsvalidate->fetch())
 				 ?>
 					<a href="#" data-toggle="modal" data-target="#logoutModal<?= $comment['id'] ?>"class="btn btn-outline-danger btn-sm" title="Supprimer">
 					<i class="fas fa-trash"></i></a></td>
+
 </tr>
    
  <!-- Comment Delete Modal-->
@@ -101,13 +110,17 @@ while ($comment = $commentsvalidate->fetch())
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">&Ecirc;tes vous s&ucirc;r ?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+
                        <!--  <span aria-hidden="true">Ã—</span> -->
+
                     </button>
                 </div>
                 <div class="modal-body">Cliquer sur  Supprimer pour Confirmer</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
+
                     <a class="btn btn-primary" href="index.php?action=commentdelete&amp;idcomment=<?= $comment['id'] ?>">Supprimer</a>
+
                 </div>
             </div>
         </div>
@@ -130,6 +143,8 @@ while ($comment = $commentsvalidate->fetch())
                 </div>
                 <!-- /.container-fluid -->
 
+
 <?php $content = ob_get_clean(); ?>
 
 <?php require('admintemplate.php'); ?>
+

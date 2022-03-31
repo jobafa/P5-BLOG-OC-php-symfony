@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 
 ob_start(); ?>
 <!-- <h1>Mon super blog !</h1> -->
@@ -24,6 +24,7 @@ if (($message) && ($message != "")){
 	unset($_SESSION['alert_flag']);
 }
 //}
+
 ?>
     <div class="card card-login mx-auto my-3 px-0">
       <div class="card-body">
