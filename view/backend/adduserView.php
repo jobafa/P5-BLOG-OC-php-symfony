@@ -1,7 +1,6 @@
 ﻿<?php 
 
 ob_start(); ?>
-<!-- <h1>Mon super blog !</h1> -->
 
 <!-- Begin Page Content -->
 <div class="container-fluid">

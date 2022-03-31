@@ -15,9 +15,6 @@ if(isset($_SESSION['alert_flag'])) {
 
 ?>
 <?php ob_start(); ?>
-<!-- <h1>Mon super blog !</h1> 
-<p>Liste des Commentaires</p>
--->
 
 <!-- Begin Page Content -->
                 <div class="container-fluid">
@@ -79,15 +76,7 @@ unset($_SESSION['alert_flag']);
 
 //$commentsvalidate = listCommentsValidate();
 
-/*
-if( ! isset($commentsvalidate )){
-	//var_dump($action);
-	//$commentsvalidate = $_SESSION['COMMENTSVALIDATE'] ;
-	$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
-	$commentsvalidate = $CommentManager->getComments(null,'0'); // Appel d'une fonction de cet objet
 
-}
-*/
 while ($users = $getusers->fetch())
 {
 	

@@ -42,10 +42,7 @@ $title = '';
     <link href="public/startbootstrap-sb-admin-2-gh-pages/css/sb-admin-2.min.css" rel="stylesheet">
   <!-- <link href="public/css/styles.css" rel="stylesheet" /> -->
   <style>
- /*  AJOUT LE 22 NOVEMBRE PROFILE HOVER EFFECTS*/
-/*body{
-    background:rgb(255, 244, 244);
-}*/
+ 
 .full-width-image {
    width: 100vw;
    position: relative;
