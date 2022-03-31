@@ -5,7 +5,6 @@ ob_start();
 <!-- <h1>Mon super blog !</h1> -->
 
 
-
 <!-- <h1>Mon super blog !</h1> -->
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -16,7 +15,6 @@ ob_start();
 <div class="container">
 
 <?php
-
 // CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
 $message = is_alertMessage();
@@ -29,6 +27,7 @@ if (($message) && ($message != "")){
 	unset($_SESSION['alert_flag']);
 }
 //}
+
 ?>
   <div class="card card-login mx-auto my-3 px-0">
       <div class="card-body">

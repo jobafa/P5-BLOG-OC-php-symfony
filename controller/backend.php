@@ -20,10 +20,11 @@ require_once('model/UserManager.php');
 
 		function verifyType(){
 
+
 			if(isset($_SESSION['FROM'])){
 				$from = $_SESSION['FROM'];
 			}
-			
+	
 			$pseudo = $_SESSION['PSEUDO'];
 			$action = $_GET['action'];
 			$result = $_SESSION['RESULT'];
@@ -45,7 +46,6 @@ require_once('model/UserManager.php');
 						
 					}
 
-					
 				}elseif(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){ // IF ADMIN
 
 					//$result1 = 1;
@@ -176,7 +176,9 @@ require_once('model/UserManager.php');
 					$userid= $_SESSION['USERID'];
 				}
 				
-				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
+
+				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // objet Creation  
+
 				$commentsvalidate = $CommentManager->getComments($postId = null, '0', $userid = null); // Appel d'une fonction de cet objet
 				
 				//require('view/backend/listCommentsView-old_OK.php');
@@ -189,7 +191,9 @@ require_once('model/UserManager.php');
 
         function listCommentsValidate()
 			{
-				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); // Création d'un objet
+
+				$CommentManager = new \OC\PhpSymfony\Blog\Model\CommentManager(); //objet Creation 
+
 				
 				// CHEKS IF USER IS A GUEST
 				if(isset( $_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 3)){
@@ -266,7 +270,9 @@ require_once('model/UserManager.php');
 					initmessage($action,$affectedLines);
 
 					 if ($affectedLines === false) {
-						throw new Exception('Impossible de mettre à jour le post !');
+
+						throw new Exception('Impossible de mettre Ã  jour le post !');
+
 					 }
 					 else{
 						//header('Location: index.php?action=modifypost&id=' . $id .'&post_id='.$_GET['post_id'] );
@@ -442,7 +448,9 @@ require_once('model/UserManager.php');
 
 					/*$errors = validate($data, $fields, [
 						'required' => 'Le champ %s est requis',
-						'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
+
+						'password2' => ['same'=> 'Merci de saisir le mÃªme mot de passe']]
+
 					);
 					*/
 
@@ -577,12 +585,12 @@ require_once('model/UserManager.php');
 		
 	}
 
-
 	/** FUNCTION USED TO ACTIVATE USER'S ACCOUNT FROM MAIL LINK
 	 *	  ALSO USED TO ACTIVATE OR DISACIVATE USER'S ACCOUNT FROM ADMIN DASHBOARD
 	 * Get email and activation key from activation link and call userManager tocheck correspondance in database.
 		Delete activation_code from database to activate user account.
 	 * @param  Parameters $userid, $email, $token, $isactivated
+
 	 * 
 	 */
 
@@ -605,6 +613,7 @@ require_once('model/UserManager.php');
 					$token = password_hash($token,PASSWORD_DEFAULT);
 				
 				}elseif($isactivated == 'off'){
+
 
 					$token = null;
 					
@@ -678,6 +687,7 @@ require_once('model/UserManager.php');
 			header('Location: index.php?action=usersadmin');
 		}
 		*/
+
 	 }
 
 
