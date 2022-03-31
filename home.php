@@ -255,7 +255,6 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
                 
 					<?php
 
-
 					// CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
 					$message = is_alertMessage();
