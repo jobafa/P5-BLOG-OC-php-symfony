@@ -49,11 +49,13 @@ require_once('model/UserManager.php');
 		
 		$post = $postManager->getPost($id, $is_published );
 
-		if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
-			if($_SESSION['ACTION'] != 'frontpost'){
+		if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){ // IF ADMIN
+
+			if($_SESSION['ACTION'] != 'frontpost'){ // IF COMING FROM ADMIN DASHBOARD
+
 				require('view/backend/postView.php');
 				
-			}else{
+			}else{ // IF COMING FROM FRONTEND POST VIEW
 
 				$comments = $commentManager->getComments($id,'1');
 				require('view/frontend/postView.php');
@@ -244,30 +246,23 @@ require_once('model/UserManager.php');
 					$inputs = [
 						'email' => $email,
 						'password' => $password
-						];
+					];
 
 					$fields = [
 						'email' => 'email',
 						'password' => 'string'
-						
 					];
 
 					$data = sanitize_inputs($inputs,$fields);
 
-
 					$fields = [
 						'email' => 'required',
 						'password' => 'required'
-						//'password' => 'required | secure'
+						//'email' => 'required|email|unique:user,email'
 					];
 					
 					$errors = validate($data, $fields);	
-					/*$errors = validate($data, $fields, [
-						'required' => 'Le champ %s est requis',
-						'password2' => ['same'=> 'Merci de saisir le même mot de passe']]
-					);
-					*/
-
+					
 					if(!empty($errors)){
 
 						$_SESSION['errors'] = $errors;
@@ -298,7 +293,6 @@ require_once('model/UserManager.php');
 
 				$result=$userManager->loginUser($email, $password) ;	
 				
-				
 				if( ($result) &&  ($result == 'not_activated') ){ // USER ACCOUNT NOT ACTIVATED
 
 					$result = 'account_not_activated';
@@ -308,15 +302,19 @@ require_once('model/UserManager.php');
 
 				}elseif (($result) &&  ($result != 'not_activated')){ // LOGIN AND PASSWORD MATCH IN DB
 				
-					initmessage($action,$result);
+					//initmessage($action,$result);
 
 					$_SESSION['USERID'] = $result['id'];
 					$_SESSION['USERTYPEID'] = $result['usertype_id'];
 					$_SESSION['PSEUDO'] = $result['pseudo'];
 					$_SESSION['PHOTO'] = $result['photo'];
 					$_SESSION['RESULT'] = $result;
-					
-					
+
+					if(isset($_SESSION['actionmessage'])) unset($_SESSION['actionmessage']); // NO MESSAGE TO DISPLAY
+
+					verifyType(); // Verify type of user ( level ) : Admin or Guest  and redirect to Post view or dashboard
+
+					 /*					
 					 if($_SESSION['USERTYPEID'] == 3){
 
 						header('Location: index.php?action=mycomments');
@@ -326,7 +324,7 @@ require_once('model/UserManager.php');
 						header('Location: index.php?action=adminposts');
 
 					 }
-
+					*/
 				
 				}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
 
@@ -589,7 +587,7 @@ require_once('model/UserManager.php');
 						*/
 						//var_dump($data);
 						
-						if(!empty($errors)){var_dump($newpassword);
+						if(!empty($errors)){
 						
 						$_SESSION['errors'] = $errors;
 						header('location: passreinitnew.html#newpass');

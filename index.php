@@ -38,10 +38,7 @@ if (isset($_SESSION['PSEUDO'])){
 
 if (isset($_GET['id']) && ($_GET['id'] > 0)){
 
-	
 	$id =  $_GET['id'];
-	
-		
 }
 
 if (isset($_GET['email'])){
@@ -64,13 +61,13 @@ if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
 			
 }
 
-if (isset($_GET['from'])){
+// flag to check , after connection, where the user comes from and redirect him : post view or dashboard
 
+if (isset($_GET['from'])){
 	
 	$_SESSION['FROM'] =  $_GET['from'];
 	$from = $_SESSION['FROM'];
-	
-		
+			
 }
 
 if (isset($_GET['idcomment']) && ($_GET['idcomment'] > 0)){
@@ -85,19 +82,20 @@ if (isset($_GET['idpost']) && ($_GET['idpost'] > 0)){
 
 }
 
-try {
-    if ( isset($action) )
-		{
-
-				if ($action == 'listposts') {
-					if (isset($_GET['page']) && ($_GET['page'] > 0)){
+if (isset($_GET['page']) && ($_GET['page'] > 0)){
 	
 					$getpage =  $_GET['page'];
 	
 					}else{
 						$getpage =  1;
 					}
-					
+
+try {
+    if ( isset($action) )
+		{
+
+				if ($action == 'listposts') {
+										
 					listPosts($from = '', $getpage);
 				}
 				elseif (($action == 'frontpost')) {
@@ -113,7 +111,7 @@ try {
 				elseif ( ($action == 'post')) {
 					if (isset($id) && $id > 0) {
 						$is_published = null;
-						post($id, $is_published );
+						post($id, $is_published);
 					}
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
@@ -263,11 +261,11 @@ try {
 				}
 				elseif ($action == 'useractivation') {
 						
-						//$id = $_GET['id'];
-						if (isset($_GET['token'])){var_dump($id);
+						
+						if (isset($_GET['token'])){ // MEANS WE ARE COMING FROM USER'S ACTIVATION LINK
 							$token = $_GET['token'];
 							$isactivated = NULL;
-						}elseif(isset($_GET['isactivated'])){
+						}elseif(isset($_GET['isactivated'])){ // MEANS WE ARE COMING FROM ADMIN DASHBOARD
 							$isactivated = $_GET['isactivated'];		
 							$token  = NULL;
 						}

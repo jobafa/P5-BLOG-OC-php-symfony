@@ -103,7 +103,7 @@ try
 		 $db = $this->dbConnect();
 	try
 	{
-		 $req = $db->prepare('SELECT * FROM user WHERE  id = :userid ');
+		 $req = $db->prepare('SELECT id, is_activated FROM user WHERE  id = :userid');
          
 		 $resultat =$req->execute(array(":userid" => $userid)); 
 	}
@@ -128,16 +128,16 @@ try
 	 try
 	{
 		
-		if(isset($token) && ($token != null)){ // ADD TEST FOR TOKEN LIFETIME
+		//if(isset($token) && ($token != null)){ // ADD TEST FOR TOKEN LIFETIME
 
 			
 			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userid';
 
-		}else{
+		/*}else{
 
 			$sql = 'UPDATE user SET is_activated = :token  WHERE user.id = :userid';
 
-		}
+		}*/
 
 		$req = $db->prepare($sql);
 

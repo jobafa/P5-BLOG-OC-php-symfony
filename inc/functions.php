@@ -1,91 +1,42 @@
 <?php
 
-function addImage_old($post_image){
+/*****************************************
+#CHECK IS LOGGED ADMIN
 
-	if (isset($post_image) && ($post_image['error'] == 0))
-			{
-//echo $post_image["name"];
-//exit;
-				$allowed_image_extension = array(	"png","jpg","jpeg");
-				
-				// Get image file extension
-				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
-	
-				//echo $file_extension;
-				
-//exit;
-			//try{
-				// Validate file input to check if is not empty
-				if (! file_exists($post_image["tmp_name"])) {
-					//throw new Exception('Choose image file to upload!');
-					$response = array(
-						"type" => "error",
-						"message" => "Choose image file to upload."
-					);
-				}   
-				
-				// Validate file input to check if is with valid extension
-				else if (! in_array($file_extension, $allowed_image_extension)) {
+*****************************************/
 
-					//throw new Exception('Upload valiid images. Only PNG, JPG and JPEG are allowed!');
-					$message = "File upload stopped by extension";
-					$_SESSION['actionmessage'] = 'File upload stopped by extension';
-					$_SESSION['alert_flag'] = 0;
-					require('view/backend/addpostView.php');
-					//header('Location: index.php?action=addpostview');
-					//exit;
-					//echo $result;
-				}   
-				
-				// Validate image file size
-				else if (($post_image["size"] > 2000000)) {
-					//throw new Exception('Image size exceeds 2MB!');
-					$_SESSION['actionmessage'] = 'File upload stopped Size issue';
-					$_SESSION['alert_flag'] = 0;
-					//$message = "File upload Size issue";
-					//header('Location: index.php?action=addpostview');
-					require('view/backend/addpostView.php');
-					//exit;
-				}   
-				
-				else {
-					$dossier = "uploads/images/" ;
-					$file_name = basename($post_image["name"]);
-					$target = $dossier.$file_name;
-					if (file_exists($target)) {
-						//$message =  'The image '.$post_image["name"].'  already exists in '.$dossier;
-						$timestamp=time();
-						$file_name = $timestamp.'-'.$file_name;
-						$target = $dossier.$file_name;
-//echo $target ;
-						//header('Location: index.php?action=addpostview&message='.$message);
-					//exit;
-					    //header('Location: index.php?action=addpostview&message='.$message);
-				    }
-					if (! empty($message)){
-						$_SESSION['actionmessage'] = $message;
-						$_SESSION['alert_flag'] = 0;
-						require('view/backend/addpostView.php');
-						//header('Location: index.php?action=addpostview&message='.$message);
-						//exit;
-					}else{
-						if (move_uploaded_file($post_image["tmp_name"], $target)) {
-							return $file_name;
-						} else {
+function is_admin(){
 
-							return false;
-							//echo 'Upload issue :';
-							//print_r($_FILES);
-						}
-					}
-				}
-			/*}
-			catch(Exception $e) {
-    $errorMessage = $e->getMessage();
-    require('view/errorView.php');
-}*/
-			}
+	if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
+
+		return true;
+
+	}else{
+
+		return false;
+
+	}
 }
+
+/*****************************************
+#CHECK IS LOGGED 
+
+*****************************************/
+
+function is_logged(){
+
+	if(isset($_SESSION['USERTYPEID'])){
+
+		return true;
+
+	}else{
+
+		return false;
+
+	}
+}
+
+
 
 /*****************************************
 #CHECK UPLOAD : IF OK MOVE TO UPLOADS FOLDER
@@ -102,9 +53,7 @@ function addImage($post_image,$id = 0){
 				// Get image file extension
 				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
 	
-				//echo $file_extension;
-				
-				
+							
 				// Validate file input to check if is with valid extension
 				if (! in_array($file_extension, $allowed_image_extension)) {
 
@@ -166,13 +115,13 @@ function addImage($post_image,$id = 0){
 
 										default:
 											
-											//header('Location: index.php?action=adminposts&from=dropdown');
+											
 											
 											break;
 							}
 
 
-							//}
+						
 						
 					}else{
 						if (move_uploaded_file($post_image["tmp_name"], $target)) {
@@ -187,14 +136,17 @@ function addImage($post_image,$id = 0){
 			}
 }
 
+//**************************************************************************//
+//*Cheks if upload is ok returns the uploaded file if no error*/
+/*if not initiates the alert message var*/
+//*@param $status,$post_image,$id
+ /* @return  string**/
 
 function checkUploadStatus($status,$post_image,$id = 0){
 
-	// an error occurs
+	
 						if($status == UPLOAD_ERR_OK){
 							
-								//$post_image = $_FILES["photo"];
-								//var_dump($post_image);
 								
 								$photo = addImage($post_image,$id);
 								
@@ -206,59 +158,58 @@ function checkUploadStatus($status,$post_image,$id = 0){
 								return $photo;
 						}else {// THERE ARE UPLOAD ERRORS : CHECKING ERRORS
 								
-								switch ($status) {
+							switch ($status) {
 
-									case UPLOAD_ERR_INI_SIZE:
-   
-										
-										$_SESSION['actionmessage'] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
-										$_SESSION['alert_flag'] = 0;
-										
-										break;
-									case UPLOAD_ERR_FORM_SIZE:
-										
-										$_SESSION['actionmessage'] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
-										$_SESSION['alert_flag'] = 0;
-										
-										break;
-									case UPLOAD_ERR_PARTIAL:
-										
-										$_SESSION['actionmessage'] = "The uploaded file was only partially uploaded";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_NO_FILE:
-										
-									 $_SESSION['actionmessage'] = "No file was uploaded";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_NO_TMP_DIR:
-										
-										$_SESSION['actionmessage'] = "Missing a temporary folder";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_CANT_WRITE:
-										
-										$_SESSION['actionmessage'] = "Failed to write file to disk";
-										$_SESSION['alert_flag'] = 0;
-										break;
-									case UPLOAD_ERR_EXTENSION:
-										
-										$_SESSION['actionmessage'] = "Echec de l\'upload :Extension non authoris&eacute; !";
-										$_SESSION['alert_flag'] = 0;
-										break;
+								case UPLOAD_ERR_INI_SIZE:
 
-									default:
-										
-										$_SESSION['actionmessage'] = "Unknown upload error";
-										$_SESSION['alert_flag'] = 0;
-										break;
+									
+									$_SESSION['actionmessage'] = "The uploaded file exceeds the upload_max_filesize directive in php.ini";
+									$_SESSION['alert_flag'] = 0;
+									
+									break;
+								case UPLOAD_ERR_FORM_SIZE:
+									
+									$_SESSION['actionmessage'] = "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form";
+									$_SESSION['alert_flag'] = 0;
+									
+									break;
+								case UPLOAD_ERR_PARTIAL:
+									
+									$_SESSION['actionmessage'] = "The uploaded file was only partially uploaded";
+									$_SESSION['alert_flag'] = 0;
+									break;
+								case UPLOAD_ERR_NO_FILE:
+									
+								 $_SESSION['actionmessage'] = "No file was uploaded";
+									$_SESSION['alert_flag'] = 0;
+									break;
+								case UPLOAD_ERR_NO_TMP_DIR:
+									
+									$_SESSION['actionmessage'] = "Missing a temporary folder";
+									$_SESSION['alert_flag'] = 0;
+									break;
+								case UPLOAD_ERR_CANT_WRITE:
+									
+									$_SESSION['actionmessage'] = "Failed to write file to disk";
+									$_SESSION['alert_flag'] = 0;
+									break;
+								case UPLOAD_ERR_EXTENSION:
+									
+									$_SESSION['actionmessage'] = "Echec de l\'upload :Extension non authoris&eacute; !";
+									$_SESSION['alert_flag'] = 0;
+									break;
+
+								default:
+									
+									$_SESSION['actionmessage'] = "Unknown upload error";
+									$_SESSION['alert_flag'] = 0;
+									break;
 
 
-								}// END OF SWITCH
+							}// END OF SWITCH
 
 								return false;	
-									 //header('Location: index.php?action=addpostview&message='.$message);
-
+									
 									 
 						} // END OF ULOADS ERRORS CHECKING
 }
@@ -300,7 +251,6 @@ function check_token($temps, $referer, $nom = '')
 		$expiredtime = (time() - $temps);
 		$_SESSION['expired_time'] = $expiredtime;
 		$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-//var_dump($_SESSION[$nom.'_token']);
 		if(isset($_SESSION[$nom.'_token']) && isset($_SESSION[$nom.'_token_time']) && isset($token)){
 			if($_SESSION[$nom.'_token'] == $token){
 				if($_SESSION[$nom.'_token_time'] >= $expiredtime){
@@ -310,14 +260,13 @@ function check_token($temps, $referer, $nom = '')
 							$error = "ras";
 							return $error ;
 						}else{
-							//var_dump($_SERVER['HTTP_REFERER']);
-							//exit;
+							
 							$error = "referer";
 							return $error;
 						}
-				}else{//echo $_SESSION['blogcontact_token'].'<BR>'.$_POST['token'].'<BR>'.$_SESSION['blogcontact_token_time'].'<BR>'.$_SESSION['expired_time'] ;
+				}else{
 
-						//exit;
+						
 					$error = "expiredtoken";
 					return $error;
 				}
@@ -337,12 +286,10 @@ function check_token($temps, $referer, $nom = '')
  /* @return string **/
 
 function get_token_field($nom) {
-	//var_dump($nom);
-	//exit;
-    //$token = create_csrf_token();
+	
 	$token = get_token($nom);
 	return '<input type="hidden" name="token" value="' . $token . '">';
-    //return '<input type="hidden" name='. $nom.'_token" value="' . $token . '">';
+   
 }
 
 //**************************************************************************//
@@ -352,169 +299,448 @@ function get_token_field($nom) {
 
 
 function sanitize_get_data($data){
-		//$res = filter_input(INPUT_GET, $data, FILTER_SANITIZE_SPECIAL_CHARS);
-		//$res = filter_input(INPUT_GET, $data, FILTER_SANITIZE_ENCODED);
-
-		
+				
 		if (filter_has_var(INPUT_GET, 'action')) {
 
 			// sanitize action
 			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
 			$data['action'] = $clean_action ;
-//var_dump($clean_action);
+
 		}
 		if (filter_has_var(INPUT_GET, 'from')) {
 
 			// sanitize from
 			$clean_action = filter_var($data['from'], FILTER_SANITIZE_STRING);
 			$data['from'] = $clean_action ;
-//var_dump($clean_action);
+
 		}
 		if (filter_has_var(INPUT_GET, 'email')) {
 
 			// sanitize email
 			$clean_action = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
 			$data['email'] = $clean_action ;
-//var_dump($clean_action);
+
 		}
 		if (filter_has_var(INPUT_GET, 'token')) {
 
 			// sanitize email
 			$clean_action = filter_var($data['token'], FILTER_SANITIZE_STRING);
 			$data['token'] = $clean_action ;
-//var_dump($clean_action);
+
 		}
 		if (filter_has_var(INPUT_GET, 'id')) {
 
 			// sanitize id
 			$clean_id = filter_var($data['id'], FILTER_SANITIZE_NUMBER_INT);
-//var_dump($clean_id);
+
 			if ($clean_id) {
 				// validate id with options
 				$id = filter_var($clean_id, FILTER_VALIDATE_INT, ['options' => [
 					'min_range' => 1
 				]]);
-//var_dump($id);
-				$data['id'] = $id ;
-				// show the id if it's valid
-				//echo $id === false ? 'Id article doit être au moins = 1' : $id;
 
+				$data['id'] = $id ;
+				
 			}
-			/*else {
-				 echo  $clean_id .'id est invalide.';
-			}*/
+			
 		}
 
 		if (filter_has_var(INPUT_GET, 'page')) {
 
-			// sanitize id
+			// sanitize page
 			$clean_page = filter_var($data['page'], FILTER_SANITIZE_NUMBER_INT);
-//var_dump($clean_page);
+
 			if ($clean_page) {
-				// validate id with options
+				// validate page with options
 				$page = filter_var($clean_page, FILTER_VALIDATE_INT, ['options' => [
 					'min_range' => 1
 				]]);
-//var_dump($page);
-				$data['page'] = $page ;
-				// show the id if it's valid
-				//echo $id === false ? 'Id article doit être au moins = 1' : $id;
 
+				$data['page'] = $page ;
+				
 			}
-			/*else {
-				 echo  $clean_id .'id est invalide.';
-			}*/
+			
 		}
 		return $data;
-//EXIT;
-}
 
-
-/**
- *  Messages associated with the upload error code
- */
-const MESSAGES = [
-    UPLOAD_ERR_OK => 'File uploaded successfully',
-    UPLOAD_ERR_INI_SIZE => 'File is too big to upload',
-    UPLOAD_ERR_FORM_SIZE => 'File is too big to upload',
-    UPLOAD_ERR_PARTIAL => 'File was only partially uploaded',
-    UPLOAD_ERR_NO_FILE => 'No file was uploaded',
-    UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder on the server',
-    UPLOAD_ERR_CANT_WRITE => 'File is failed to save to disk.',
-    UPLOAD_ERR_EXTENSION => 'File is not allowed to upload to this server',
-];
-
-function test_input($data) {
-
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  //$data = htmlentities($data, ENT_QUOTES, 'UTF-8');
-
-  return $data;
 }
 
 
 
+		# **************
+        # Initialize Display Action Message
+		# @Param $action : user's action 
+		# @Param $result : user's action result
+        # **************
 
-/*
-function sanitize_my_data($data){
 
-//ECHO 'DATA : <BR>'.$_SERVER['REQUEST_METHOD'].'<BR>';
 
-	if(! is_array($data)){
-//ECHO ' <BR>REQUEST : '.$_SERVER['REQUEST_METHOD'].'<BR>';
-		foreach ($data as $key => $value) {
-//echo $key.'  =  '.$value.'  Type :  '.gettype($value).'<BR>';
-			//$result[$key] = sanitize_my_data($value);
-			//$result[$key] = test_input($value);
-			echo  $data[$key].'<BR>';
+        function initmessage($action,$result) {
 			
-		}
-		exit;
-	}else{//ECHO '<BR>'.$data.'<BR>';
-					//echo 'var  =  '.$data.'  Type :  '.gettype($data).'<BR>';
-			//var_dump($type);
-			if($_SERVER['REQUEST_METHOD'] == 'POST' ){
+			switch ($action) {
+			
+			case 'addcomment':
+				if (! $result) {
+					$_SESSION['actionmessage'] = 'Comment Adding failed !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				else {
+					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+
+            case 'addpost':
+				if (! $result) {
+					$_SESSION['actionmessage'] = 'Post Adding failed !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				else {
+					$_SESSION['actionmessage'] = 'Success Post Added !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+			
+            case 'updatepost':
+				if (! $result) {
+					$_SESSION['actionmessage'] = 'Post Update failed !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				else {
+					$_SESSION['actionmessage'] = 'Success Post Updated !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+			//}
+			case 'deletepost':
+				if (! $result) {
+					$_SESSION['actionmessage'] = 'Post Delete failed !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				else {
+					$_SESSION['actionmessage'] = 'Success Post Deleteted !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+
+				case 'useradd':
+				if ($result == 1) {
+					$_SESSION['actionmessage'] = 'Merci pour votre insription. Pour activer votre compte. Merci de cliquer sur le lien d\'activation qui vous a &eacute;t&eacute; envoy&eacute; sur votre adresse email .  !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+					
+				 elseif($result == 'email') {
+					$_SESSION['actionmessage'] =  'l\adresse email existe d&egrave;j&agrave; !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				elseif ( ($result != 1) && ($result != 'email')) {
+					$_SESSION['actionmessage'] = 'Failed to Add User !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'usersignin':
+				if ($result == 1) {
+					$_SESSION['actionmessage'] = 'Merci pour votre insription. Pour activer votre compte. Merci de cliquer sur le lien d\'activation qui vous a &eacute;t&eacute; envoy&eacute; sur votre adresse email .  !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+					
+				 elseif($result == 'email') {
+
+					$_SESSION['actionmessage'] = 'l\adresse email existe d&egrave;j&agrave; !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				elseif ( ($result != 1) && ($result != 'email')) {
+
+					$_SESSION['actionmessage'] = 'Failed to Add User !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'verifylogin':
+
+					if (($result) && ($result == 'account_not_activated')) {
+
+					$_SESSION['actionmessage'] = 'Votre compte n\'est pas activ&eacute;. Merci de verifier votre messagerie pour l\'activer !';
+					$_SESSION['alert_flag'] = 0;
+
+				 }elseif(!$result ) {
+
+					$_SESSION['actionmessage'] = 'Failed Bad Login Or Password !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+				else {
+
+					$_SESSION['actionmessage'] = 'Bienvenue !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+
+				case 'backblogmanage':
+				if ( $result == 1) {
+					$_SESSION['actionmessage'] = 'Success Welcome to the BackEnd Management  !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				elseif ( $result == 0) {
+					$_SESSION['actionmessage'] = 'Success you Are connected !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+                
+                break;
+
+				case 'userupdate':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = 'Profile Utilistaeur mis &aacute; jour !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'userdelete':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = 'Utilistaeur supprim&eacute; !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'probl&egrave;me lors de la Suppression !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'passreset':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = ' Pour r&eacute;initialiser votre Mot de Passe. Merci de cliquer sur le lien  qui vous a &eacute;t&eacute; envoy&eacute; sur votre adresse email .   !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'l\adresse email n\existe pas !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'passreinitialisation':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = ' Veuillez saisir et confirmer votre nouveau Mot de Passe .   !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'le lien Pour r&eacute;initialiser votre Mot de Passe est expir&eacute;  !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'newpass':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = ' Votre Mot de Passe a &eacute;t&eacute; r&eacute;initialis&eacute; .   !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'Probl&egrave;me de confirmation de mot de passe  !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'contactform':
+				if ( $result ) {
+					$_SESSION['actionmessage'] = ' Votre message a &eacute;t&eacute; envoy&eacute; .   !';
+					$_SESSION['alert_flag'] = 1;
+				 }
+				else{
+					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
+					$_SESSION['alert_flag'] = 0;
+				 }
+                
+                break;
+
+				case 'tokenlife':
+				if ( $result ) {
+					if(($result == 'token') || ($result == 'referer') ){
+						$_SESSION['actionmessage'] = 'Vous ne pouvez pas faire cela !';
+						$_SESSION['alert_flag'] = 0;
+						//require('view/frontend/template.php');
+						//exit;
+					}elseif($result == 'expiredtoken' ){
+						//echo 'ici aussi';
+						//exit;
+						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci recharger la page et de recommencer !';
+						$_SESSION['alert_flag'] = 0;
+					}
+					
+				 }else{
+						$_SESSION['actionmessage'] = ' Probl&egrave;me de token .  Merci de recommencer !';
+						$_SESSION['alert_flag'] = 0;
+				 }
+				/*else{
+					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
+					$_SESSION['alert_flag'] = 0;
+				 }*/
+                
+                break;
+			 
+			}
+			
+        }
+
+		/**************************************************************************
+		#DISPLAY ACCOUNT ACTIVATION MESSAGE
+		#PARAMS $getactivationcode : GET ACTIVATION CODE, $activatedaccount : is account activated
+		*****************************************************************************/
+
+		function DisplayActivationMessage($getactivationcode, $activatedaccount){
+
+			// TEST ACTIVATION RESULT TO GENERATE ACTION MESSAGE TO BE DISPLAYAED TO USER
+
+			if( isset($activatedaccount ) && ($activatedaccount == true)){ // USER'ACTIVATION FROM MAIL LINK IS OK
 				
-				ECHO 'POST';
+					$_SESSION['actionmessage'] = 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
+					$_SESSION['alert_flag'] = 1;
+					header('Location: loginview.html#login');
 
-				foreach ($data as $key => $value) {
-					echo gettype($value), "\n";
-//echo $key.'  =  '.$value.'  Type :  '.gettype($value).'<BR>';
-			//$result[$key] = sanitize_my_data($value);
-			//$result[$key] = test_input($value);
-			//echo  $data[$key].'<BR>';
-			$res = trim($key);
-			echo ' <BR>'.$res.' <BR>avant  filter_input<BR>';
-				$res = filter_input(INPUT_POST, $res, FILTER_SANITIZE_STRING);
-				echo ' <BR>'.$res.' <BR>avant  filter_input FILTER_SANITIZE_SPECIAL_CHARS<BR>';
-				//$res = filter_input(INPUT_POST, $res, FILTER_SANITIZE_SPECIAL_CHARS);
-//echo ' <BR>'.$res.' <BR>avant  filter_input FILTER_SANITIZE_ENCODED<BR>';
-				//$res = filter_input(INPUT_POST, $res, FILTER_SANITIZE_ENCODED);
-				$result[$key] = $res;
-				//$type = INPUT_POST;
-				echo $res.'apres   filter_input<BR>';
+			}elseif( isset($activatedaccount ) && ($activatedaccount == false)){
+				$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
+				$_SESSION['alert_flag'] = 1;
+				header('Location: signinview.html#inscription');
+			}
+
+			if(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
+
+				$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&agrave;  activ&eacute;';
+				$_SESSION['alert_flag'] = 1;
+				header('Location: loginview.html#login');
+			}
+			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
+
+					$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
+					$_SESSION['alert_flag'] = 0;
+					header('Location: signinview.html#inscription');
+			}
+
 		}
 
-				
-				//echo $res.'apres   filter_input<BR>';
-				return $result;
 
-			}elseif($_SERVER['REQUEST_METHOD'] == 'GET' ){//ECHO 'OUI';
-				$res = trim($data);
-				$res = filter_input(INPUT_GET, $data, FILTER_SANITIZE_SPECIAL_CHARS);
-				$res = filter_input(INPUT_GET, $data, FILTER_SANITIZE_ENCODED);
-				//$type = INPUT_GET;
-				//echo '<BR>'.$res.'<BR>';
-				return $res;
-			}	
-			//$result = trim($data);
+	# CHECK IF THERE IS AN ALERT MESSAGE TO DISPLAY
+	# AND RETURN THE MESSAGE
+	# returns $message
+
+	function is_alertMessage(){
+
+		$message = "";
+		
+		// CHECKS IF THERE IS A MESSAGE : ( ALERT ) TO BE DISPLAYED 
+
+		if (isset($_SESSION['alert_flag']) &&  ($_SESSION['alert_flag'] == 0)){
 			
+			$classe = "alert-danger";
+
+		}else if(isset($_SESSION['alert_flag']) &&  ($_SESSION['alert_flag'] == 1)){
 			
-	}
-	return $result;
+			$classe = "alert-success";
+		}
+    
+		if(isset($_SESSION['actionmessage']) && isset($_SESSION['alert_flag'])) {
+
+			$actionmessage = $_SESSION['actionmessage'];
+
+			ob_start();
+
+		?>
+		  
+			<div class="alert <?= $classe ?> my-2 mx-2  alert-dismissible fade show" role="alert">
+			  <em><?= $actionmessage ?></em>
+			  <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+
+		<?php
+
+			$message = ob_get_clean();
+
+		}
+		
+		return $message;
+}
+
+
+/*function addImage_old($post_image){
+
+	if (isset($post_image) && ($post_image['error'] == 0))
+			{
+
+				$allowed_image_extension = array(	"png","jpg","jpeg");
+				
+				// Get image file extension
+				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
 	
-}
+				// Validate file input to check if is not empty
+				if (! file_exists($post_image["tmp_name"])) {
+					//throw new Exception('Choose image file to upload!');
+					$response = array(
+						"type" => "error",
+						"message" => "Choose image file to upload."
+					);
+				}   
+				
+				// Validate file input to check if is with valid extension
+				else if (! in_array($file_extension, $allowed_image_extension)) {
 
-*/
+					//throw new Exception('Upload valiid images. Only PNG, JPG and JPEG are allowed!');
+					$message = "File upload stopped by extension";
+					$_SESSION['actionmessage'] = 'File upload stopped by extension';
+					$_SESSION['alert_flag'] = 0;
+					require('view/backend/addpostView.php');
+					
+				}   
+				
+				// Validate image file size
+				else if (($post_image["size"] > 2000000)) {
+					
+					$_SESSION['actionmessage'] = 'File upload stopped Size issue';
+					$_SESSION['alert_flag'] = 0;
+					
+					require('view/backend/addpostView.php');
+					
+				}   
+				
+				else {
+					$dossier = "uploads/images/" ;
+					$file_name = basename($post_image["name"]);
+					$target = $dossier.$file_name;
+					if (file_exists($target)) {
+						
+						$timestamp=time();
+						$file_name = $timestamp.'-'.$file_name;
+						$target = $dossier.$file_name;
+
+				    }
+					if (! empty($message)){
+						$_SESSION['actionmessage'] = $message;
+						$_SESSION['alert_flag'] = 0;
+						require('view/backend/addpostView.php');
+						
+					}else{
+						if (move_uploaded_file($post_image["tmp_name"], $target)) {
+							return $file_name;
+						} else {
+
+							return false;
+							
+						}
+					}
+				}
+			
+			}
+}*/

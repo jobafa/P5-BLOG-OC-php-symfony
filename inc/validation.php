@@ -11,7 +11,7 @@ const DEFAULT_VALIDATION_ERRORS = [
     'same' => 'Le champ %s doit avoir la m&ecirc;me valeur que %s',
     'alphanumeric' => 'Le champ %s doit contenir, uniquement, des chiffres et des lettres',
     'secure' => 'Le champ %s doit contenir entre 8 et 64 caract&eacute;res avec au moins un chiffre, une majiscule, une miniscule et un caract&eacute;re sp&eacute;cial',
-    'unique' => 'Le champ %s existe d&egrave;j&agrave;',
+    'unique' => 'L\'adresse  %s existe d&egrave;j&agrave;',
 ];
 
 

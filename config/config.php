@@ -16,6 +16,13 @@ define('BLOG_AUTHOR', 'A F');
 $servername = $_SERVER["SERVER_NAME"];
 
 if (stristr($servername , "ocblog.capdeco.com")) {
+	//echo $_SERVER["SERVER_NAME"].'ere';
+	//exit;
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'ocp5blog');
+define('DB_USER', 'oc_p5_blog_usr');
+define('DB_PASSWORD', 'O15c3p16');
+
 	$URL = "https://ocblog.capdeco.com/";
   /* PREPROD config  
   $GLB_SYSTYPE="unix";
@@ -24,6 +31,10 @@ if (stristr($servername , "ocblog.capdeco.com")) {
   $s_DbUser = "oc_p5blog_usr";
   $s_DbPass = "O15c3p16";*/
 } else {
+	define('DB_HOST', 'localhost');
+define('DB_NAME', 'test');
+define('DB_USER', 'dbuser');
+define('DB_PASSWORD', '');
 
 	$URL = "http://localhost/TP-OC-P5-BLOG/";
 
