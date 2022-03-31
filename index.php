@@ -61,7 +61,6 @@ if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
 			
 }
 
-
 // flag to check , after connection, where the user comes from and redirect him : post view or dashboard
 
 if (isset($_GET['from'])){
