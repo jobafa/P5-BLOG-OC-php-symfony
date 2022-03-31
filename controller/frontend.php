@@ -490,11 +490,15 @@ require_once('model/UserManager.php');
 					];
 
 			$errors = validate($data, $fields);	
+
 			
 			if(!empty($errors)){
 				$_SESSION['errors'] = $errors;
 				header('location: passresetrequest.html');
 				
+
+			
+
 				
 			}else{
 
@@ -536,7 +540,7 @@ require_once('model/UserManager.php');
 			if(isset($_SESSION['errors'] )) unset($_SESSION['errors']) ;
 			
 			$errors = array();
-
+          
 			// CHECK LOGIN CSRF TOKEN
 			$check_token = check_token(600,  $URL.'passreinitnew.html', $token_name);
 
@@ -576,7 +580,7 @@ require_once('model/UserManager.php');
 							];
 
 						$errors = validate($data, $fields);	
-												
+
 						if(!empty($errors)){
 						
 						$_SESSION['errors'] = $errors;
