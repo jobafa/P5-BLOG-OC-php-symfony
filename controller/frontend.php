@@ -490,12 +490,10 @@ require_once('model/UserManager.php');
 					];
 
 			$errors = validate($data, $fields);	
-			
-			if(!empty($errors)){
+
+          if(!empty($errors)){
 				$_SESSION['errors'] = $errors;
 				header('location: passresetrequest.html');
-				
-				
 			}else{
 
 				$action =$_SESSION['ACTION'];
@@ -576,7 +574,7 @@ require_once('model/UserManager.php');
 							];
 
 						$errors = validate($data, $fields);	
-												
+
 						if(!empty($errors)){
 						
 						$_SESSION['errors'] = $errors;
