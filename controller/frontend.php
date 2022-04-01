@@ -581,7 +581,7 @@ require_once('model/UserManager.php');
 						
 						$_SESSION['errors'] = $errors;
 						header('location: passreinitnew.html#newpass');
-						//require('passresetrequest.html');
+						
 						
 						}
 					}else{

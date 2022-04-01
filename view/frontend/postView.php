@@ -148,8 +148,7 @@ while ($comment = $comments->fetch())
 					</div>
 				</div>
             
-    <!-- <p>Posté par <strong><?= htmlentities($comment['author']) ?></strong> le <?= $comment['comment_date_fr'] ?></p>
-    <p class="mx-3"><?= nl2br(htmlentities($comment['comment'])) ?></p> -->
+    
 <?php
 }
 ?>
