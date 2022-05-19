@@ -1,0 +1,223 @@
+/*************************/
+/******* Global **********/
+/*************************/
+
+
+/********* TEXT **********/
+
+body {
+  font-family: 'Nunito';
+  letter-spacing: 0.05em;
+}
+
+.text-primary-custom {
+	color:#64a19d;
+}
+
+/********* LINKS **********/
+
+a {
+  color: #64a19d;
+}
+
+a:focus, a:hover {
+  text-decoration: none;
+  color: #3c6360;
+}
+
+
+/******** BUTTON ********/
+
+.btn-primary-custom {
+  box-shadow: 0 0.1875rem 0.1875rem 0 rgba(0, 0, 0, 0.1) !important;
+  padding: 0.75rem 1.35rem;
+  font-family: 'Varela Round';
+  font-size: 75%;
+  text-transform: uppercase;
+  letter-spacing: .15rem;
+  border: 0;
+  background-color: #64a19d;
+  color: #fff;
+}
+
+.btn-primary-custom:hover {
+  background-color: #4f837f;
+}
+
+.btn-primary-custom:focus {
+  background-color: #4f837f;
+  color: #fff;
+}
+
+.btn-primary-custom:active {
+  background-color: #467370 !important;
+}
+
+.fa-toggle-on {
+	color: #64a19d;
+}
+
+.fa-toggle-off {
+	color: red;
+}
+
+.updateBtn
+{
+	font-size: 60%;
+}
+
+/******** TABLES ********/
+
+.table-success-custom {
+	background-color:#eaecf4;
+}
+
+.table-success-custom .fa-check{
+	color: #64a19d;
+}
+
+.table-success-custom .fa-times{
+	color: #b32b1e;
+}
+
+
+@media (max-width:768px) {
+	.responsive-table-custom{
+		display:none;
+	}
+}
+
+/******** CARDS ********/
+
+
+.border-left-primary-custom {
+  border-left: 0.25rem solid #64a19d !important;
+}
+
+.card-header {
+	background-color: #161616;
+}
+
+.card-body table {
+	font-size: 0.9rem;
+}
+
+/************* FORMS ***************/
+
+.answer-form {
+	width: 100% !important;
+}
+
+.form-error p {
+	color: red;
+	font-style: italic;
+}
+
+/* //////////////////////////////// */
+/* /////// backend_template ////////// */
+/* //////////////////////////////// */
+
+/* //////// Navbar /////// */
+
+.adminProfileNavCard img {
+	max-width: 80%;
+	border-radius: 0.5rem;
+}
+
+.adminProfileNavCard .btn-primary-custom {
+	max-width: 80%;
+	padding: 0.5rem 1rem;
+}
+
+.bg-black {
+	background-color: #161616;
+}
+
+
+/* //////// Message div /////// */
+
+.adminMessage {
+	background-color: rgba(100,161,157,0.3);
+	border: 0.0625rem dashed #161616;
+	border-radius: 0.5rem;
+	padding: 1rem 0.5rem;
+	margin: 1rem 0;
+	color: #161616;
+}
+
+/* //////////////////////////////// */
+/* /////// backend Views ////////// */
+/* //////////////////////////////// */
+
+/* /////// dashboard view //////// */
+
+.dashboard-card .h5 {
+	font-size: 1rem;
+}
+
+/* /////// Sorting row //////// */
+
+.sorting-form .btn-primary-custom {
+	padding: 0.55rem 0.75rem;
+	margin-left: 0.5rem;
+}
+
+.sorting-form .form-control, .sorting-form label {
+	margin-right: 1rem;
+}
+
+.fa-sort-up
+{
+	transform: translateY(0.7rem);
+}
+
+
+/* /////// ProfileViews /////////// */
+
+.profile-user-card .profile-card-avatar {
+	max-width: 30%;
+	margin-right: 2rem;
+}
+
+.profile-user-card .card-body {
+	display: flex;
+	flex-direction: row;
+}
+
+@media (max-width: 900px) {
+  	.profile-user-card .card-body {
+		flex-direction: column;
+	}
+
+	.profile-user-card .profile-card-avatar {
+		max-width: 80%;
+		margin: auto;
+		justify-content: center;
+	}
+}
+
+.profile-user-card .editProfileView .profile-card-info {
+	width: 100%;
+}
+
+
+/* /////// adminPostView /////////// */
+
+
+.adminPostView .admin-post-img {
+	max-width: 95%;
+	max-height: 20rem;
+}
+
+.unapproved-comment {
+	background-color: #eaecf4 ;
+	padding: 1rem;
+}
+
+.unapproved-comment .fa-check{
+	color: #64a19d;
+}
+
+.unapproved-comment .fa-times{
+	color: #b32b1e;
+}

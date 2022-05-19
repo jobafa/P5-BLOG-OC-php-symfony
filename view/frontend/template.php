@@ -1,4 +1,4 @@
-﻿<?php require('header.php'); 
+<?php require('header.php'); 
  // IF NO USER PICTURE USE DEFAULT PICTURE
 
 	  if( isset($_SESSION['PHOTO']) && (null !== $_SESSION['PHOTO']) ){
@@ -15,14 +15,18 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top " id="mainNav">
             <div class="container px-4 px-lg-5">
+
                 <a class="navbar-brand" href="accueil.html"><IMG SRC="public/images/LOGO-BLOG.png" width="160" height="80" ALT=""></a>
+
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto  ">
 						<!-- <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front-post.html#posts">Blog</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
                     </ul>
                 </div>
@@ -59,13 +63,17 @@ if(isset($_SESSION['USERTYPEID']) ){
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+
                                 <a class="dropdown-item" href="index.php?action=myprofile&controller=user">
+
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
 								 <?php
 	//if((isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1))){?>
+
 								 <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown&controller=user">
+
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>
@@ -92,8 +100,10 @@ if(isset($_SESSION['USERTYPEID']) ){
 		}else{
 		?>
 		<!-- <li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li> -->
+
 		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="loginview-user.html#login"><i class="fas fa-user-alt  mx-2  text-gray-400"></i><small>Se Connecter</small></a></li>
 		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview-user.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+
 
 		<?php
 		}
