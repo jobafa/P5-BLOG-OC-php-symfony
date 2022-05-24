@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+
 
 // GET THE HIDEN FIELD WITH CRSF TOKEN
 $signuptoken = new \Inc\Clean();
@@ -10,11 +11,13 @@ $title = "Inscription Utilisateur";
 ?>
 <!-- Begin Page Content -->
 
+
 <div class="container-fluid" id = "inscription">
  <div class="card shadow mb-4">
 <div class="card-header py-3">
 	<h3 class="m-0 font-weight-bold text-info">Inscription Utilisateur</h3>
 </div>
+
 
 <?php
 
@@ -30,6 +33,7 @@ if (($message) && ($message != "")){
 	unset($_SESSION['alert_flag']);
 }
 //}
+
 ?>
 
 
@@ -42,8 +46,10 @@ if (($message) && ($message != "")){
 						<div class="alert  alert-danger my-2 alert-dismissible fade show" role="alert">
 						  <em>
 						  <?php
+
 						  		/*var_dump($_SESSION['errors']);
 								  exit;*/
+
 								foreach($_SESSION['errors'] as $key=>$value){
 
 									echo $value.'<BR>';
@@ -55,7 +61,9 @@ if (($message) && ($message != "")){
 			<?php	
 			}
 			?>
+
 			<form enctype="multipart/form-data" action="index.php?action=usersignin&controller=user" method="post">
+
 				<div class="form-group">
 					<label for="pseudo" class="form-label"><i class="fas fa-user mx-1"></i>Pseudo</label><br />
 					<input type="text"  class="form-control" id="pseudo" name="pseudo" value="" required />
@@ -73,9 +81,11 @@ if (($message) && ($message != "")){
 					<input type="file" class="form-control py-1" id="photo" name="photo" />
 				</div>
 				<div class="g-recaptcha" data-sitekey="6LcRt9UeAAAAANoCcOoFihVp2eShv5YpYQia9Aw1"></div>
+
 				
 						<?= $token_field;?>
 				
+
 				<div class="form-group my-3">
 					<input   type="submit" class="btn btn-info" />
 				</div>

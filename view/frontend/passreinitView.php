@@ -1,6 +1,7 @@
-﻿<?php 
+<?php 
 
 // GET THE HIDEN FIELD WITH CRSF TOKEN
+
 //$token_field = get_token_field('newpass');
 $passreinitnewtoken = new \Inc\Clean();
 //var_dump($signuptoken);
@@ -13,18 +14,22 @@ if((null !== $SessionManager->get('LINK_EMAIL')) && (null !== $SessionManager->g
 	$link_token = $SessionManager->get('LINK_TOKEN');
 	//$link_email = $_SESSION['LINK_EMAIL'] ;
 	//$link_token = 	$_SESSION['LINK_TOKEN'] ;
+
 }
 
 ob_start(); ?>
 <!-- <h1>Mon super blog !</h1> -->
 
+
  <div class="container" id="newpass">
+
     <div class="card card-login mx-auto px-0">
 		<div class="card-header text-left"><h5  class="text-bluedev">Réinitialisation Mot de Passe</h5>
               <!-- Merci de saisir et confirmer votre mot de passe  -->
         </div>
        <div class="card-body">
 		<?php
+
 		//if(isset($_SESSION['errors'] )){
 			if(null !== $SessionManager->get('errors')){
 				?>
@@ -45,6 +50,7 @@ ob_start(); ?>
 
 		<?php
 		}
+
 		// CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
 		$message = is_alertMessage();
@@ -52,6 +58,7 @@ ob_start(); ?>
 		if (($message) && ($message != "")){
 
 			echo $message;
+
 
 			$SessionManager->sessionvarUnset('actionmessage');
 			$SessionManager->sessionvarUnset('alert_flag');
@@ -77,6 +84,7 @@ ob_start(); ?>
 			<?= $token_field;?>
 					
 			<input type="submit" name="password-reinit" class="btn btn-primary my-2">
+
           
         </form>
       </div>

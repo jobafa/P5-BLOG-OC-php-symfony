@@ -1,4 +1,5 @@
-﻿<?php 
+<?php 
+
 
 /*// GET THE HIDEN FIELD WITH CRSF TOKEN
 $token_field = get_token_field('login');*/
@@ -11,6 +12,7 @@ $SessionManager = new \Inc\SessionManager($_SESSION);
 
 ob_start(); ?>
 
+
 <div class="container-fluid" id = "login">
 <div class="row justify-content-center  my-3" id=login">
   <div class="col-lg-10 "> 
@@ -18,6 +20,7 @@ ob_start(); ?>
 		<div class="card-header py-2">
 			<h5 class=" text-capitalize  m-0 font-weight-bold text-info">Authentification  Utilisateur</h5>
 		</div>
+
  
       <div class="card-body">
 
@@ -40,6 +43,7 @@ ob_start(); ?>
 		
 			/*if(isset($_SESSION['errors'] )){
 			
+
 				?>
 				<div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
 			  <em>
@@ -51,6 +55,7 @@ ob_start(); ?>
 				?>
 			  </em>
 			  <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
+
 			</div>*/
 			if(null !== $SessionManager->get('errors')){
 				?>
@@ -68,11 +73,14 @@ ob_start(); ?>
 			  			</em>
 		  				<button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>
+
 			<?php	
 			}
 			?>
 
+
         <form action="index.php?action=verifylogin&amp;controller=user" method="post">
+
           <div class="form-group">
             <label for="email">identifiant</label>
             <input type="email" class="form-control" type="text" placeholder="Entrer votre identifiant" name="email" required>
@@ -97,12 +105,14 @@ ob_start(); ?>
 			
           </div>
 
+
 		  <?= $token_field;?>
 										
 							
           <button type="submit" class="btn btn-primary my-3">Se connecter</button>
 		  <div class="content-fluid alert-info  py-1 px-1 ">
 		  <p><small><a class="text-secondary mx-2 " href="passresetrequest-user.html#passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <!-- <a class=" text-secondary mx-2" href="index.php?action=signinview"> --><a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></small></p>
+
 
 		   </div>
 

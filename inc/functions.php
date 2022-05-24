@@ -1,17 +1,6 @@
 <?php
 
-/*****************************************
-#redirects to the specified url
 
-****************************************
-function redirect(string $url): void {
-
-	header("Location: $url");
-	exit();
-
-}
-*/
-/*****************************************
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -119,7 +108,9 @@ function addImage($post_image,$id = 0){
 										case 'usersignin':
 										
 											//header('Location: index.php?action=myprofile&id=' . $id);
+
 											header('Location: signinview-user.html#inscription');
+
 											exit;
 										
 										break;
@@ -155,15 +146,16 @@ function addImage($post_image,$id = 0){
 
 function checkUploadStatus($status,$post_image,$id = 0){
 
-	/*var_dump($status);
-	exit;*/
+
 						if($status == UPLOAD_ERR_OK){
 							
 								
 								$photo = addImage($post_image,$id);
 								
 								return $photo;
+
 						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+
 						
 								$photo = 'undraw_profile.svg';
 								return $photo;
@@ -260,7 +252,7 @@ function get_token($nom = '')
 function check_token($temps, $referer, $nom = '')
 {
 		$expiredtime = (time() - $temps);
-		
+
 		$_SESSION['expired_time'] = $expiredtime;
 		$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
 		if(isset($_SESSION[$nom.'_token']) && isset($_SESSION[$nom.'_token_time']) && isset($token)){
@@ -314,11 +306,12 @@ function sanitize_get_data($data){
 				
 		if (filter_has_var(INPUT_GET, 'action')) {
 
-			
+		
 			// sanitize action
 			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
 			$data['action'] = $clean_action ;
 			
+
 		}
 		if (filter_has_var(INPUT_GET, 'from')) {
 
@@ -327,6 +320,7 @@ function sanitize_get_data($data){
 			$data['from'] = $clean_action ;
 
 		}
+
 		if (filter_has_var(INPUT_GET, 'controller')) {
 
 			// sanitize from
@@ -334,6 +328,7 @@ function sanitize_get_data($data){
 			$data['controller'] = $clean_action ;
 
 		}
+
 		if (filter_has_var(INPUT_GET, 'email')) {
 
 			// sanitize email
@@ -405,7 +400,9 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 0;
 				 }
 				else {
+
 					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+
 					$_SESSION['alert_flag'] = 1;
 				 }
                 
@@ -521,7 +518,9 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
+
 					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
@@ -545,18 +544,22 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
+
 					$_SESSION['actionmessage'] = "l'adresse email n'existe pas !";
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
                 break;
 
 				case 'passreinitialisation':
+
 				if ( $result === "emailissue" ) {
 					$_SESSION['actionmessage'] = " l'adresse email n'existe pas  !";
 					$_SESSION['alert_flag'] = 0;
 				 }
 				elseif( !$result || ($result === "tokenissue") ){
+
 					$_SESSION['actionmessage'] = 'le lien Pour r&eacute;initialiser votre Mot de Passe est expir&eacute;  !';
 					$_SESSION['alert_flag'] = 0;
 				 }
@@ -592,11 +595,9 @@ function sanitize_get_data($data){
 					if(($result == 'token') || ($result == 'referer') ){
 						$_SESSION['actionmessage'] = 'Vous ne pouvez pas faire cela !';
 						$_SESSION['alert_flag'] = 0;
-						//require('view/frontend/template.php');
-						//exit;
+						
 					}elseif($result == 'expiredtoken' ){
-						//echo 'ici aussi';
-						//exit;
+						
 						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci recharger la page et de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 					}
@@ -605,11 +606,7 @@ function sanitize_get_data($data){
 						$_SESSION['actionmessage'] = ' Probl&egrave;me de token .  Merci de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 				 }
-				/*else{
-					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
-					$_SESSION['alert_flag'] = 0;
-				 }*/
-                
+				
                 break;
 			 
 			}
@@ -629,11 +626,14 @@ function sanitize_get_data($data){
 				
 					$_SESSION['actionmessage'] = 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
 					$_SESSION['alert_flag'] = 1;
+
 					header('Location: loginview-user.html#login');
+
 
 			}elseif( isset($activatedaccount ) && ($activatedaccount == false)){
 				$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
 				$_SESSION['alert_flag'] = 1;
+
 				header('Location: signinview-user.html#inscription');
 			}
 
@@ -642,12 +642,15 @@ function sanitize_get_data($data){
 				$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&agrave;  activ&eacute;';
 				$_SESSION['alert_flag'] = 1;
 				header('Location: loginview-user.html#login');
+
 			}
 			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
 
 					$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
 					$_SESSION['alert_flag'] = 0;
+
 					header('Location: signinview-user.html#inscription');
+
 			}
 
 		}
@@ -695,72 +698,4 @@ function sanitize_get_data($data){
 }
 
 
-/*function addImage_old($post_image){
 
-	if (isset($post_image) && ($post_image['error'] == 0))
-			{
-
-				$allowed_image_extension = array(	"png","jpg","jpeg");
-				
-				// Get image file extension
-				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
-	
-				// Validate file input to check if is not empty
-				if (! file_exists($post_image["tmp_name"])) {
-					//throw new Exception('Choose image file to upload!');
-					$response = array(
-						"type" => "error",
-						"message" => "Choose image file to upload."
-					);
-				}   
-				
-				// Validate file input to check if is with valid extension
-				else if (! in_array($file_extension, $allowed_image_extension)) {
-
-					//throw new Exception('Upload valiid images. Only PNG, JPG and JPEG are allowed!');
-					$message = "File upload stopped by extension";
-					$_SESSION['actionmessage'] = 'File upload stopped by extension';
-					$_SESSION['alert_flag'] = 0;
-					require('view/backend/addpostView.php');
-					
-				}   
-				
-				// Validate image file size
-				else if (($post_image["size"] > 2000000)) {
-					
-					$_SESSION['actionmessage'] = 'File upload stopped Size issue';
-					$_SESSION['alert_flag'] = 0;
-					
-					require('view/backend/addpostView.php');
-					
-				}   
-				
-				else {
-					$dossier = "uploads/images/" ;
-					$file_name = basename($post_image["name"]);
-					$target = $dossier.$file_name;
-					if (file_exists($target)) {
-						
-						$timestamp=time();
-						$file_name = $timestamp.'-'.$file_name;
-						$target = $dossier.$file_name;
-
-				    }
-					if (! empty($message)){
-						$_SESSION['actionmessage'] = $message;
-						$_SESSION['alert_flag'] = 0;
-						require('view/backend/addpostView.php');
-						
-					}else{
-						if (move_uploaded_file($post_image["tmp_name"], $target)) {
-							return $file_name;
-						} else {
-
-							return false;
-							
-						}
-					}
-				}
-			
-			}
-}*/

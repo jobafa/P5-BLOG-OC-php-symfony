@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+
 //if( ! isset($_SESSION) ) session_start();
 
 
@@ -86,18 +87,22 @@ if($get->get('email')){
 	
 	//$link_email =  $_GET['email'];
 	$link_email = $get->get('email');
+
 	
 		
 }
+
 
 //if (isset($_GET['token'])){
 if($get->get('token')){
 	
 	//$link_token =  $_GET['token'];
 	$link_token = $get->get('token');
+
 	
 		
 }
+
 
 //if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
 if ( ( $get->get('usertypeid') ) && ( $get->get('usertypeid') > 0 )){
@@ -159,11 +164,13 @@ if ($session->get('USERID')){
 }
 
 
+
 try {
     if ( isset($action) )
 		{
 
 				if ($action == 'listposts') {
+
 					//$controller = new \Controllers\Post();
 					//\Application::process();
 					$controller->listposts($from, $getpage);
@@ -174,12 +181,15 @@ try {
 						//$is_published = '1';
 						//\Application::process();
 						$controller->post($id, $getpage);
+
 					}
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
+
 				/*elseif ( ($action == 'post')) {
+
 					if (isset($id) && $id > 0) {
 						$is_published = null;
 						post($id, $is_published);
@@ -187,17 +197,20 @@ try {
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
+
 				}*/
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
 
 					$controller->checkContactdata($post, $URL, 'blogcontact');
+
 				}
 				elseif ($action == 'addcomment') {
 					
 					if (isset($id) && $id > 0) {
 
 						if (!empty($pseudo) && !empty($_POST['comment'])) {
+
 							//$userid = $_SESSION['USERID'] ;
 							//$usrid = $session->get('USERID');
 							
@@ -208,6 +221,7 @@ try {
 							$controller->addComment($id, $pseudo, $_POST['comment'],$userid );
 
 							
+
 						}
 						else {
 							throw new Exception('Tous les champs ne sont pas remplis !');
@@ -217,6 +231,7 @@ try {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
+
 				elseif ($action == 'loginview') {
 
 					//$controller = new \Controllers\User();
@@ -287,6 +302,7 @@ try {
 						
 				}
 				/*elseif ($action == 'modifycomment') {
+
 					 if (isset($id) && $id > 0) {
 						
 						  modifyComment($id);
@@ -316,6 +332,7 @@ try {
 					  else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					 }
+
 				}*/
 				
 				/*****************************************************/ 
@@ -433,6 +450,7 @@ try {
 						//$commentid = $id;
 						deleteComment($id);
 				}
+
 				/*elseif (($action == 'adduserview') || ($action == 'signinview')) {
 					
 					//\Application::process();
@@ -446,6 +464,7 @@ try {
 					$controller->adduser($post, $URL, 'newuser');
 				}*/
 				
+
 
 				elseif ($action == 'usersadmin') {
 					
