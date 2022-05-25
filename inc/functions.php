@@ -1,6 +1,19 @@
 <?php
 
 /*****************************************
+
+#redirects to the specified url
+
+****************************************
+function redirect(string $url): void {
+
+	header("Location: $url");
+	exit();
+
+}
+*/
+/*****************************************
+
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -108,7 +121,9 @@ function addImage($post_image,$id = 0){
 										case 'usersignin':
 										
 											//header('Location: index.php?action=myprofile&id=' . $id);
-											header('Location: signinview.html#inscription');
+
+											header('Location: signinview-user.html#inscription');
+
 											exit;
 										
 										break;
@@ -144,15 +159,16 @@ function addImage($post_image,$id = 0){
 
 function checkUploadStatus($status,$post_image,$id = 0){
 
-	
+
 						if($status == UPLOAD_ERR_OK){
 							
 								
 								$photo = addImage($post_image,$id);
 								
 								return $photo;
-							}else		
-						if	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+
+						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+
 						
 								$photo = 'undraw_profile.svg';
 								return $photo;
@@ -249,6 +265,7 @@ function get_token($nom = '')
 function check_token($temps, $referer, $nom = '')
 {
 		$expiredtime = (time() - $temps);
+
 		$_SESSION['expired_time'] = $expiredtime;
 		$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
 		if(isset($_SESSION[$nom.'_token']) && isset($_SESSION[$nom.'_token_time']) && isset($token)){
@@ -302,9 +319,12 @@ function sanitize_get_data($data){
 				
 		if (filter_has_var(INPUT_GET, 'action')) {
 
+
+			
 			// sanitize action
 			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
 			$data['action'] = $clean_action ;
+			
 
 		}
 		if (filter_has_var(INPUT_GET, 'from')) {
@@ -314,6 +334,15 @@ function sanitize_get_data($data){
 			$data['from'] = $clean_action ;
 
 		}
+
+		if (filter_has_var(INPUT_GET, 'controller')) {
+
+			// sanitize from
+			$clean_action = filter_var($data['controller'], FILTER_SANITIZE_STRING);
+			$data['controller'] = $clean_action ;
+
+		}
+
 		if (filter_has_var(INPUT_GET, 'email')) {
 
 			// sanitize email
@@ -385,7 +414,9 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 0;
 				 }
 				else {
-					$_SESSION['actionmessage'] = 'Votre Commentaire a �t� enregist� et sera publi� apr�s Validation !';
+
+					$_SESSION['actionmessage'] = 'Votre Commentaire a Ã©tÃ© enregistÃ© et sera publiÃ© aprÃ¨s Validation !';
+
 					$_SESSION['alert_flag'] = 1;
 				 }
                 
@@ -501,7 +532,9 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
-					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise � jour !';
+
+					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise Ã  jour !';
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
@@ -525,18 +558,22 @@ function sanitize_get_data($data){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
-					$_SESSION['actionmessage'] = 'l\adresse email n\existe pas !';
+
+					$_SESSION['actionmessage'] = "l'adresse email n'existe pas !";
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
                 break;
 
 				case 'passreinitialisation':
-				if ( $result ) {
-					$_SESSION['actionmessage'] = ' Veuillez saisir et confirmer votre nouveau Mot de Passe .   !';
-					$_SESSION['alert_flag'] = 1;
+
+				if ( $result === "emailissue" ) {
+					$_SESSION['actionmessage'] = " l'adresse email n'existe pas  !";
+					$_SESSION['alert_flag'] = 0;
 				 }
-				else{
+				elseif( !$result || ($result === "tokenissue") ){
+
 					$_SESSION['actionmessage'] = 'le lien Pour r&eacute;initialiser votre Mot de Passe est expir&eacute;  !';
 					$_SESSION['alert_flag'] = 0;
 				 }
@@ -609,25 +646,31 @@ function sanitize_get_data($data){
 				
 					$_SESSION['actionmessage'] = 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
 					$_SESSION['alert_flag'] = 1;
-					header('Location: loginview.html#login');
+
+					header('Location: loginview-user.html#login');
+
 
 			}elseif( isset($activatedaccount ) && ($activatedaccount == false)){
 				$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
 				$_SESSION['alert_flag'] = 1;
-				header('Location: signinview.html#inscription');
+
+				header('Location: signinview-user.html#inscription');
 			}
 
-			if(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
+			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
 
 				$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&agrave;  activ&eacute;';
 				$_SESSION['alert_flag'] = 1;
-				header('Location: loginview.html#login');
+				header('Location: loginview-user.html#login');
+
 			}
 			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
 
 					$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
 					$_SESSION['alert_flag'] = 0;
-					header('Location: signinview.html#inscription');
+
+					header('Location: signinview-user.html#inscription');
+
 			}
 
 		}

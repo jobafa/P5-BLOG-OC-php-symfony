@@ -1,4 +1,4 @@
-﻿<?php require('header.php'); 
+<?php require('header.php'); 
  // IF NO USER PICTURE USE DEFAULT PICTURE
 
 	  if( isset($_SESSION['PHOTO']) && (null !== $_SESSION['PHOTO']) ){
@@ -25,7 +25,7 @@
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
 
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front.html#posts">Blog</a></li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front-post.html#posts">Blog</a></li>
 
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
                     </ul>
@@ -63,13 +63,17 @@ if(isset($_SESSION['USERTYPEID']) ){
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="index.php?action=myprofile">
+
+                                <a class="dropdown-item" href="index.php?action=myprofile&controller=user">
+
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
 								 <?php
 	//if((isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1))){?>
-								 <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown">
+
+								 <a class="dropdown-item" href="index.php?action=<?= $useraction ?>&from=dropdown&controller=user">
+
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Tableau de Bord
                                 </a>
@@ -96,8 +100,10 @@ if(isset($_SESSION['USERTYPEID']) ){
 		}else{
 		?>
 		<!-- <li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li> -->
-		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="loginview.html#login"><i class="fas fa-user-alt  mx-2  text-gray-400"></i><small>Se Connecter</small></a></li>
-		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="loginview-user.html#login"><i class="fas fa-user-alt  mx-2  text-gray-400"></i><small>Se Connecter</small></a></li>
+		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview-user.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+
 
 		<?php
 		}

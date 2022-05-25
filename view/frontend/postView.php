@@ -1,21 +1,24 @@
 <?php 
+$cleanobject = new \Inc\Clean();
 
-$title = htmlentities($post['title']); 
 
+$SessionManager = new \Inc\SessionManager();
 // CHEKS IF USER IS CONNECTED
 
-if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
+
+if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENTS FORM
 
 	
-	$pseudo = $_SESSION['PSEUDO'];
+	$pseudo = $SessionManager->get('PSEUDO');
 	$formstatus = '';
 	$placeholder = '';
 }else
 
 { // DISABLE COMMENTS FORM
 
-	$_SESSION['POSTID'] = $post['id']; // REGISTER POSTID TO SEND THE USER BACK TO THE POST VIEW AFTER CONNECTION
 	
+
+	$SessionManager->Set('POSTID', $post['id']); // REGISTER POSTID TO SEND THE USER BACK TO THE POST VIEW AFTER CONNECTION
 
 	$pseudo = '';
 	$placeholder = "placeholder=\"Vous devez être connecté pour publier des commentaires\" ";
@@ -24,7 +27,7 @@ if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
 
 ?>
 
-<?php ob_start(); 
+<?php 
 
 
 	if($post['photo'] == Null){
@@ -41,9 +44,9 @@ if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
 		<div class="card-header my-3 py-3">
 
 
-<h5 class="text-capitalize text-bluedev"><?= htmlentities($post['title']) ?>	</h5>
+<h5 class="text-capitalize text-bluedev"><?= $cleanobject->escapeoutput($post['title']) ?>	</h5>
+        <em class="text-sm-start text-muted">par <img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40"><span class="fw-bold"><?= $post['author'] ?></span> le <?= $post['update_date_fr'] ?></em><p><a class="text-secondary mx-2 " href="listposts-front-<?= $page;?>-post.html#posts"><!-- <a href="index.php?action=listposts">-->Retour à la liste des billets</a> </p>
 
-        <em class="text-sm-start text-muted">par <img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40"><span class="fw-bold"><?= $post['author'] ?></span> le <?= $post['update_date_fr'] ?></em><p><a class="text-secondary mx-2 " href="listposts.html?#posts"><!-- <a href="index.php?action=listposts">-->Retour à la liste des billets</a> </p>
 </div>
 		<div class="card-body ">
 
@@ -53,7 +56,7 @@ if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
                 <div class=".profile-content justify-content-left">
 				<div class="profile-img">
 
-	<IMG SRC="uploads/images/<?= htmlentities($post['image']) ?>"   BORDER=0 ALT="">
+	<IMG SRC="uploads/images/<?= $cleanobject->escapeoutput($post['image']) ?>"   BORDER=0 ALT="">
 
 </div>
 
@@ -62,7 +65,7 @@ if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
 </div>
 </div><div class="fw-bold mt-3 pt-3">
 
-						<?= htmlentities($post['lede']) ?>	
+						<?= $cleanobject->escapeoutput($post['lede']) ?>	
 
 						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
 					
@@ -73,13 +76,13 @@ if(isset($_SESSION['PSEUDO'])){ // ENABLE COMMENTS FORM
     
     <p>
 
-        <?= nl2br(htmlentities($post['content'])) ?>
+        <?= nl2br($cleanobject->escapeoutput($post['content'])) ?>
 
     </p>
 
 <div>
 </div>
-<div>
+<div id="commentaires">
 
 <h2>Commentaires</h2>
 <?php
@@ -92,13 +95,14 @@ if (($message) && ($message != "")){
 
 	echo $message;
 
-	unset($_SESSION['actionmessage']);
-	unset($_SESSION['alert_flag']);
+	$SessionManager->sessionvarUnset('actionmessage');
+	$SessionManager->sessionvarUnset('alert_flag');
+	
 }
-//}
+
 
 ?>
-<form action="index.php?action=addcomment&amp;id=<?= $post['id'] ?>" method="post">
+<form action="index.php?action=addcomment&amp;id=<?= $post['id'] ?>&amp;controller=Comment" method="post">
      <div class="form-group">
         <label for="author">Auteur</label><br />
         <input type="text" class="form-control"  id="author" name="author" value="<?= $pseudo ?>" <?= $placeholder ?>  disabled />
@@ -113,16 +117,16 @@ if (($message) && ($message != "")){
 </form>
 
 <?php
-if(! isset($_SESSION['PSEUDO'])){
+
+if(null === $SessionManager->get('PSEUDO')){ // IF USER NOT CONNECTED
 ?>
 <div class="content-fluid alert-info my-3">
 	<div class=" col py-2 px-2 justify-content-right">
-		<!-- <a class="text-secondary " href="index.php?action=loginview">Se Connecter</a> -->
 
-		<a class="text-secondary " href="loginview.html#login">Se Connecter</a>
-	<!-- </div>
-	<div class="  col-6 py-2 px-2 justify-content-right"> -->
-		<em>Vous n'avez pas encore de compte <!-- <a class=" text-secondary mx-2" href="index.php?action=signinview">Inscrivez Vous</a> --><a class=" text-secondary mx-2" href="signinview.html#inscription">Inscrivez Vous</a></em>
+		
+		<a class="text-secondary " href="loginview-user.html#login">Se Connecter</a>
+	
+		<em>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></em>
 
 	</div>
 </div>
@@ -144,31 +148,29 @@ while ($comment = $comments->fetch())
 	}
 ?>
 
-<!-- <div class="bg-gray p-2"> -->
-					<div class="card mt-2 bg-white">
+				<div class="card mt-2 bg-white">
 
                     <div class="d-flex flex-row user-info mx-3 my-3">
-							<img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40">
+						<img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40">
 							
-      <div class="d-flex flex-column justify-content-start ml-2">
 
-											<span class="d-block font-weight-bold name"><?= htmlentities($comment['author']) ?></span>
+      					<div class="d-flex flex-column justify-content-start ml-2">
+							<span class="d-block font-weight-bold name"><?= $cleanobject->escapeoutput($comment['author']) ?></span>
+							<span class="date text-black-50"> le <?= $comment['comment_date_fr'] ?></span>
+						</div>
 
-											<span class="date text-black-50"> le <?= $comment['comment_date_fr'] ?></span>
-									</div>
                     
 					</div>
                    
 					<div class="mx-3 mt-2">
 					
 
-       <p class="comment-text"><?= nl2br(htmlentities($comment['comment'])) ?>
-
-							</p>
-                    
-					</div>
+       					<p class="comment-text"><?= nl2br($cleanobject->escapeoutput($comment['comment'])) ?></p>
+							
+                    </div>
 				</div>
             
+    
 
 <?php
 }
@@ -178,7 +180,7 @@ while ($comment = $comments->fetch())
    
 			</div >
 
- <p class="my-3 mx-2"><a class="text-secondary  " href="listposts-front-<?= $getpage; ?>.html#posts">Retour à la liste des billets</a><!-- <a href="index.php?action=listposts">Retour à la liste des "</a> --></p>       
+ <p class="my-3 mx-2"><a class="text-secondary  " href="listposts-front-<?= $page;?>-post.html#posts">Retour à la liste des billets</a><!-- <a href="index.php?action=listposts">Retour à la liste des "</a> --></p>       
 
 		</div>
     
@@ -187,9 +189,8 @@ while ($comment = $comments->fetch())
 
 	</div>
 
-<?php $content = ob_get_clean(); ?>
 
-<?php require('template.php'); ?>
+
 
 
                    
