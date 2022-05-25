@@ -47,6 +47,7 @@ if (($message) && ($message != "")){
 						  <em>
 						  <?php
 
+
 								foreach($_SESSION['errors'] as $key=>$value){
 
 									echo $value.'<BR>';

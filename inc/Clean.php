@@ -1,11 +1,34 @@
 <?php
 namespace Inc;
 
+//require_once('Models/Model.php');
+//use Models\Manager;
+//require_once("Models/Model.php");
+
 use Models\Model;
 
 class Clean  {
 
-   
+
+   /* public function __construct(){
+        $this->model = new Models\Manager();
+    }
+
+    //protected $commentManager;
+	//protected $modelName ;
+    //private $ispublished = '1';
+
+	protected $model;
+	//protected $modelName = "\Models\PostManager";
+    //protected $modelName = \Models\UserManager::class;
+
+    public function __construct(){
+
+    $this->model = new \Inc\Clean();
+
+    }*/
+
+
     /**/private static $filters = array(
         'string' => FILTER_SANITIZE_STRING,
         'string[]' => [
@@ -34,6 +57,22 @@ class Clean  {
         );
 
         
+
+        /*define('FILTERS' = [
+            'string' => FILTER_SANITIZE_STRING,
+            'string[]' => [
+                'filter' => FILTER_SANITIZE_STRING,
+                'flags' => FILTER_REQUIRE_ARRAY
+            ],
+            'email' => FILTER_SANITIZE_EMAIL,
+            'password' => FILTER_UNSAFE_RAW,
+            'int' => [
+                'filter' => FILTER_SANITIZE_NUMBER_INT,
+                'flags' => FILTER_REQUIRE_SCALAR
+            ],
+            'url' => FILTER_SANITIZE_URL
+        ]);*/
+
 
             /**************************************************************************/
         //*sanitize $GET data*/
@@ -165,7 +204,25 @@ class Clean  {
         }
 
 
-             
+
+        /**
+        * VALIDATION
+        */
+
+        /*const DEFAULT_VALIDATION_ERRORS = [
+            'required' => 'le champ %s est requis',
+            'email' => ' %s n\'est pas une adresse email valide',
+            'min' => 'Le champ %s doit avoir au moins %s caract&eacute;res',
+            'max' => 'Le champ %s doit avoir au plus %s caract&eacute;res',
+            'between' => 'Le champ %s doit avoir entre %d et %d caract&eacute;res',
+            'same' => 'Le champ %s doit avoir la m&ecirc;me valeur que %s',
+            'alphanumeric' => 'Le champ %s doit contenir, uniquement, des chiffres et des lettres',
+            'secure' => 'Le champ %s doit contenir entre 8 et 64 caract&eacute;res avec au moins un chiffre, une majiscule, une miniscule et un caract&eacute;re sp&eacute;cial',
+            'unique' => 'L\'adresse  %s existe d&egrave;j&agrave;',
+        ];*/
+        
+        
+
         /**
          * Validate
          * @param array $data
@@ -175,7 +232,12 @@ class Clean  {
          */
         public function validate(array $data, array $fields, array $messages = []): array
         {
-           
+
+            /*var_dump($fields);
+            var_dump($data);
+                        exit;*/
+
+
             // Split the array by a separator, trim each element
             // and return the array
         
@@ -510,10 +572,14 @@ class Clean  {
         public function get_token_field($nom) {
             
             $token = $this->get_token($nom);
-            
+
+            /*var_dump($token);
+            exit;*/
+
             return '<input type="hidden" name="token" value="' . $token . '">';
         
         }
+
 
         //**************************************************************************//
         //*converts htmlentities*/
@@ -523,6 +589,7 @@ class Clean  {
         public function escapeoutput($output){
             return htmlentities($output, ENT_QUOTES);
         }
+
 
 
 }
