@@ -1,11 +1,14 @@
 <?php
 namespace Inc;
+
 //require_once('Models/Model.php');
 //use Models\Manager;
 //require_once("Models/Model.php");
+
 use Models\Model;
 
 class Clean  {
+
 
    /* public function __construct(){
         $this->model = new Models\Manager();
@@ -24,6 +27,7 @@ class Clean  {
     $this->model = new \Inc\Clean();
 
     }*/
+
 
     /**/private static $filters = array(
         'string' => FILTER_SANITIZE_STRING,
@@ -53,6 +57,7 @@ class Clean  {
         );
 
         
+
         /*define('FILTERS' = [
             'string' => FILTER_SANITIZE_STRING,
             'string[]' => [
@@ -67,6 +72,7 @@ class Clean  {
             ],
             'url' => FILTER_SANITIZE_URL
         ]);*/
+
 
             /**************************************************************************/
         //*sanitize $GET data*/
@@ -198,6 +204,7 @@ class Clean  {
         }
 
 
+
         /**
         * VALIDATION
         */
@@ -215,6 +222,7 @@ class Clean  {
         ];*/
         
         
+
         /**
          * Validate
          * @param array $data
@@ -224,6 +232,7 @@ class Clean  {
          */
         public function validate(array $data, array $fields, array $messages = []): array
         {
+
             /*var_dump($fields);
             var_dump($data);
                         exit;*/
@@ -563,11 +572,24 @@ class Clean  {
         public function get_token_field($nom) {
             
             $token = $this->get_token($nom);
+
             /*var_dump($token);
             exit;*/
+
             return '<input type="hidden" name="token" value="' . $token . '">';
         
         }
+
+
+        //**************************************************************************//
+        //*converts htmlentities*/
+        //*@param string $output
+        /* @return string encoded $output **/
+
+        public function escapeoutput($output){
+            return htmlentities($output, ENT_QUOTES);
+        }
+
 
 
 }

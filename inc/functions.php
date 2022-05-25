@@ -1,6 +1,8 @@
 <?php
 
 
+
+
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -306,7 +308,7 @@ function sanitize_get_data($data){
 				
 		if (filter_has_var(INPUT_GET, 'action')) {
 
-		
+
 			// sanitize action
 			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
 			$data['action'] = $clean_action ;
@@ -401,7 +403,9 @@ function sanitize_get_data($data){
 				 }
 				else {
 
+
 					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+
 
 					$_SESSION['alert_flag'] = 1;
 				 }
@@ -519,7 +523,9 @@ function sanitize_get_data($data){
 				 }
 				else{
 
+
 					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+
 
 					$_SESSION['alert_flag'] = 0;
 				 }

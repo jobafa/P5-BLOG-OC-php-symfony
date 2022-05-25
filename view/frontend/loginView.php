@@ -118,8 +118,7 @@ ob_start(); ?>
 
 
         </form>
-	<!-- 	<div class="row  col-6 py-2 px-2 justify-content-right"> -->
-<!----> </div> 
+	 </div> 
       </div>
     </div>
   </div>

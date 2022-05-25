@@ -34,6 +34,7 @@ ob_start(); ?>
 			<div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
 			  <em>
 			  <?php
+
 					//if($_SESSION['errors']){
 						//foreach($_SESSION['errors'] as $key=>$value){
 						foreach($SessionManager->get('errors') as $key=>$value){

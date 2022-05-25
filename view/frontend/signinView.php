@@ -47,8 +47,6 @@ if (($message) && ($message != "")){
 						  <em>
 						  <?php
 
-						  		/*var_dump($_SESSION['errors']);
-								  exit;*/
 
 								foreach($_SESSION['errors'] as $key=>$value){
 
