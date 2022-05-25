@@ -1,7 +1,10 @@
 <?php 
 
+
 $cleanobject = new \Inc\Clean();
 
+
+//ob_start(); 
 
 
 while ($data = $posts->fetch())
@@ -19,7 +22,9 @@ $texte = substr($texte, 0, 150);
 					<h5 class="text-capitalize text-bluedev">
 
 
+
 							<?= $cleanobject->escapeoutput($data['title']) ?>
+
 
 
 							
@@ -30,7 +35,9 @@ $texte = substr($texte, 0, 150);
 						<div class="profile-img my-3">
 
 
+
 							<IMG SRC="uploads/images/<?= $cleanobject->escapeoutput($data['image']) ?>"  width="320" height="250" BORDER=0 ALT="">
+
 
 
 						</div>
@@ -39,10 +46,12 @@ $texte = substr($texte, 0, 150);
 				<h5 class="text-capitalize text-bluedev">
 
 
+
 							<?= $cleanobject->escapeoutput($data['title']) ?>
 							
 					</h5>
 												<em class="text-md-start text-muted mb-3">Par <?= $cleanobject->escapeoutput($data['author']) ?><BR>le <?= $data['update_date_fr'] ?> </em>
+
 
 
 
@@ -55,6 +64,7 @@ $texte = substr($texte, 0, 150);
 
 
 						<?= $cleanobject->escapeoutput($data['lede']) ?>
+
 
 
 						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
@@ -87,7 +97,9 @@ $posts->closeCursor();
                     <a class="page-link"
 
 
+
                         href="<?php if($page <= 1){ echo '#'; } else { echo "listposts-front-" . $prev; } ?>-post.html#posts">Précédent</a>
+
 
 
                 </li>
@@ -104,14 +116,17 @@ $posts->closeCursor();
 				 <a class="page-link"
 
 
+
                         href="<?php if($page >= $totoalPages){ echo '#'; } else {echo "listposts-front-". $next; } ?>-post.html#posts">Suivant</a>
                    
+
 
 
                 </li>
             </ul>
         </nav>
 	</div>
+
 
 
 

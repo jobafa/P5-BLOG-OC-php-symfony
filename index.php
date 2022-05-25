@@ -344,6 +344,7 @@ try {
 					//\Application::process();
 					//$controller = new \Controllers\User();
 					$controller->adduserview($action);
+
 				}
 				elseif (($action == 'useradd') || ($action == 'usersignin')) {
 					
@@ -351,6 +352,25 @@ try {
 					//\Application::process();
 					$controller->adduser($post, $URL, 'newuser');
 				}
+
+				elseif ($action == 'useractivation') {
+						
+						
+					if (isset($_GET['token'])){ // MEANS WE ARE COMING FROM USER'S ACTIVATION LINK
+						$token = $_GET['token'];
+						$isactivated = NULL;
+					}elseif(isset($_GET['isactivated'])){ // MEANS WE ARE COMING FROM ADMIN DASHBOARD
+						$isactivated = $_GET['isactivated'];		
+						$token  = NULL;
+					}
+					
+					//\Application::process();
+					//$controller = new \Controllers\User();
+					$controller->userActivation($id, $link_email, $token, $isactivated);
+					
+			}
+		
+
 
 				elseif ($action == 'useractivation') {
 						

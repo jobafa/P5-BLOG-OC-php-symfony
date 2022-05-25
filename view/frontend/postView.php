@@ -1,5 +1,6 @@
 <?php 
 
+
 $cleanobject = new \Inc\Clean();
 
 
@@ -8,8 +9,6 @@ $SessionManager = new \Inc\SessionManager();
 
 
 if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENTS FORM
-
-	
 
 	$pseudo = $SessionManager->get('PSEUDO');
 	$formstatus = '';
@@ -24,8 +23,6 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 	$SessionManager->Set('POSTID', $post['id']); // REGISTER POSTID TO SEND THE USER BACK TO THE POST VIEW AFTER CONNECTION
 
 
-	$SessionManager->Set('POSTID', $post['id']); // REGISTER POSTID TO SEND THE USER BACK TO THE POST VIEW AFTER CONNECTION
-
 	$pseudo = '';
 	$placeholder = "placeholder=\"Vous devez être connecté pour publier des commentaires\" ";
 	$formstatus = " disabled";	
@@ -34,7 +31,9 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 ?>
 
 
+
 <?php 
+
 
 
 
@@ -53,9 +52,11 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 
 
 
+
 <h5 class="text-capitalize text-bluedev"><?= $cleanobject->escapeoutput($post['title']) ?>	</h5>
 
         <em class="text-sm-start text-muted">par <img class="rounded-circle mx-2" src="uploads/images/<?= $photo ?> "width="40"><span class="fw-bold"><?= $post['author'] ?></span> le <?= $post['update_date_fr'] ?></em><p><a class="text-secondary mx-2 " href="listposts-front-<?= $page;?>-post.html#posts"><!-- <a href="index.php?action=listposts">-->Retour à la liste des billets</a> </p>
+
 
 </div>
 		<div class="card-body ">
@@ -67,7 +68,9 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 				<div class="profile-img">
 
 
+
 	<IMG SRC="uploads/images/<?= $cleanobject->escapeoutput($post['image']) ?>"   BORDER=0 ALT="">
+
 
 
 </div>
@@ -78,7 +81,10 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 </div><div class="fw-bold mt-3 pt-3">
 
 
+	
+
 						<?= $cleanobject->escapeoutput($post['lede']) ?>	
+
 
 
 						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
@@ -91,7 +97,9 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
     <p>
 
 
+
         <?= nl2br($cleanobject->escapeoutput($post['content'])) ?>
+
 
 
     </p>
@@ -114,6 +122,8 @@ if (($message) && ($message != "")){
 	$SessionManager->sessionvarUnset('actionmessage');
 	$SessionManager->sessionvarUnset('alert_flag');
 
+
+
 }
 
 
@@ -134,16 +144,20 @@ if (($message) && ($message != "")){
 
 <?php
 
+
+
 if(null === $SessionManager->get('PSEUDO')){ // IF USER NOT CONNECTED
 ?>
 <div class="content-fluid alert-info my-3">
 	<div class=" col py-2 px-2 justify-content-right">
 
 
+
 		
 		<a class="text-secondary " href="loginview-user.html#login">Se Connecter</a>
 	
 		<em>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></em>
+
 
 
 	</div>
@@ -167,6 +181,8 @@ while ($comment = $comments->fetch())
 ?>
 
 
+
+
 				<div class="card mt-2 bg-white">
 
                     <div class="d-flex flex-row user-info mx-3 my-3">
@@ -175,7 +191,9 @@ while ($comment = $comments->fetch())
 
       					<div class="d-flex flex-column justify-content-start ml-2">
 
+
 							<span class="d-block font-weight-bold name"><?= $cleanobject->escapeoutput($comment['author']) ?></span>
+
 
 							<span class="date text-black-50"> le <?= $comment['comment_date_fr'] ?></span>
 						</div>
@@ -187,7 +205,9 @@ while ($comment = $comments->fetch())
 					
 
 
+
        					<p class="comment-text"><?= nl2br($cleanobject->escapeoutput($comment['comment'])) ?></p>
+
 
 							
                     </div>
@@ -212,8 +232,3 @@ while ($comment = $comments->fetch())
 
 	</div>
 
-
-
-
-                   
-				 

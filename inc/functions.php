@@ -1,8 +1,6 @@
 <?php
 
 
-
-
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -404,7 +402,9 @@ function sanitize_get_data($data){
 				else {
 
 
+
 					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+
 
 
 					$_SESSION['alert_flag'] = 1;
@@ -524,7 +524,9 @@ function sanitize_get_data($data){
 				else{
 
 
+
 					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+
 
 
 					$_SESSION['alert_flag'] = 0;

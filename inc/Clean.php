@@ -1,10 +1,6 @@
 <?php
 namespace Inc;
 
-//require_once('Models/Model.php');
-//use Models\Manager;
-//require_once("Models/Model.php");
-
 use Models\Model;
 
 class Clean  {
@@ -573,12 +569,10 @@ class Clean  {
             
             $token = $this->get_token($nom);
 
-            /*var_dump($token);
-            exit;*/
-
             return '<input type="hidden" name="token" value="' . $token . '">';
         
         }
+
 
 
         //**************************************************************************//
@@ -589,6 +583,7 @@ class Clean  {
         public function escapeoutput($output){
             return htmlentities($output, ENT_QUOTES);
         }
+
 
 
 
