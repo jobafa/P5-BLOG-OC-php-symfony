@@ -1,4 +1,4 @@
-﻿ <footer class="footer text-center">
+<footer class="footer text-center">
             <div class="container">
                 <div class="row">
                     <!-- Footer Location-->
@@ -13,7 +13,9 @@
                     <!-- Footer Social Icons-->
                     <div class="col-lg-4 mb-5 mb-lg-0">
                         <h4 class="text-uppercase mb-4"> Réseaux Sociaux</h4>
+
                       <!--  --> <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-github"></i></a> 
+
                         <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-twitter"></i></a>
                         <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-linkedin-in"></i></a>
                        <!--  <a class="btn btn-outline-light btn-social mx-1" href="#!"><i class="fab fa-fw fa-dribbble"></i></a> -->

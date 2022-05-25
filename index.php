@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+
 
 
 require_once __DIR__.'/autoload.php';
@@ -64,18 +65,22 @@ if($get->get('email')){
 	
 	
 	$link_email = $get->get('email');
+
 	
 		
 }
+
 
 
 if($get->get('token')){
 	
 	
 	$link_token = $get->get('token');
+
 	
 		
 }
+
 
 
 if ( ( $get->get('usertypeid') ) && ( $get->get('usertypeid') > 0 )){
@@ -134,38 +139,44 @@ if ($session->get('USERID')){
 }
 
 
+
 try {
     if ( isset($action) )
 		{
 
 				if ($action == 'listposts') {
-					
+
 					$controller->listposts($from, $getpage);
 				}
 				elseif (($action == 'frontpost') || ($action == 'post')) {
 					if (isset($id) && $id > 0) {
 						
 						$controller->post($id, $getpage);
+
 					}
 					else {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
-				
+
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
 
 					$controller->checkContactdata($post, $URL, 'blogcontact');
+
 				}
 				elseif ($action == 'addcomment') {
 					
 					if (isset($id) && $id > 0) {
 
+s
 						if (!empty($pseudo) && !empty($post->get('comment'))) {
+
 							
 							$controller->addComment($id, $pseudo, $post->get('comment'), $userid );
 
 							
+
 						}
 						else {
 							throw new Exception('Tous les champs ne sont pas remplis !');
@@ -175,6 +186,7 @@ try {
 						throw new Exception('Aucun identifiant de billet envoyé');
 					}
 				}
+
 				elseif ($action == 'loginview') {
 
 					
@@ -238,7 +250,7 @@ try {
 					
 						
 				}
-				
+
 				
 				/*****************************************************/ 
 				/*********** Common Routing **************/
@@ -248,6 +260,7 @@ try {
 					
 					
 					$controller->adduserview($action);
+
 				}
 				elseif (($action == 'useradd') || ($action == 'usersignin')) {
 					
@@ -267,6 +280,25 @@ try {
 					}
 					
 					
+					$controller->userActivation($id, $link_email, $token, $isactivated);
+					
+			}
+		
+
+
+				elseif ($action == 'useractivation') {
+						
+						
+					if (isset($_GET['token'])){ // MEANS WE ARE COMING FROM USER'S ACTIVATION LINK
+						$token = $_GET['token'];
+						$isactivated = NULL;
+					}elseif(isset($_GET['isactivated'])){ // MEANS WE ARE COMING FROM ADMIN DASHBOARD
+						$isactivated = $_GET['isactivated'];		
+						$token  = NULL;
+					}
+					
+					//\Application::process();
+					//$controller = new \Controllers\User();
 					$controller->userActivation($id, $link_email, $token, $isactivated);
 					
 			}
@@ -352,7 +384,9 @@ try {
 						
 						deleteComment($id);
 				}
+
 				
+
 
 				elseif ($action == 'usersadmin') {
 					

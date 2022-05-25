@@ -1,6 +1,8 @@
 <?php
 
+
 /*****************************************
+
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -108,7 +110,9 @@ function addImage($post_image,$id = 0){
 										case 'usersignin':
 										
 											//header('Location: index.php?action=myprofile&id=' . $id);
+
 											header('Location: signinview-user.html#inscription');
+
 											exit;
 										
 										break;
@@ -144,15 +148,16 @@ function addImage($post_image,$id = 0){
 
 function checkUploadStatus($status,$post_image,$id = 0){
 
-	/*var_dump($status);
-	exit;*/
+
 						if($status == UPLOAD_ERR_OK){
 							
 								
 								$photo = addImage($post_image,$id);
 								
 								return $photo;
+
 						}elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
+
 						
 								$photo = 'undraw_profile.svg';
 								return $photo;
@@ -215,6 +220,7 @@ function checkUploadStatus($status,$post_image,$id = 0){
 }
 
 
+
 		# **************
         # Initialize Display Action Message
 		# @Param $action : user's action 
@@ -233,7 +239,13 @@ function checkUploadStatus($status,$post_image,$id = 0){
 					$_SESSION['alert_flag'] = 0;
 				 }
 				else {
+
+
+
 					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+
+
+
 					$_SESSION['alert_flag'] = 1;
 				 }
                 
@@ -349,7 +361,13 @@ function checkUploadStatus($status,$post_image,$id = 0){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
+
+
+
 					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+
+
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
@@ -373,18 +391,22 @@ function checkUploadStatus($status,$post_image,$id = 0){
 					$_SESSION['alert_flag'] = 1;
 				 }
 				else{
+
 					$_SESSION['actionmessage'] = "l'adresse email n'existe pas !";
+
 					$_SESSION['alert_flag'] = 0;
 				 }
                 
                 break;
 
 				case 'passreinitialisation':
+
 				if ( $result === "emailissue" ) {
 					$_SESSION['actionmessage'] = " l'adresse email n'existe pas  !";
 					$_SESSION['alert_flag'] = 0;
 				 }
 				elseif( !$result || ($result === "tokenissue") ){
+
 					$_SESSION['actionmessage'] = 'le lien Pour r&eacute;initialiser votre Mot de Passe est expir&eacute;  !';
 					$_SESSION['alert_flag'] = 0;
 				 }
@@ -420,11 +442,9 @@ function checkUploadStatus($status,$post_image,$id = 0){
 					if(($result == 'token') || ($result == 'referer') ){
 						$_SESSION['actionmessage'] = 'Vous ne pouvez pas faire cela !';
 						$_SESSION['alert_flag'] = 0;
-						//require('view/frontend/template.php');
-						//exit;
+						
 					}elseif($result == 'expiredtoken' ){
-						//echo 'ici aussi';
-						//exit;
+						
 						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci recharger la page et de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 					}
@@ -433,16 +453,13 @@ function checkUploadStatus($status,$post_image,$id = 0){
 						$_SESSION['actionmessage'] = ' Probl&egrave;me de token .  Merci de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 				 }
-				/*else{
-					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
-					$_SESSION['alert_flag'] = 0;
-				 }*/
-                
+				
                 break;
 			 
 			}
 			
         }
+
 
 
 	# CHECK IF THERE IS AN ALERT MESSAGE TO DISPLAY
@@ -485,4 +502,5 @@ function checkUploadStatus($status,$post_image,$id = 0){
 		
 		return $message;
 }
+
 

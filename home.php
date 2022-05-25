@@ -1,4 +1,5 @@
-﻿<?php
+<?php
+
 
 require_once __DIR__.'/autoload.php';
 require_once __DIR__.'/Inc/functions.php';
@@ -19,11 +20,14 @@ $token_field = $contactoken->get_token_field("blogcontact");
  if( null !== $session->get('PHOTO')){
 		  $photo = $session->get('PHOTO');
 
+
   }else{
 		 $photo = "undraw_profile.svg";
   }
 
+
  
+
   ?>
 
 <!DOCTYPE html>
@@ -117,14 +121,18 @@ $token_field = $contactoken->get_token_field("blogcontact");
 		   <!-- Navigation-->
            <nav class="navbar navbar-expand-lg navbar-light  bg-white fixed-top " id="mainNav">
             <div class="container px-4 px-lg-5">
+
                 <a class="navbar-brand" href="accueil.html"><IMG SRC="public/images/LOGO-BLOG.png" width="160" height="80" ALT=""></a>
+
                  <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
                        <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php">Accueil</a></li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="index.php?action=listposts&from=front">Blog</a></li> -->
 						 <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html">Accueil</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="listposts-front-post.html#posts">Blog</a></li>
+
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link  px-0 px-lg-3 rounded" href="accueil.html#contact">Contact</a></li>
                        <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="home.php?#contact">Contact</a></li> -->
                     </ul>
@@ -142,6 +150,7 @@ $token_field = $contactoken->get_token_field("blogcontact");
                         <div class="topbar-divider d-none d-sm-block"></div>
 <?php
 
+
 // DEFINE $useraction VARIABLE TO REDIRECT THE USER TO THE APPROPRIATE DASHBOARD : SEE "Tableau de Bord"  LINK
 if( null !== $session->get('USERTYPEID') ){ // IF USER'S ROLE IS SET
 
@@ -151,6 +160,7 @@ if( null !== $session->get('USERTYPEID') ){ // IF USER'S ROLE IS SET
 
 	}elseif($session->get('USERTYPEID') == 3){ // IF NOT ADMIN
 
+
 		$useraction = "mycomments";
 	}
 	?>
@@ -158,13 +168,16 @@ if( null !== $session->get('USERTYPEID') ){ // IF USER'S ROLE IS SET
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?= $cleanobject->escapeoutput($session->get('PSEUDO')) ?></span>
                                 <img class="user_snippet_small_profile_image_rounded_geo mx-1"
                                     src="uploads/images/<?= $cleanobject->escapeoutput($photo) ?>">
+
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
+
                                 <a class="dropdown-item" href="index.php?action=myprofile&controller=user">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
@@ -175,6 +188,7 @@ if( null !== $session->get('USERTYPEID') ){ // IF USER'S ROLE IS SET
                                     Tableau de Bord
                                 </a>
 								
+
                           
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
@@ -188,8 +202,10 @@ if( null !== $session->get('USERTYPEID') ){ // IF USER'S ROLE IS SET
 <?php
 		}else{
 		?>
+
 		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="loginview-user.html#login"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
 		<li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-1 " href="signinview-user.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+
 		<!-- <li class="nav-item dropdown no-arrow"><a class="nav-link py-3 px-0 px-lg-3 " href="index.php?action=loginview"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li> -->
 
 		<?php
@@ -263,11 +279,13 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
 
 						echo $message;
 
+
 						$session->sessionvarUnset('actionmessage');
                         $session->sessionvarUnset('alert_flag');
                         
 					}
 					
+
 					?>
                         <!-- * * * * * * * * * * * * * * *-->
                         <!-- * * SB Forms Contact Form * *-->
@@ -280,7 +298,9 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
     <!-- <div class="card card-login mx-auto px-0"> -->
       <div class="card-body">
 			<div class="col-lg-10 "> 
+
                         <form action="index.php?action=contactform&controller=user" method="post" id="contactForm" data-sb-form-api-token="API_TOKEN">
+
                             <!-- Name input-->
                             <div class="form-floating mb-3">
                                 <input class="form-control" id="name" type="text" name="name" placeholder="votre nom..."   pattern="^[A-Za-z '-]+$" required />
@@ -323,7 +343,9 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
                             <!-- This is what your users will see when there is-->
                             <!-- an error submitting the form-->
                             <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">message d'erreur!</div></div>
+
 							<?= $token_field;?>
+
                             <!-- Submit Button-->
                             <button class="btn btn-bluedev" type="submit">Envoyez</button>
                         </form>
@@ -344,11 +366,13 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
+
                     <button type="button" class="btn btn-primary-mod" data-dismiss="modal">Fermer</button>
                         <!-- <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title"></h4> -->
                     </div>
                     
+
                     <div class="modal-body">
 
                         <embed src="public/documents/CV-Fathi-Abderrahim2.pdf"
@@ -408,8 +432,10 @@ C'est pourquoi je suis actuellement, auprès d'<B>OpenClassrooms</B>, une format
                     <!-- Footer About Text-->
                     <div class="col-lg-4">
 					<nav class="navbar navbar-expand-lg navbar-light   " id="mainNav">
+
 					<li class="nav-item "><a class="nav-link py-3 px-0 px-lg-3 " href="loginview-user.html#login"><i class="fas fa-user-alt  mx-2 text-gray-400"></i>Se Connecter</a></li>
 		<li class="nav-item "><a class="nav-link py-3 px-0 px-lg-1 " href="signinview-user.html#inscription"><i class="fa fa-sign-in-alt mx-2 text-gray-400"></i></i><small>S'inscrire</small></a></li>
+
 		</nav>
                      
                     </div>
