@@ -10,30 +10,30 @@ class File
 {
     private $file;
 
-    public function __construct($file)
+    public function __construct()
     {
-        $this->file = $file;
+        $this->file = $_FILES;
     }
 
     public function set($id, $name, $value)
     {
-        $_FILES[$id][$name] = $value;
+        $this->file[$id][$name] = $value;
     }
 
     public function get($id, $name = null)
     {
         if ($name != null)
         {
-            if(isset($_FILES[$id][$name])) 
+            if(isset($this->file[$id][$name])) 
             {
-            return $_FILES[$id][$name];
+            return $this->file[$id][$name];
             }
         }
         else
         {
-            if(isset($_FILES[$id])) 
+            if(isset($this->file[$id])) 
             {
-            return $_FILES[$id];
+            return $this->file[$id];
             }
         }
         

@@ -2,19 +2,13 @@
 
 namespace Models;
 
-//require_once("model/Manager.php");
-require_once("Models/Model.php");
+
+require_once('Models/Model.php');
 
 class CommentManager extends Model
 {
     
-	/*private $db;
 
-		public function __construct()
-		{
-			$this->db = dbConnect();
-		}
-*/
 	# **************
         # GET ALL POST COMMENTS with params working for front and back end
         # @ Params $postId $isenabled $userid**************
@@ -22,7 +16,7 @@ class CommentManager extends Model
 	public function getComments($postId = null, $isenabled = null, $userid = null)
     {
 				
-        //$db = $this->dbConnect();
+        
 
 		if(isset($userid) && ($userid != null)){
 
@@ -69,7 +63,7 @@ class CommentManager extends Model
 		public function getAll($postId = null, $isenabled = null, $userid = null)
 		{
 					
-			//$db = $this->dbConnect();
+			
 	
 			if(isset($userid) && ($userid != null)){
 	
@@ -116,8 +110,8 @@ class CommentManager extends Model
 
     public function postComment($postId, $author, $comment, $userid)
     {
-        $db = $this->dbConnect();
-        $comments = $db->prepare('INSERT INTO comments(post_id, user_id,  author, comment, is_enabled, comment_date) VALUES(?, ?, ?, ?, ?, NOW())');
+        
+        $comments = $this->db->prepare('INSERT INTO comments(post_id, user_id,  author, comment, is_enabled, comment_date) VALUES(?, ?, ?, ?, ?, NOW())');
         $affectedLines = $comments->execute(array($postId, $userid,  $author, $comment, '0'));
 
         return $affectedLines;
@@ -131,8 +125,8 @@ class CommentManager extends Model
 	public function getComment($commentId)
     { 
 	
-        $db = $this->dbConnect();
-        $comment = $db->prepare('SELECT id, post_id,  author, comment, DATE_FORMAT(comment_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS comment_date_fr FROM comments WHERE id = ? ');
+        
+        $comment = $this->db->prepare('SELECT id, post_id,  author, comment, DATE_FORMAT(comment_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS comment_date_fr FROM comments WHERE id = ? ');
         $comment->execute(array($commentId));
 
         return $comment;
@@ -145,7 +139,7 @@ class CommentManager extends Model
 
     public function insert($postId, $author, $comment, $userid)
     {
-        //$db = $this->dbConnect();
+       
         $comments = $this->db->prepare('INSERT INTO comments(post_id, user_id,  author, comment, is_enabled, comment_date) VALUES(?, ?, ?, ?, ?, NOW())');
         $affectedLines = $comments->execute(array($postId, $userid,  $author, $comment, '0'));
 
@@ -160,7 +154,7 @@ class CommentManager extends Model
 	public function get($commentId)
     { 
 	
-        //$db = $this->dbConnect();
+        
         $comment = $this->db->prepare('SELECT id, post_id,  author, comment, DATE_FORMAT(comment_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS comment_date_fr FROM comments WHERE id = ? ');
         $comment->execute(array($commentId));
 
@@ -174,8 +168,8 @@ class CommentManager extends Model
 
 	public function updateComment($comment, $commentId)
     { 
-        $db = $this->dbConnect();
-        $commentupdate = $db->prepare('UPDATE comments SET comment = ? WHERE id = ? ');
+        
+        $commentupdate = $this->db->prepare('UPDATE comments SET comment = ? WHERE id = ? ');
         $commentupdate->execute(array($comment, $commentId));
 
         return $commentupdate;
@@ -188,7 +182,7 @@ class CommentManager extends Model
 
 	public function validateComment($commentId)
     { 
-        //$db = $this->dbConnect();
+        
         $commentupdate = $this->db->prepare('UPDATE comments SET is_enabled = ? WHERE id = ? ');
         $commentupdate->execute(array('1', $commentId));
 
@@ -198,7 +192,7 @@ class CommentManager extends Model
 	public function deleteCommentPost($idpost, $idcomment, $userid) {
 
 
-            $db = $this->dbConnect();
+            
 			$query =( 'DELETE FROM comments ');
 													if ($idpost != null) {
 														$query.= ' WHERE comments.post_id = ? ';
