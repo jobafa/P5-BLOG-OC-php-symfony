@@ -2,7 +2,7 @@
 
 namespace Models;
 
-require_once('Models/Manager.php');
+require_once ('Models/Manager.php');
 
 abstract class Model {
     
@@ -10,7 +10,7 @@ abstract class Model {
 
 		public function __construct()
 		{
-			//$this->db = dbConnect();
+			
 			$this->db = \Manager::getPdo();
 		}
 }

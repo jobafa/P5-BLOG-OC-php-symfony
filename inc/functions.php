@@ -1,6 +1,8 @@
 <?php
 
 
+/*****************************************
+
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -215,169 +217,6 @@ function checkUploadStatus($status,$post_image,$id = 0){
 									
 									 
 						} // END OF ULOADS ERRORS CHECKING
-}
-
-//**************************************************************************//
-//*Cheks if registred token is set and returns it*/
-/*if not generates the token and returns it*/
-//*@param string $name
- /* @return  string**/
-
-function get_token($nom = '')
-{
-	
-	if (isset($_SESSION[$nom.'_token'])) {
-		return $_SESSION[$nom.'_token'];
-    }
-
-	 if($nom == 'activation'){ // GENERATE TOKEN FOR ACCOUNT ACTIVATION
-		$token = bin2hex(random_bytes(35));
-		return $token;
-	 }
-	// GENERATE CSRF TOKEN 
-	$token = bin2hex(random_bytes(35));
-	$_SESSION[$nom.'_token'] = $token;
-	$_SESSION[$nom.'_token_time'] = time();
-	return $token;
-}
-
-
-//**************************************************************************//
-//*Cheks if registred token, lifetime token and received token are set, if tokens are equal and if lifetime is not over*/
-/*Then if referer is the same as the one passed in params and returns true*/
-//*@param int  string $temps, string $ , string $name
- /* @return  bool**/
-
-
-function check_token($temps, $referer, $nom = '')
-{
-		$expiredtime = (time() - $temps);
-
-		$_SESSION['expired_time'] = $expiredtime;
-		$token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-		if(isset($_SESSION[$nom.'_token']) && isset($_SESSION[$nom.'_token_time']) && isset($token)){
-			if($_SESSION[$nom.'_token'] == $token){
-				if($_SESSION[$nom.'_token_time'] >= $expiredtime){
-					
-					
-						if($_SERVER['HTTP_REFERER'] == $referer){
-							$error = "ras";
-							return $error ;
-						}else{
-							
-							$error = "referer";
-							return $error;
-						}
-				}else{
-
-						
-					$error = "expiredtoken";
-					return $error;
-				}
-			}else{
-				$error = "token";
-				return $error;
-			}
-		}else{
-
-			return false;
-		}
-}
-
-//**************************************************************************//
-//*generates the hidden input field for the token*/
-//*@param string $name
- /* @return string **/
-
-function get_token_field($nom) {
-	
-	$token = get_token($nom);
-	return '<input type="hidden" name="token" value="' . $token . '">';
-   
-}
-
-//**************************************************************************//
-//*sanitize $GET data*/
-//*@param string $data = $_GET
- /* @return ARRAY **/
-
-
-function sanitize_get_data($data){
-				
-		if (filter_has_var(INPUT_GET, 'action')) {
-
-
-			// sanitize action
-			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
-			$data['action'] = $clean_action ;
-			
-
-		}
-		if (filter_has_var(INPUT_GET, 'from')) {
-
-			// sanitize from
-			$clean_action = filter_var($data['from'], FILTER_SANITIZE_STRING);
-			$data['from'] = $clean_action ;
-
-		}
-
-		if (filter_has_var(INPUT_GET, 'controller')) {
-
-			// sanitize from
-			$clean_action = filter_var($data['controller'], FILTER_SANITIZE_STRING);
-			$data['controller'] = $clean_action ;
-
-		}
-
-		if (filter_has_var(INPUT_GET, 'email')) {
-
-			// sanitize email
-			$clean_action = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
-			$data['email'] = $clean_action ;
-
-		}
-		if (filter_has_var(INPUT_GET, 'token')) {
-
-			// sanitize email
-			$clean_action = filter_var($data['token'], FILTER_SANITIZE_STRING);
-			$data['token'] = $clean_action ;
-
-		}
-		if (filter_has_var(INPUT_GET, 'id')) {
-
-			// sanitize id
-			$clean_id = filter_var($data['id'], FILTER_SANITIZE_NUMBER_INT);
-
-			if ($clean_id) {
-				// validate id with options
-				$id = filter_var($clean_id, FILTER_VALIDATE_INT, ['options' => [
-					'min_range' => 1
-				]]);
-
-				$data['id'] = $id ;
-				
-			}
-			
-		}
-
-		if (filter_has_var(INPUT_GET, 'page')) {
-
-			// sanitize page
-			$clean_page = filter_var($data['page'], FILTER_SANITIZE_NUMBER_INT);
-
-			if ($clean_page) {
-				// validate page with options
-				$page = filter_var($clean_page, FILTER_VALIDATE_INT, ['options' => [
-					'min_range' => 1
-				]]);
-
-				$data['page'] = $page ;
-				
-			}
-			
-		}
-		return $data;
-
 }
 
 
@@ -621,47 +460,6 @@ function sanitize_get_data($data){
 			
         }
 
-		/**************************************************************************
-		#DISPLAY ACCOUNT ACTIVATION MESSAGE
-		#PARAMS $getactivationcode : GET ACTIVATION CODE, $activatedaccount : is account activated
-		*****************************************************************************/
-
-		function DisplayActivationMessage($getactivationcode, $activatedaccount){
-
-			// TEST ACTIVATION RESULT TO GENERATE ACTION MESSAGE TO BE DISPLAYAED TO USER
-
-			if( isset($activatedaccount ) && ($activatedaccount == true)){ // USER'ACTIVATION FROM MAIL LINK IS OK
-				
-					$_SESSION['actionmessage'] = 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;';
-					$_SESSION['alert_flag'] = 1;
-
-					header('Location: loginview-user.html#login');
-
-
-			}elseif( isset($activatedaccount ) && ($activatedaccount == false)){
-				$_SESSION['actionmessage'] = 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ';
-				$_SESSION['alert_flag'] = 1;
-
-				header('Location: signinview-user.html#inscription');
-			}
-
-			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
-
-				$_SESSION['actionmessage'] = 'Votre compte est d&egrave;j&agrave;  activ&eacute;';
-				$_SESSION['alert_flag'] = 1;
-				header('Location: loginview-user.html#login');
-
-			}
-			elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
-
-					$_SESSION['actionmessage'] = 'Mauvaise cl&eacute; d\'activativation';
-					$_SESSION['alert_flag'] = 0;
-
-					header('Location: signinview-user.html#inscription');
-
-			}
-
-		}
 
 
 	# CHECK IF THERE IS AN ALERT MESSAGE TO DISPLAY
@@ -704,6 +502,5 @@ function sanitize_get_data($data){
 		
 		return $message;
 }
-
 
 

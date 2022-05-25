@@ -119,12 +119,13 @@ class User extends Controller{
 			$email_ok = false;	
 		}
 
-		$action = $_GET['action'];
+		
+		$action = SessionManager::getInstance()->get('ACTION');
 
 			//generate a message according to the action processed
 			
 		initmessage($action,$email_ok);
-		//header('location: home.php#contact');
+		
 		\Http::redirect('home.php#contact');
 		
 		
@@ -172,8 +173,7 @@ class User extends Controller{
 
 				$cleanobject = new \Inc\Clean();
 				$check_token = $cleanobject->check_token(600,  $URL.'signinview-user.html', $token_name);
- /*var_dump($check_token);
-            exit;*/
+ 
 			}
 			if($action == 'useradd'){ // for admin user
 
@@ -217,8 +217,7 @@ class User extends Controller{
 			
 			if(empty($this->errors)){ // NO ERRORS GO ON PROCESS
 	
-			//$userManager = new \Models\UserManager(); // Objet creation
-			
+						
 			// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
 
           	$pseudo =  $data['pseudo'];
@@ -234,7 +233,7 @@ class User extends Controller{
 			
 			if( null !== $request->getFile()){
 
-				$file = new \Inc\File($_FILES);
+				$file = new \Inc\File();
 				
 				
 
@@ -367,8 +366,7 @@ class User extends Controller{
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		//$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
-		
+				
 		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/useractivation-".$id."-".$token. "-user.html\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		mail($email, $subject, $message, $headers);
@@ -635,7 +633,7 @@ class User extends Controller{
 						$postid = SessionManager::getInstance()->get('POSTID');
 						
 						\Http::redirect(' frontpost-'.$postid.'.html#post');
-						//exit;
+						
 						
 					}else{// IF  DOES NOT COME FROM A POST VIEW : SEND TO GUEST DASHBOARD PAGE
 
@@ -724,7 +722,7 @@ class User extends Controller{
 
 			// CHECK LOGIN CSRF TOKEN
 
-			//$check_token = check_token(600,  $URL.'passresetrequest.html', $token_name);
+			
 			SessionManager::getInstance()->sessionvarUnset('errors');
 		
 			// CHECK LOGIN CSRF TOKEN
@@ -741,7 +739,7 @@ class User extends Controller{
 				'email' => 'email'
 				];
 
-			//$data = sanitize_inputs($inputs,$fields);
+			
 
 			$rules = [
 				'email' => 'required'
@@ -836,22 +834,17 @@ class User extends Controller{
 						SessionManager::getInstance()->set('LINK_EMAIL', $link_email);
 						SessionManager::getInstance()->set('LINK_TOKEN', $link_token);
 						
-						//header('Location: passreinitnew.html');
 						\Http::redirect('passreinitnew-user.html');
-						//require('view/frontend/passreinitView.php');
+						
 				}else{
 						
 						initmessage($action,$verifyemailtoken);
-						//require('view/frontend/passresetView.php');
+						
 						\Http::redirect('passresetrequest-user.html');
 
 				}
 
-				//require('view/frontend/passreinitView.php');
-				//header('Location: passreinitnew.html');
 				
-
-				//header('location: passreinitialisation.html');
 			}
 
         }
@@ -915,20 +908,17 @@ class User extends Controller{
 						
 						$newpass = $hash;
 
-						//$userManager = new \Model\UserManager(); // Creation of objet
-
-
 						$updateNewPass = $this->model->updatePass($newpass, $link_email, $link_token);
 
 						
-						$action  = $session->get('ACTION');
+						$action  = SessionManager::getInstance()->get('ACTION');
 
 						initmessage($action,$insertNewPass);
 
 						if ($updateNewPass) 
 						{ 
 							
-							$action  = $session->get('ACTION');
+							$action  = SessionManager::getInstance()->get('ACTION');
 
 							initmessage($action,$updateNewPass);
 							
@@ -936,7 +926,7 @@ class User extends Controller{
 
 						}else{
 						
-						$action  = $session->get('ACTION');
+						$action  = SessionManager::getInstance()->get('ACTION');
 						initmessage($action,$updateNewPass = false);
 
 						
@@ -956,9 +946,9 @@ class User extends Controller{
 		$subject = "Réinitialisation de votre Mot de Passe";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		//$message = "Bonjour " . $pseudo. ", Pour Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=passreinitialisation&email=". $email."&token=" . $passreset_token . "\r\n\r\n----------------------.";
+		
 		$message = "Bonjour " . $pseudo. ", Afin de procéder à la Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/passreinitialisation-". $email."-". $passreset_token . "-user.html\r\n\r\n----------------------.";
-		//$message = wordwrap($message, 70, "\r\n");
+		
 		mail($email, $subject, $message, $headers);
 		
 	}

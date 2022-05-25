@@ -2,7 +2,7 @@
 
 namespace Models;
 
-//require_once("model/Manager.php");
+
 require_once('Models/Model.php');
 
 class PostManager extends Model
@@ -14,13 +14,7 @@ class PostManager extends Model
 		private $post_content ;
 		private $is_enabled ;
 
-		/*private $db;
-
-		public function __construct()
-		{
-			$this->db = dbConnect();
-		}
-		*/
+		
 
 	/**
 	 * Get total of Posts for Pagination
@@ -29,7 +23,7 @@ class PostManager extends Model
 
 	public function gettotalPosts( $ispublished)
     {
-			//$db = $this->dbConnect();
+			
 			try
 				{	
 					$sql = $this->db->query('SELECT count(id) AS id FROM posts WHERE is_published = "'.$ispublished.'"')->fetchAll();
@@ -40,7 +34,7 @@ class PostManager extends Model
 				}
 			catch (Exception $e)
 				{
-					echo 'Connexion �chou�e : ' . $e->getMessage();
+					echo 'Connexion échouée : ' . $e->getMessage();
 				}					
 					
 	}									
@@ -52,7 +46,7 @@ class PostManager extends Model
 
     public function getAll($post_userid = null, $from, $is_published = null, $paginationStart, $limit)
     {
-        //$db = $this->dbConnect();
+        
 		try
 		{
 			$req =('
@@ -63,7 +57,7 @@ class PostManager extends Model
 						if ( isset($post_userid) && ($post_userid > 0) && ( ! isset  ($from))) {
 	
 							$req.= ' WHERE user_id = "'.$post_userid.'" ORDER BY creation_date DESC ';
-							$result = $db->query($req);
+							$result = $this->db->query($req);
 							
 						}elseif( isset($is_published) && ($is_published != null)){
 
@@ -82,7 +76,7 @@ class PostManager extends Model
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion �chou�e : ' . $e->getMessage();
+			echo 'Connexion échouée : ' . $e->getMessage();
 		}					
 			
 		return $result;			
@@ -96,8 +90,7 @@ class PostManager extends Model
 
   	public function get($postId, $is_published)
     {
-        //$db = $this->dbConnect();
-
+        
 		 
 		if($is_published == '1'){			
 
@@ -122,21 +115,21 @@ class PostManager extends Model
 
 	public function addPost( $post_userid,$post_title, $post_lede,$post_author,$post_content, $pimage_name,$is_published) 
 		{
-			$db = $this->dbConnect();
+			
        
            
-			$req = $db->prepare('INSERT INTO posts(user_id, title, lede, author, content,image, is_published, creation_date, update_date) VALUES( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
+			$req = $this->db->prepare('INSERT INTO posts(user_id, title, lede, author, content,image, is_published, creation_date, update_date) VALUES( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
 			$resultat = $req->execute(array($post_userid,$post_title,$post_lede,$post_author,$post_content, $pimage_name,$is_published));
 							
 			return $resultat;
-				//}
+				
             
         }
 
 
 		 public function updatePost($idpost, $data, $postimage = '') {
 	
-			$db = $this->dbConnect();
+			
 
 			try
 		{
@@ -152,7 +145,7 @@ class PostManager extends Model
 			$sql.= ' WHERE id = :id'	;
 			
 
-            $req = $db->prepare($sql);
+            $req = $this->db->prepare($sql);
 			
 			if($postimage == '')	{
 				
@@ -176,7 +169,7 @@ class PostManager extends Model
 		}
 			catch (Exception $e)
 		{
-			echo 'Connexion �chou�e : ' . $e->getMessage();
+			echo 'Connexion échouée : ' . $e->getMessage();
 		}	
 			return $resultat;
         }
@@ -189,18 +182,18 @@ class PostManager extends Model
 
 	public function publishPost($id, $ispublished)
 	{
-		$db = $this->dbConnect();
+		
 	 try
 	{
 		
 		$sql = 'UPDATE posts SET is_published = "'.$ispublished.'"  WHERE id = '.$id;
-		$resultat = $db->query($sql);
+		$resultat = $this->db->query($sql);
 		
 		
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion �chou�e : ' . $e->getMessage();
+		echo 'Connexion échouée : ' . $e->getMessage();
 	}	
 		return $resultat;
 	}
@@ -212,17 +205,17 @@ class PostManager extends Model
 
 	public function deletePost($postId, $userid) {
 
-		$db = $this->dbConnect();
+		
 		
 		$query = 'DELETE FROM posts';
 		if ($postId != null) {
 			$query.= ' WHERE posts.id = ? ';
-			$deleteposts = $db->prepare($query);
+			$deleteposts = $this->db->prepare($query);
 			$resultat = $deleteposts->execute(array($idpost));
 			
 		}elseif ($userid != null) {
 			$query.= '  WHERE posts.user_id = ? ';
-			$deleteposts = $db->prepare($query);
+			$deleteposts = $this->db->prepare($query);
 			$resultat = $deleteposts->execute(array($userid));
 		}
 		

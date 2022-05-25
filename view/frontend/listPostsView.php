@@ -65,9 +65,6 @@ $texte = substr($texte, 0, 150);
 
 						<?= $cleanobject->escapeoutput($data['lede']) ?>
 
-
-
-						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
 					</h6>
 					
 					<p class=" mb-1">

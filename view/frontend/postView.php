@@ -85,9 +85,6 @@ if(null !== $SessionManager->get('PSEUDO')){ // IF USER CONNECTED ENABLE COMMENT
 
 						<?= $cleanobject->escapeoutput($post['lede']) ?>	
 
-
-
-						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
 					
 											
 										</div>
