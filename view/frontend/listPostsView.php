@@ -1,6 +1,8 @@
 <?php 
 
-//$title = 'Mon blog';  
+
+$cleanobject = new \Inc\Clean();
+
 
 //ob_start(); 
 
@@ -8,7 +10,9 @@
 while ($data = $posts->fetch())
 {
 
-$texte=nl2br(htmlentities($data['content']));
+
+$texte=nl2br($cleanobject->escapeoutput($data['content']));
+
 $texte = substr($texte, 0, 150);
 ?>
 <div class="container">
@@ -17,7 +21,11 @@ $texte = substr($texte, 0, 150);
 				<div class="profile-card-header mt-2">
 					<h5 class="text-capitalize text-bluedev">
 
-							<?= htmlentities($data['title'], ENT_QUOTES) ?>
+
+
+							<?= $cleanobject->escapeoutput($data['title']) ?>
+
+
 
 							
 					</h5>
@@ -26,17 +34,25 @@ $texte = substr($texte, 0, 150);
 				<div class="col-md-6 col-lg-4 mx-2 mb-3">
 						<div class="profile-img my-3">
 
-							<IMG SRC="uploads/images/<?= htmlentities($data['image'], ENT_QUOTES) ?>"  width="320" height="250" BORDER=0 ALT="">
+
+
+							<IMG SRC="uploads/images/<?= $cleanobject->escapeoutput($data['image']) ?>"  width="320" height="250" BORDER=0 ALT="">
+
+
 
 						</div>
 				</div>
 				<div class="col-md-6 col-lg-4 mx-5 my-3 justify-content-center">
 				<h5 class="text-capitalize text-bluedev">
 
-							<?= htmlentities($data['title'], ENT_QUOTES) ?>
+
+
+							<?= $cleanobject->escapeoutput($data['title']) ?>
 							
 					</h5>
-												<em class="text-md-start text-muted mb-3">Par <?= htmlentities($data['author'], ENT_QUOTES) ?><BR>le <?= $data['update_date_fr'] ?> </em>
+												<em class="text-md-start text-muted mb-3">Par <?= $cleanobject->escapeoutput($data['author']) ?><BR>le <?= $data['update_date_fr'] ?> </em>
+
+
 
 
 				</div>
@@ -46,7 +62,10 @@ $texte = substr($texte, 0, 150);
 					
 					<h6>
 
-						<?= htmlentities($data['lede'], ENT_QUOTES) ?>
+
+						<?= $cleanobject->escapeoutput($data['lede']) ?>
+
+
 
 						<!-- <em>le <?= $data['creation_date_fr'] ?></em> -->
 					</h6>
@@ -77,7 +96,11 @@ $posts->closeCursor();
                 <li class="page-item <?php if($page <= 1){ echo 'disabled'; } ?>">
                     <a class="page-link"
 
-                        href="<?php if($page <= 1){ echo '#'; } else { echo "listposts-front-" . $prev; } ?>-post.html#posts">Previous</a>
+
+
+                        href="<?php if($page <= 1){ echo '#'; } else { echo "listposts-front-" . $prev; } ?>-post.html#posts">Précédent</a>
+
+
 
                 </li>
 
@@ -92,9 +115,12 @@ $posts->closeCursor();
                 <li class="page-item <?php if($page >= $totoalPages) { echo 'disabled'; } ?>">
 				 <a class="page-link"
 
-                        href="<?php if($page >= $totoalPages){ echo '#'; } else {echo "listposts-front-". $next; } ?>-post.html#posts">Next</a>
-                   <!--  <a class="page-link"
-                        href="<?php //if($page >= $totoalPages){ echo '#'; } else {echo "?action=listposts&from=front&page=". $next; } ?>">Next</a> -->
+
+
+                        href="<?php if($page >= $totoalPages){ echo '#'; } else {echo "listposts-front-". $next; } ?>-post.html#posts">Suivant</a>
+                   
+
+
 
                 </li>
             </ul>
@@ -103,11 +129,4 @@ $posts->closeCursor();
 
 
 
-
-<?php 
-
-//$content = ob_get_clean(); 
-//require('template.php'); 
-
-?>
 

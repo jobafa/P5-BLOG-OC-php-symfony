@@ -1,18 +1,6 @@
 <?php
 
-/*****************************************
 
-#redirects to the specified url
-
-****************************************
-function redirect(string $url): void {
-
-	header("Location: $url");
-	exit();
-
-}
-*/
-/*****************************************
 #CHECK IS LOGGED ADMIN
 
 *****************************************/
@@ -319,7 +307,6 @@ function sanitize_get_data($data){
 		if (filter_has_var(INPUT_GET, 'action')) {
 
 
-			
 			// sanitize action
 			$clean_action = filter_var($data['action'], FILTER_SANITIZE_STRING);
 			$data['action'] = $clean_action ;
@@ -414,7 +401,11 @@ function sanitize_get_data($data){
 				 }
 				else {
 
+
+
 					$_SESSION['actionmessage'] = 'Votre Commentaire a été enregisté et sera publié après Validation !';
+
+
 
 					$_SESSION['alert_flag'] = 1;
 				 }
@@ -532,7 +523,11 @@ function sanitize_get_data($data){
 				 }
 				else{
 
-					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise Ã  jour !';
+
+
+					$_SESSION['actionmessage'] = 'probl&eacute;me lors de la mise à jour !';
+
+
 
 					$_SESSION['alert_flag'] = 0;
 				 }
@@ -608,11 +603,9 @@ function sanitize_get_data($data){
 					if(($result == 'token') || ($result == 'referer') ){
 						$_SESSION['actionmessage'] = 'Vous ne pouvez pas faire cela !';
 						$_SESSION['alert_flag'] = 0;
-						//require('view/frontend/template.php');
-						//exit;
+						
 					}elseif($result == 'expiredtoken' ){
-						//echo 'ici aussi';
-						//exit;
+						
 						$_SESSION['actionmessage'] = ' Votre session est expir&eacute;e .  Merci recharger la page et de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 					}
@@ -621,11 +614,7 @@ function sanitize_get_data($data){
 						$_SESSION['actionmessage'] = ' Probl&egrave;me de token .  Merci de recommencer !';
 						$_SESSION['alert_flag'] = 0;
 				 }
-				/*else{
-					$_SESSION['actionmessage'] = 'Probl&egrave;me d\'envoi du mail  !';
-					$_SESSION['alert_flag'] = 0;
-				 }*/
-                
+				
                 break;
 			 
 			}
@@ -717,72 +706,4 @@ function sanitize_get_data($data){
 }
 
 
-/*function addImage_old($post_image){
 
-	if (isset($post_image) && ($post_image['error'] == 0))
-			{
-
-				$allowed_image_extension = array(	"png","jpg","jpeg");
-				
-				// Get image file extension
-				$file_extension = pathinfo($post_image["name"], PATHINFO_EXTENSION);
-	
-				// Validate file input to check if is not empty
-				if (! file_exists($post_image["tmp_name"])) {
-					//throw new Exception('Choose image file to upload!');
-					$response = array(
-						"type" => "error",
-						"message" => "Choose image file to upload."
-					);
-				}   
-				
-				// Validate file input to check if is with valid extension
-				else if (! in_array($file_extension, $allowed_image_extension)) {
-
-					//throw new Exception('Upload valiid images. Only PNG, JPG and JPEG are allowed!');
-					$message = "File upload stopped by extension";
-					$_SESSION['actionmessage'] = 'File upload stopped by extension';
-					$_SESSION['alert_flag'] = 0;
-					require('view/backend/addpostView.php');
-					
-				}   
-				
-				// Validate image file size
-				else if (($post_image["size"] > 2000000)) {
-					
-					$_SESSION['actionmessage'] = 'File upload stopped Size issue';
-					$_SESSION['alert_flag'] = 0;
-					
-					require('view/backend/addpostView.php');
-					
-				}   
-				
-				else {
-					$dossier = "uploads/images/" ;
-					$file_name = basename($post_image["name"]);
-					$target = $dossier.$file_name;
-					if (file_exists($target)) {
-						
-						$timestamp=time();
-						$file_name = $timestamp.'-'.$file_name;
-						$target = $dossier.$file_name;
-
-				    }
-					if (! empty($message)){
-						$_SESSION['actionmessage'] = $message;
-						$_SESSION['alert_flag'] = 0;
-						require('view/backend/addpostView.php');
-						
-					}else{
-						if (move_uploaded_file($post_image["tmp_name"], $target)) {
-							return $file_name;
-						} else {
-
-							return false;
-							
-						}
-					}
-				}
-			
-			}
-}*/
