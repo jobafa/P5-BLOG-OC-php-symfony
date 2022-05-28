@@ -1,5 +1,5 @@
 <?php
-
+use Inc\Request;
 class Application {
 
     public static function process(){
@@ -7,13 +7,17 @@ class Application {
         $controllerName = "Post";
         $action = "listposts";
 
-        if(!empty($_GET['controller'])){
-            $controllerName = ucfirst($_GET['controller']);
+        //$get = new \Inc\Method($_GET);
+        $request =  new \Inc\Request;
+        
+
+        if(!empty($request->getGet()->get('controller'))){
+            $controllerName = ucfirst($request->getGet()->get('controller'));
             
         }
 
-        if(!empty($_GET['action'])){
-            $action = $_GET['action'];
+        if(!empty($request->getGet()->get('action'))){
+            $action = $request->getGet()->get('action');
         }
 
         $controllerName = "\Controllers\\" . $controllerName;
