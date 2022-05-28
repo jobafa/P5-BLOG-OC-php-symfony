@@ -2,7 +2,7 @@
 
 namespace Controllers;
 
-require_once('Controllers/Controller.php');
+require_once'Controllers/Controller.php';
 
 use Inc\SessionManager;
 
@@ -140,11 +140,11 @@ class User extends Controller{
 			
 			if(isset($action) && ($action == "signinview")){
 						
-					require('view/frontend/signinView.php');
+					require'view/frontend/signinView.php';
 
 			}elseif(isset($action) && ($action == "adduserview")){
 
-					require('view/backend/adduserView.php');
+					require'view/backend/adduserView.php';
 
 			}
 
@@ -289,7 +289,7 @@ class User extends Controller{
 					}
 					catch(Exception $e) {
 						$errorMessage = $e->getMessage();
-						require('view/errorView.php');
+						require'view/errorView.php';
 				}
 				
 	}
@@ -504,7 +504,7 @@ class User extends Controller{
 
         public function loginView( ) {
 
-			require('view/frontend/loginView.php');
+			require'view/frontend/loginView.php';
 
         }
 
@@ -695,7 +695,7 @@ class User extends Controller{
 
         public function passresetRequest() {
 
-			require('view/frontend/passresetView.php');
+			require'view/frontend/passresetView.php';
 
         }
 
@@ -708,7 +708,7 @@ class User extends Controller{
 
         public function passreinitNew() {
 
-			require('view/frontend/passreinitView.php');
+			require'view/frontend/passreinitView.php';
 
         }
 
