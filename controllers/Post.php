@@ -73,7 +73,7 @@ class Post extends Controller{
 
 			if(SessionManager::getInstance()->get('ACTION') != 'frontpost'){ // IF COMING FROM ADMIN DASHBOARD
 
-				require('view/backend/postView.php');
+				require'view/backend/postView.php';
 				
 			}else{ // IF COMING FROM FRONTEND POST VIEW
 
