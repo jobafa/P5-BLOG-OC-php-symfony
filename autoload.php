@@ -3,7 +3,7 @@
 spl_autoload_register ( function ($className) {
     
     $className = str_replace("\\","/", $className);
-    require_once("$className.php");});
+    require_once"$className.php";});
     //require_once("controllers/$classname.php")
    /* $sources = array("Controllers/$className.php", "models/$className.php ",  "inc/$className.php " );
     
