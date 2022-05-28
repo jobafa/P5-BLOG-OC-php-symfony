@@ -2,6 +2,7 @@
 namespace Inc;
 
 use Models\Model;
+use Inc\SessionManager;
 
 class Clean  {
 
@@ -499,11 +500,11 @@ class Clean  {
         //*@param string $name
         /* @return  string**/
 
-        public function get_token($nom = '')
+          public function get_token($nom = '')
         {
             
-            if (isset($_SESSION[$nom.'_token'])) {
-                return $_SESSION[$nom.'_token'];
+            if (SessionManager::getInstance()->get($nom.'_token')) {
+                return SessionManager::getInstance()->get($nom.'_token');
             }
 
             if($nom == 'activation'){ // GENERATE TOKEN FOR ACCOUNT ACTIVATION
@@ -512,8 +513,8 @@ class Clean  {
             }
             // GENERATE CSRF TOKEN 
             $token = bin2hex(random_bytes(35));
-            $_SESSION[$nom.'_token'] = $token;
-            $_SESSION[$nom.'_token_time'] = time();
+            SessionManager::getInstance()->set($nom.'_token', $token);
+            SessionManager::getInstance()->set($nom.'_token_time', time());
             return $token;
         }
 
@@ -529,11 +530,14 @@ class Clean  {
         {
                 $expiredtime = (time() - $temps);
                 
-                $_SESSION['expired_time'] = $expiredtime;
+                //$_SESSION['expired_time'] = $expiredtime;
+                SessionManager::getInstance()->set('expired_time', $expiredtime);
+
                 $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-                if(isset($_SESSION[$nom.'_token']) && isset($_SESSION[$nom.'_token_time']) && isset($token)){
-                    if($_SESSION[$nom.'_token'] == $token){
-                        if($_SESSION[$nom.'_token_time'] >= $expiredtime){
+
+                if((SessionManager::getInstance()->get($nom.'_token')) && (SessionManager::getInstance()->get($nom.'_token_time')) && isset($token)){
+                    if(SessionManager::getInstance()->get($nom.'_token') == $token){
+                        if(SessionManager::getInstance()->get($nom.'_token_time') >= $expiredtime){
                             
                             
                                 if($_SERVER['HTTP_REFERER'] == $referer){
@@ -558,8 +562,9 @@ class Clean  {
 
                     return false;
                 }
-        }
 
+            
+        }
         //**************************************************************************//
         //*generates the hidden input field for the token*/
         //*@param string $name
