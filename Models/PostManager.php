@@ -3,7 +3,7 @@
 namespace Models;
 
 
-require_once'Models/Model.php';
+require_once('Models/Model.php');
 
 class PostManager extends Model
 {
@@ -34,7 +34,9 @@ class PostManager extends Model
 				}
 			catch (Exception $e)
 				{
-					echo 'Connexion échouée : ' . $e->getMessage();
+					//echo 'Connexion échouée : ' . $e->getMessage();
+					$errorMessage = $e->getMessage();
+    				require'view/errorView.php';
 				}					
 					
 	}									
@@ -76,7 +78,9 @@ class PostManager extends Model
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			//echo 'Connexion échouée : ' . $e->getMessage();
+			$errorMessage = $e->getMessage();
+    		require'view/errorView.php';
 		}					
 			
 		return $result;			
@@ -169,7 +173,9 @@ class PostManager extends Model
 		}
 			catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			//echo 'Connexion échouée : ' . $e->getMessage();
+			$errorMessage = $e->getMessage();
+    		require'view/errorView.php';
 		}	
 			return $resultat;
         }
@@ -193,7 +199,9 @@ class PostManager extends Model
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion échouée : ' . $e->getMessage();
+		//echo 'Connexion échouée : ' . $e->getMessage();
+		$errorMessage = $e->getMessage();
+    	require'view/errorView.php';
 	}	
 		return $resultat;
 	}
