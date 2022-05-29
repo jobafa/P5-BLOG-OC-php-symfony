@@ -3,7 +3,7 @@
 namespace Models;
 
 
-require_once('Models/Model.php');
+require_once'Models/Model.php';
 
 class CommentManager extends Model
 {
@@ -30,7 +30,7 @@ class CommentManager extends Model
 													);
 													
 														
-														$comments = $db->prepare($query);
+														$comments = $this->db->prepare($query);
 														$comments->execute(array($userid));
 		}else{
 					$query = ('
