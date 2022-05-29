@@ -534,13 +534,16 @@ class Clean  {
                 SessionManager::getInstance()->set('expired_time', $expiredtime);
 
                 $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
+		
+		 $server = new \Inc\Server();
 
                 if((SessionManager::getInstance()->get($nom.'_token')) && (SessionManager::getInstance()->get($nom.'_token_time')) && isset($token)){
                     if(SessionManager::getInstance()->get($nom.'_token') == $token){
                         if(SessionManager::getInstance()->get($nom.'_token_time') >= $expiredtime){
                             
                             
-                                if($_SERVER['HTTP_REFERER'] == $referer){
+                                //if($_SERVER['HTTP_REFERER'] == $referer){
+				if($server->get_SERVER('HTTP_REFERER') == $referer){
                                     $error = "ras";
                                     return $error ;
                                 }else{
