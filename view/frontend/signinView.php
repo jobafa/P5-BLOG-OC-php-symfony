@@ -1,23 +1,25 @@
 <?php
+use Inc\SessionManager;
 
 
 // GET THE HIDEN FIELD WITH CRSF TOKEN
+$SessionManager = new \Inc\SessionManager($_SESSION);
 $signuptoken = new \Inc\Clean();
-//var_dump($signuptoken);
+
+
 $token_field = $signuptoken->get_token_field('newuser');
+
 
 ob_start(); 
 $title = "Inscription Utilisateur";
 ?>
 <!-- Begin Page Content -->
 
-
 <div class="container-fluid" id = "inscription">
  <div class="card shadow mb-4">
 <div class="card-header py-3">
 	<h3 class="m-0 font-weight-bold text-info">Inscription Utilisateur</h3>
 </div>
-
 
 <?php
 
@@ -29,11 +31,12 @@ if (($message) && ($message != "")){
 
 	echo $message;
 
-	unset($_SESSION['actionmessage']);
-	unset($_SESSION['alert_flag']);
+	$SessionManager->sessionvarUnset('actionmessage');
+	$SessionManager->sessionvarUnset('alert_flag');
+	//unset($_SESSION['actionmessage']);
+	//unset($_SESSION['alert_flag']);
 }
 //}
-
 ?>
 
 
@@ -41,27 +44,27 @@ if (($message) && ($message != "")){
     <div class="card card-login mx-auto my-3 px-0">
       <div class="card-body">
 			<?php
-					if(isset($_SESSION['errors'] )){
-				?>
-						<div class="alert  alert-danger my-2 alert-dismissible fade show" role="alert">
-						  <em>
-						  <?php
 
-
-								foreach($_SESSION['errors'] as $key=>$value){
-
-									echo $value.'<BR>';
-								}
-							?>
-						  </em>
-					  <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>
-			<?php	
-			}
+		if(null !== $SessionManager->get('errors')){
 			?>
+				<div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
+					<em>
+				<?php
+						
+							foreach($SessionManager->get('errors') as $key=>$value){
 
+								echo $value.'<BR>';
+							}
+						
+					?>
+					</em>
+					<button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+		<?php	
+		}
+		?>
+			
 			<form enctype="multipart/form-data" action="index.php?action=usersignin&controller=user" method="post">
-
 				<div class="form-group">
 					<label for="pseudo" class="form-label"><i class="fas fa-user mx-1"></i>Pseudo</label><br />
 					<input type="text"  class="form-control" id="pseudo" name="pseudo" value="" required />
@@ -79,11 +82,9 @@ if (($message) && ($message != "")){
 					<input type="file" class="form-control py-1" id="photo" name="photo" />
 				</div>
 				<div class="g-recaptcha" data-sitekey="6LcRt9UeAAAAANoCcOoFihVp2eShv5YpYQia9Aw1"></div>
-
 				
 						<?= $token_field;?>
 				
-
 				<div class="form-group my-3">
 					<input   type="submit" class="btn btn-info" />
 				</div>
