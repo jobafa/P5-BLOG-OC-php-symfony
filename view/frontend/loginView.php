@@ -28,7 +28,7 @@ ob_start(); ?>
 
 			if (($message) && ($message != "")){
 
-				echo escapeoutput($cleanobject->$message);
+				echo $cleanobject->escapeoutput($message);
 
 				$SessionManager->sessionvarUnset('actionmessage');
 				$SessionManager->sessionvarUnset('alert_flag');
@@ -44,7 +44,7 @@ ob_start(); ?>
 							
 								foreach($SessionManager->get('errors') as $key=>$value){
 		
-									echo escapeoutput($cleanobject->$value).'<BR>';
+									echo $cleanobject->escapeoutput($value).'<BR>';
 								}
 							//}
 						?>
@@ -73,7 +73,7 @@ ob_start(); ?>
 							
           <button type="submit" class="btn btn-primary my-3">Se connecter</button>
 		  <div class="content-fluid alert-info  py-1 px-1 ">
-		  <p><small><a class="text-secondary mx-2 " href="passresetrequest-user.html#passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <!-- <a class=" text-secondary mx-2" href="index.php?action=signinview"> --><a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></small></p>
+		  <p><small><a class="text-secondary mx-2 " href="passresetrequest-user.html#passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></small></p>
 
 		   </div>
 
