@@ -2,7 +2,7 @@
 
 namespace Models;
 
-require_once ('Models/Manager.php');
+require_once 'Models/Manager.php';
 
 abstract class Model {
     
