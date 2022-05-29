@@ -210,7 +210,7 @@ try {
 					
 					if (isset($id) && $id > 0) {
 
-						if (!empty($pseudo) && !empty($_POST['comment'])) {
+						if (!empty($pseudo) && !empty($post->get('comment'))) {
 
 							//$userid = $_SESSION['USERID'] ;
 							//$usrid = $session->get('USERID');
@@ -219,7 +219,7 @@ try {
 
 							//\Application::process();
 							//exit;
-							$controller->addComment($id, $pseudo, $_POST['comment'],$userid );
+							$controller->addComment($id, $pseudo, $post->get('comment'),$userid );
 
 							
 
@@ -486,7 +486,7 @@ try {
 
 				elseif ($action == 'userupdate') {
 				
-						$post = $_POST;
+						//$post = $_POST;
 						userUpdate($post,$id);
 				}
 
