@@ -14,14 +14,14 @@ require_once __DIR__.'/config/config.php';
 //require_once __DIR__.'/controllers/Post.php';
 //require_once __DIR__.'/controllers/Comment.php';
 use Inc\SessionManager;
-//$request =  new \Inc\Request;
+$request =  new \Inc\Request;
 //\Application::process();
 $controller = \Application::process();
 
-$get = new \Inc\Method($_GET);
-$post = new \Inc\Method($_POST);
+//$get = new \Inc\Method($_GET);
+//$post = new \Inc\Method($_POST);
 
-if( ! isset($_SESSION) ) {
+if( null !== $request->getSession()) {
 	session_start();
 	//$session = new \Inc\SessionManager($_SESSION); // create session instance
 }
@@ -35,9 +35,9 @@ if( ! isset($_SESSION) ) {
 //$id =  $_GET['id'];
 //if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
 	
-if (null !== $get->all()){
+if (null !== $request->getGet()->all()){
 	
-	//var_dump($_GET);
+	//var_dump($request->getGet()->all());
 	 //EXIT;
 	//$data_inputs = $_GET;
 	$requestmethod = 'GET';
@@ -45,14 +45,14 @@ if (null !== $get->all()){
 	// SANITIZE AND VALIDATE DATA
 
 	$cleandata = new \Inc\Clean();
-	$data_inputs = $cleandata->sanitize_get_data( $get->all());
+	$data_inputs = $cleandata->sanitize_get_data( $request->getget()->all());
 
 	//$get = new \Inc\Method($data_inputs);
 
 	//$get->all() = $data_inputs;
 //}elseif (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')){
 
-}elseif (null !== $post->all()){
+}elseif (null !== $request->getPost()->all()){
 
 	//$post = $_POST;
 	//$post = new \Inc\Method($_POST);
@@ -72,28 +72,28 @@ if (null !== $get->all()){
 	$controller = \Application::process();
 }*/
 //if(isset($_GET['action'])){
-if($get->get('action')){
+if($request->getGet()->get('action')){
 	//var_dump($get->get('action'));
 	//exit;
 	//$action = strtolower($_GET['action']);
-	$action = strtolower($get->get('action'));
+	$action = strtolower($request->getGet()->get('action'));
 	sessionmanager::getinstance()->set('ACTION', $action);
 	//$action  = sessionmanager::getinstance()->get('ACTION');
 }
 
 //if (isset($_GET['id']) && ($_GET['id'] > 0)){
-if ( ( $get->get('id') ) && ( $get->get('id') > 0 )){
+if ( ( $request->getGet()->get('id') ) && ( $request->getGet()->get('id') > 0 )){
 
-	$id = $get->get('id');
+	$id = $request->getGet()->get('id');
 	
 	//$id =  $_GET['id'];
 }
 
 //if (isset($_GET['email'])){
-if($get->get('email')){
+if($request->getGet()->get('email')){
 	
 	//$link_email =  $_GET['email'];
-	$link_email = $get->get('email');
+	$link_email = $request->getGet()->get('email');
 
 	
 		
@@ -101,10 +101,10 @@ if($get->get('email')){
 
 
 //if (isset($_GET['token'])){
-if($get->get('token')){
+if($request->getGet()->get('token')){
 	
 	//$link_token =  $_GET['token'];
-	$link_token = $get->get('token');
+	$link_token = $request->getGet()->get('token');
 
 	
 		
@@ -112,10 +112,10 @@ if($get->get('token')){
 
 
 //if (isset($_GET['usertypeid']) && ($_GET['usertypeid'] > 0)){
-if ( ( $get->get('usertypeid') ) && ( $get->get('usertypeid') > 0 )){
+if ( ( $request->getGet()->get('usertypeid') ) && ( $request->getGet()->get('usertypeid') > 0 )){
 	
 	//$usertypeid =  $_GET['usertypeid'];
-	$usertypeid = $get->get('usertypeid');
+	$usertypeid = $request->getGet()->get('usertypeid');
 			
 }
 
@@ -123,33 +123,33 @@ if ( ( $get->get('usertypeid') ) && ( $get->get('usertypeid') > 0 )){
 // flag to check , after connection, where the user comes from and redirect him : post view or dashboard
 
 //if (isset($_GET['from'])){
-if($get->get('from')){
-	$from = sessionmanager::getinstance()->set('FROM', $get->get('from'));
+if($request->getGet()->get('from')){
+	$from = sessionmanager::getinstance()->set('FROM', $request->getGet()->get('from'));
 	//$_SESSION['FROM'] =  $_GET['from'];
 	//$from = $_SESSION['FROM'];
 			
 }
 
 //if (isset($_GET['idcomment']) && ($_GET['idcomment'] > 0)){
-if ( ( $get->get('idcomment') ) && ( $get->get('idcomment') > 0 )){
+if ( ( $request->getGet()->get('idcomment') ) && ( $request->getGet()->get('idcomment') > 0 )){
 	
 	//$id =  $_GET['idcomment'];
-	$id = $get->get('usertypeid');
+	$id = $request->getGet()->get('usertypeid');
 	
 }
 
 //if (isset($_GET['idpost']) && ($_GET['idpost'] > 0)){
-if ( ( $get->get('idpost') ) && ( $get->get('idpost') > 0 )){
+if ( ( $request->getGet()->get('idpost') ) && ( $request->getGet()->get('idpost') > 0 )){
 	
 	//$id =  $_GET['idpost'];
-	$id = $get->get('idpost');
+	$id = $request->getGet()->get('idpost');
 
 }
 
 //if (isset($_GET['page']) && ($_GET['page'] > 0)){
-if ( ( $get->get('page') ) && ( $get->get('page') > 0 )){
+if ( ( $request->getGet()->get('page') ) && ( $request->getGet()->get('page') > 0 )){
 
-	$getpage = $get->get('page');
+	$getpage = $request->getGet()->get('page');
 	//$getpage =  $_GET['page'];
 
 }else{
@@ -209,14 +209,14 @@ try {
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
 
-					$controller->checkContactdata($post, $URL, 'blogcontact');
+					$controller->checkContactdata($request->getPost(), $URL, 'blogcontact');
 
 				}
 				elseif ($action == 'addcomment') {
 					
 					if (isset($id) && $id > 0) {
 
-						if (!empty($pseudo) && !empty($post->get('comment'))) {
+						if (!empty($pseudo) && !empty($request->getPost()->get('comment'))) {
 
 							//$userid = $_SESSION['USERID'] ;
 							//$usrid = $session->get('USERID');
@@ -225,7 +225,7 @@ try {
 
 							//\Application::process();
 							//exit;
-							$controller->addComment($id, $pseudo, $post->get('comment'),$userid );
+							$controller->addComment($id, $pseudo, $request->getPost()->get('comment'),$userid );
 
 							
 
@@ -253,7 +253,7 @@ try {
 					//$controller = \Application::process();
 					//var_dump($controller);
 					//exit;
-					$controller->verifyLogin($post->all(), $URL, 'login');
+					$controller->verifyLogin($request->getPost()->all(), $URL, 'login');
 						
 				}
 				elseif ($action == 'userlogout') {
@@ -271,7 +271,7 @@ try {
 
 				elseif ($action == 'passreset') {
 					//$controller = new \Controllers\User();
-					$controller->passReset($post, $URL, 'passreset');
+					$controller->passReset($request->getPost(), $URL, 'passreset');
 					
 				}
 
@@ -300,9 +300,9 @@ try {
 
 				elseif ($action == 'newpass') {
 
-					if(isset($post)){
+					if(null !== $request->getPost()){
 						//$controller = new \Controllers\User();
-					$controller->getNewPass($post, $URL, 'newpass');
+					$controller->getNewPass($request->getPost(), $URL, 'newpass');
 						
 					}
 					
@@ -356,17 +356,17 @@ try {
 					
 					//$controller = new \Controllers\User();	
 					//\Application::process();
-					$controller->adduser($post, $URL, 'newuser');
+					$controller->adduser($request->getPost(), $URL, 'newuser');
 				}
 
 				elseif ($action == 'useractivation') {
 						
 						
-					if (null !== $get->get('token')){ // MEANS WE ARE COMING FROM USER'S ACTIVATION LINK
-						$token = $get->get('token');
+					if (null !== $request->getGet()->get('token')){ // MEANS WE ARE COMING FROM USER'S ACTIVATION LINK
+						$token = $request->getGet()->get('token');
 						$isactivated = NULL;
-					}elseif(null !== $get->get('isactivated')){ // MEANS WE ARE COMING FROM ADMIN DASHBOARD
-						$isactivated = $get->get('isactivated');		
+					}elseif(null !== $request->getGet()->get('isactivated')){ // MEANS WE ARE COMING FROM ADMIN DASHBOARD
+						$isactivated = $request->getGet()->get('isactivated');		
 						$token  = NULL;
 					}
 					
@@ -412,7 +412,7 @@ try {
 					listPostsUpdate();
 				}
 				elseif ($action == 'addpost') {
-					 if ((null !== $post->all()) && !empty($post->all())) {
+					 if ((null !== $request->getPost()->all()) && !empty($request->getPost()->all())) {
 
 							addPost();
 							
@@ -441,7 +441,7 @@ try {
 
 				}
 				elseif ($action == 'postactivation') {
-						$ispublished = $get->get('ispublished');
+						$ispublished = $request->getGet()->get('ispublished');
 						if($ispublished == 'on'){
 							$ispublished = '0';
 						}else{
@@ -493,7 +493,7 @@ try {
 				elseif ($action == 'userupdate') {
 				
 						//$post = $_POST;
-						userUpdate($post,$id);
+						userUpdate($request->getPost(),$id);
 				}
 
 				elseif ($action == 'userdelete') {
