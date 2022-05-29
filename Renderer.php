@@ -8,11 +8,11 @@ class Renderer{
         
         ob_start(); 
                 
-        require('view/'.$path.'.php');
+        require'view/'.$path.'.php';
         
         $content = ob_get_clean(); 
         
-        require('view/frontend/template.php'); 
+        require'view/frontend/template.php'; 
         
         
         }
