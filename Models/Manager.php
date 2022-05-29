@@ -24,7 +24,9 @@ public static function getPdo()
 				}
 				catch (PDOException $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+					//echo 'Connexion échouée : ' . $e->getMessage();
+					$errorMessage = $e->getMessage();
+    					require'view/errorView.php';
 				}				    
 				return self::$instance;
 			}
