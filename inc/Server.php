@@ -3,12 +3,12 @@ namespace Inc;
 
 class Server
 {
-    private $_SERVER;
+    private $server;
     
 
     public function __construct()
     {
-        $this->_SERVER = (isset($_SERVER)) ? $_SERVER : null;
+        $this->server = (isset($_SERVER)) ? $_SERVER : null;
     }
     /**
      * Returns a key from the superglobal,
@@ -20,9 +20,9 @@ class Server
     public function get_SERVER($key = null)
     {
         if (null !== $key) {
-            return (isset($this->_SERVER["$key"])) ? $this->_SERVER["$key"] : null;
+            return (isset($this->server["$key"])) ? $this->server["$key"] : null;
         } else {
-            return $this->_SERVER;
+            return $this->server;
         }
     }
     
