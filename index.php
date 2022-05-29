@@ -17,7 +17,9 @@ use Inc\SessionManager;
 //$request =  new \Inc\Request;
 //\Application::process();
 $controller = \Application::process();
+
 $get = new \Inc\Method($_GET);
+$post = new \Inc\Method($_POST);
 
 if( ! isset($_SESSION) ) {
 	session_start();
@@ -31,7 +33,9 @@ if( ! isset($_SESSION) ) {
 
 //$session = new \Inc\SessionManager($_SESSION); // create session instance
 //$id =  $_GET['id'];
-if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
+//if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
+	
+if (null !== $get->all()){
 	
 	//var_dump($_GET);
 	 //EXIT;
@@ -46,10 +50,12 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'GET')){
 	//$get = new \Inc\Method($data_inputs);
 
 	//$get->all() = $data_inputs;
-}elseif (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')){
+//}elseif (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST')){
+
+}elseif (null !== $post->all()){
 
 	//$post = $_POST;
-	$post = new \Inc\Method($_POST);
+	//$post = new \Inc\Method($_POST);
 	//$controller = \Application::process();
 	
 	$requestmethod = 'POST';
