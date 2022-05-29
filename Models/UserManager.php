@@ -2,7 +2,7 @@
 namespace Models;
 
 
-require_once'Models/Model.php';
+require_once('Models/Model.php');
 use Inc\SessionManager;
 
 class UserManager extends Model {
@@ -50,7 +50,9 @@ try
 		}
 				catch (Exception $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+					//echo 'Connexion échouée : ' . $e->getMessage();
+					$errorMessage = $e->getMessage();
+    				require'view/errorView.php';
 				}			
 		
 		
@@ -112,7 +114,9 @@ try
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion échouée : ' . $e->getMessage();
+		//echo 'Connexion échouée : ' . $e->getMessage();
+		$errorMessage = $e->getMessage();
+    	require'view/errorView.php';
 	}	
 		 $resultat = $req->fetch();
 		
@@ -145,7 +149,9 @@ try
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion échouée : ' . $e->getMessage();
+		//echo 'Connexion échouée : ' . $e->getMessage();
+		$errorMessage = $e->getMessage();
+    	require'view/errorView.php';
 	}	
 	
 	return $resultat;
@@ -173,7 +179,9 @@ try
 	}
 				catch (Exception $e)
 				{
-				echo 'Connexion �chou�e : ' . $e->getMessage();
+					//echo 'Connexion �chou�e : ' . $e->getMessage();
+					$errorMessage = $e->getMessage();
+					require'view/errorView.php';
 				}	
         $result = $obj->fetch();
 		
@@ -224,7 +232,9 @@ try
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion �chou�e : ' . $e->getMessage();
+			//echo 'Connexion �chou�e : ' . $e->getMessage();
+			$errorMessage = $e->getMessage();
+			require'view/errorView.php';
 		}	
     }
 
@@ -256,7 +266,9 @@ try
 			}
 			catch (Exception $e)
 			{
-			echo 'Connexion échouée : ' . $e->getMessage();
+				//echo 'Connexion échouée : ' . $e->getMessage();
+				$errorMessage = $e->getMessage();
+				require'view/errorView.php';
 			}			
 			
 			
@@ -287,7 +299,9 @@ try
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion �chou�e : ' . $e->getMessage();
+			//echo 'Connexion �chou�e : ' . $e->getMessage();
+			$errorMessage = $e->getMessage();
+			require'view/errorView.php';
 		}	
 		
 		
@@ -336,7 +350,9 @@ try
 	}
 	catch (Exception $e)
 	{
-	echo 'Connexion échouée : ' . $e->getMessage();
+		//echo 'Connexion échouée : ' . $e->getMessage();
+		$errorMessage = $e->getMessage();
+    	require'view/errorView.php';
 	}	
 		
 		return $result;
@@ -372,7 +388,9 @@ try
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			//echo 'Connexion échouée : ' . $e->getMessage();
+			$errorMessage = $e->getMessage();
+			require'view/errorView.php';
 		}	
 	
 		return $result;
@@ -395,7 +413,9 @@ try
 			}
 				catch (Exception $e)
 				{
-				echo 'Connexion �chou�e : ' . $e->getMessage();
+					//echo 'Connexion �chou�e : ' . $e->getMessage();
+					$errorMessage = $e->getMessage();
+					require'view/errorView.php';
 				}	
 			
             return $resultat;
