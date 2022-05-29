@@ -1,5 +1,6 @@
 <?php
 
+$server = new \Inc\Server();
 // Database connection
 
 /*define('DB_HOST', 'localhost');
@@ -13,7 +14,7 @@ define('DB_NAME', 'oc_p5blog');
 define('CF_EMAIL', 'contact@capdeco.com');
 define('BLOG_AUTHOR', 'A F');
 
-$servername = $_SERVER["SERVER_NAME"];
+$servername = $server->get_SERVER('SERVER_NAME');
 
 if (stristr($servername , "ocblog.capdeco.com")) {
 	//echo $_SERVER["SERVER_NAME"].'ere';
