@@ -1,19 +1,20 @@
 <?php
-namespace OC\PhpSymfony\Blog\Model;
+namespace Models;
 
 
-require_once("model/Manager.php");
+require_once('Models/Model.php');
+use Inc\SessionManager;
 
-class UserManager extends Manager {
+class UserManager extends Model {
 		
-		private $usertype_id;
+		/*private $usertype_id;
 		private $pseudo;
 		private $email;
 		private $token;
 		private $password;
 		private $userId;
 		private $id;
-		private $is_enabled ;
+		private $is_enabled ;*/
 
 
 		/**
@@ -24,7 +25,7 @@ class UserManager extends Manager {
 
 		public function registerUser($usertype_id, $pseudo, $email, $user_password, $photo, $token) {
 		$is_enabled = 1;
-		$db = $this->dbConnect();
+		
 
 		$userpassword = $user_password;
 
@@ -35,7 +36,7 @@ try
 				{
         $sql = 'INSERT INTO user(usertype_id, pseudo, email, password, photo, is_enabled, is_activated, creation_date, update_date) VALUES (:usertype_id, :pseudo, :email, :userpassword, :photo,  :is_enabled, :token, NOW(), NOW())';
 
-        $req = $db->prepare($sql);
+        $req = $this->db->prepare($sql);
 
         $resultat = $req->execute(array(
 			'usertype_id' => $usertype_id,
@@ -49,10 +50,11 @@ try
 		}
 				catch (Exception $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+				echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 				}			
 		
-		$_SESSION['LASTUSERID'] = $db->lastInsertId();
+		
+		SessionManager::getInstance($_SESSION)->set('LASTUSERID', $this->db->lastInsertId());
 		
 		return $resultat;
     }
@@ -77,13 +79,13 @@ try
 		
         //Get password and hash
 
-        $password = $post_password;
+        //$password = $post_password;
         $hash = $userEntry['password'];
 
         //Verify password
 
         if (password_verify($post_password, $hash)){
-			//echo 'oui';
+			
 			return $userEntry;
 		}else{
 		
@@ -98,19 +100,19 @@ try
 	 * @return object User
 	 */
 
-	//public function getUseractivationcode($userId, $token)
+	
 	public function getUseractivationcode($userid)
 	{
-		 $db = $this->dbConnect();
+		
 	try
 	{
-		 $req = $db->prepare('SELECT id, is_activated FROM user WHERE  id = :userid');
+		 $req = $this->db->prepare('SELECT id, is_activated FROM user WHERE  id = :userid');
          
 		 $resultat =$req->execute(array(":userid" => $userid)); 
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion échouée : ' . $e->getMessage();
+		echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 	}	
 		 $resultat = $req->fetch();
 		
@@ -125,32 +127,28 @@ try
 
 	public function userActivate($userid, $token = NULL)
 	{
-		$db = $this->dbConnect();
+		
 	 try
 	{
 		
-		//if(isset($token) && ($token != null)){ // ADD TEST FOR TOKEN LIFETIME
-
+		
 			
 			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userid';
 
-		/*}else{
+		
 
-			$sql = 'UPDATE user SET is_activated = :token  WHERE user.id = :userid';
-
-		}*/
-
-		$req = $db->prepare($sql);
+		$req = $this->db->prepare($sql);
 
         $resultat = $req->execute(array('userid' => $userid,
-															'token' => $token
-															)); 
+										'token' => $token
+										)); 
 	}
 	catch (Exception $e)
 	{
-		echo 'Connexion échouée : ' . $e->getMessage();
+		echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 	}	
-		return $resultat;
+	
+	return $resultat;
 	}
 
 	
@@ -163,19 +161,19 @@ try
     public function VerifyUserEmail($email) {
 
 
-		$db = $this->dbConnect();
+		
     try
 	{
 		$sql = 'SELECT * FROM user WHERE email = :email ';
         
 
-        $obj = $db->prepare($sql);
+        $obj = $this->db->prepare($sql);
 
         $obj->execute(array('email' => $email));
 	}
 				catch (Exception $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+				echo 'Connexion ï¿½chouï¿½e : ' . $e->getMessage();
 				}	
         $result = $obj->fetch();
 		
@@ -191,17 +189,18 @@ try
     public function VerifyEmailToken($link_email, $link_token) {
 
 
-		$db = $this->dbConnect();
+		
     try
 	{
 		$sql = 'SELECT pass_resetcode, pass_resetdate FROM user WHERE email = :link_email ';
         
 
-        $obj = $db->prepare($sql);
+        $obj = $this->db->prepare($sql);
 
         $obj->execute(array('link_email' => $link_email));
 	
         $result = $obj->fetch();
+
 		if($result){
 
 			if($result['pass_resetcode'] == $link_token){
@@ -211,7 +210,13 @@ try
 				}else{
 					$result = false;
 				}
+			}else{
+
+				$result = "tokenissue";
 			}
+		}else{
+
+			$result = "emailissue";
 		}
 		
 
@@ -219,7 +224,7 @@ try
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			echo 'Connexion ï¿½chouï¿½e : ' . $e->getMessage();
 		}	
     }
 
@@ -232,7 +237,7 @@ try
 	 public function resetPassTokenInsert($userid, $token)
 		{
 
-			$db = $this->dbConnect();
+			
 			try
 			{
 					$sql = 'UPDATE user SET pass_resetcode = ?, pass_resetdate = ? WHERE id = ? ';
@@ -244,14 +249,14 @@ try
 				 
 					$expDate = date("Y-m-d H:i:s",$expFormat);
  
-					$req = $db->prepare($sql);
+					$req = $this->db->prepare($sql);
 					$resultat = $req->execute(array($token,$expDate,$userid));
 	
 					return $resultat;
 			}
 			catch (Exception $e)
 			{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 			}			
 			
 			
@@ -267,12 +272,12 @@ try
 	{
 		
 
-			$db = $this->dbConnect();
+			
 		try
 		{
 			$req = 'UPDATE user SET password = :newpass where email = :link_email AND pass_resetcode = :link_token ';
 		
-			$res = $db->prepare($req);
+			$res = $this->db->prepare($req);
 			$result = $res->execute(array(
 															'newpass' => $newpass,
 															'link_email' => $link_email,
@@ -282,7 +287,7 @@ try
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			echo 'Connexion ï¿½chouï¿½e : ' . $e->getMessage();
 		}	
 		
 		
@@ -296,7 +301,7 @@ try
 	public function getUser($userid = null)
 	{
 
-		$db = $this->dbConnect();
+		
 	try
 	{
 		$sql = ('
@@ -319,19 +324,19 @@ try
 			);
 		if($userid != null){
 			$sql.= 'WHERE user.id = :id ';
-			$req = $db->prepare($sql);
+			$req = $this->db->prepare($sql);
 			$req->execute(array(':id' => $userid));
 			$result = $req->fetch();
 		}else{
 			$sql.= ' ORDER BY creation_date DESC ';
-			$req = $db->query($sql);
+			$req = $this->db->query($sql);
 			return $req;
 			
 		}
 	}
 	catch (Exception $e)
 	{
-	echo 'Connexion échouée : ' . $e->getMessage();
+	echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 	}	
 		
 		return $result;
@@ -346,7 +351,7 @@ try
 
 	public function userUpdateProfile($userid, $post, $photo)
 	{
-			$db = $this->dbConnect();
+			
 		try
 		{
 			$req = 'UPDATE user SET  ';
@@ -361,13 +366,13 @@ try
 			
 			$req .= 'photo = "'.$photo. '"';
 			$req .= ' WHERE id = ?';
-			$res = $db->prepare($req);
+			$res = $this->db->prepare($req);
 			
 			$result = $res->execute(array( $userid));
 		}
 		catch (Exception $e)
 		{
-			echo 'Connexion échouée : ' . $e->getMessage();
+			echo 'Connexion Ã©chouÃ©e : ' . $e->getMessage();
 		}	
 	
 		return $result;
@@ -380,17 +385,17 @@ try
 
 	public function deleteUser($userid) {
 
-            $db = $this->dbConnect();
+            
 			
 		try
 		{
 			$query = 'DELETE FROM user WHERE user.id = ? ';
-			$deleteuser = $db->prepare($query);
+			$deleteuser = $this->db->prepare($query);
 			$resultat = $deleteuser->execute(array($userid));
 			}
 				catch (Exception $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+				echo 'Connexion ï¿½chouï¿½e : ' . $e->getMessage();
 				}	
 			
             return $resultat;
