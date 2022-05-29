@@ -1,5 +1,9 @@
 <?php
-if( ! isset($_SESSION) ) session_start();
+//if( ! isset($_SESSION) ) session_start();
+if( null !== $request->getSession()) {
+	session_start();
+	//$session = new \Inc\SessionManager($_SESSION); // create session instance
+}
 ?>
 <!DOCTYPE html>
 <html lang="FR">
