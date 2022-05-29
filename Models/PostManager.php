@@ -3,7 +3,7 @@
 namespace Models;
 
 
-require_once('Models/Model.php');
+require_once'Models/Model.php';
 
 class PostManager extends Model
 {
