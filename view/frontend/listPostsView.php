@@ -60,20 +60,20 @@ $posts->closeCursor();
 <div class="row mt-5">
         <nav aria-label="Page navigation example mt-5">
             <ul class="pagination justify-content-center">
-                <li class="page-item <?php if($page <= 1){ print_r( 'disabled'); } ?>">
+                <li class="page-item <?php if($page <= 1){ echo 'disabled'; } ?>">
                     <a class="page-link"
-                        href="<?php if($page <= 1){ print_r( '#'); } else { print_r( "listposts-front-" . $prev); } ?>-post.html#posts">Précédent</a>
+                        href="<?php if($page <= 1){ echo '#'; } else { echo "listposts-front-" . $prev; } ?>-post.html#posts">Précédent</a>
                 </li>
 
                 <?php for($i = 1; $i <= $totoalPages; $i++ ): ?>
-                <li class="page-item <?php if($page == $i) {print_r( 'active'); } ?>">
+                <li class="page-item <?php if($page == $i) {echo 'active'; } ?>">
                     <a class="page-link" href="listposts-front-<?= $i; ?>-post.html#posts"> <?= $i; ?> </a>
                 </li>
                 <?php endfor; ?>
 
-                <li class="page-item <?php if($page >= $totoalPages) { print_r( 'disabled'); } ?>">
+                <li class="page-item <?php if($page >= $totoalPages) { echo 'disabled'; } ?>">
 				 <a class="page-link"
-                        href="<?php if($page >= $totoalPages){ print_r( '#'); } else {print_r( "listposts-front-". $next); } ?>-post.html#posts">Suivant</a>
+                        href="<?php if($page >= $totoalPages){ echo '#'; } else {echo "listposts-front-". $next; } ?>-post.html#posts">Suivant</a>
                    
                 </li>
             </ul>
