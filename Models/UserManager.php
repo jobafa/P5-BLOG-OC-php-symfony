@@ -2,7 +2,7 @@
 namespace Models;
 
 
-require_once('Models/Model.php');
+require_once'Models/Model.php';
 use Inc\SessionManager;
 
 class UserManager extends Model {
@@ -367,7 +367,7 @@ try
 
 	public function userUpdateProfile($userid, $post, $photo)
 	{
-			
+		
 		try
 		{
 			$req = 'UPDATE user SET  ';

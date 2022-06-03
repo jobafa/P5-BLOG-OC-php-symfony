@@ -18,15 +18,13 @@ public static function getPdo()
               \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
               \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
               ]);
-             
+              
             }
 						
 				}
 				catch (PDOException $e)
 				{
-					//echo 'Connexion échouée : ' . $e->getMessage();
-					$errorMessage = $e->getMessage();
-    					require'view/errorView.php';
+				echo 'Connexion échouée : ' . $e->getMessage();
 				}				    
 				return self::$instance;
 			}
