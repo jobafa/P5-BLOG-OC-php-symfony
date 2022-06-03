@@ -1,6 +1,9 @@
-<?php require'header.php'; 
+﻿<?php require'header.php'; 
 //require_once __DIR__.'/inc/SessionManager.php';
 use \Inc\SessionManager;
+use Controllers\User;
+
+$user = new \Controllers\User();
  // IF NO USER PICTURE USE DEFAULT PICTURE
 
 	  //if( isset($_SESSION['PHOTO']) && (null !== $_SESSION['PHOTO']) ){
@@ -45,10 +48,11 @@ use \Inc\SessionManager;
   // IF USER IS LOGGED USE THE WRITE ACTION ACCORDING TO THE USER TYPE ID
 
 //if(isset($_SESSION['USERTYPEID']) ){
-if( null !== SessionManager::getInstance()->get('USERTYPEID') ){
-	if(SessionManager::getInstance()->get('USERTYPEID') == 1){
+if( $user->is_Logged() ){
+
+	if($user->is_Admin()){
 		$useraction = "adminposts";
-	}elseif(SessionManager::getInstance()->get('USERTYPEID') == 3){
+	}elseif($user->is_Guest()){
 		$useraction = "mycomments";
 	}
 	?>

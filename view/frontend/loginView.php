@@ -1,11 +1,14 @@
-<?php 
+﻿<?php 
 
 
-$cleanobject = new \Inc\Clean();
+// GET THE HIDEN FIELD WITH CRSF TOKEN
+$logintoken = new \Inc\Clean();
+//use Inc\MessageDisplay;
+$messagedisplay = new \Inc\MessageDisplay();
+$SessionManager = new \Inc\SessionManager($_SESSION);
+$token_field = $logintoken->get_token_field('login');
 
-$token_field = $cleanobject->get_token_field('login');
 
-$SessionManager = new \Inc\SessionManager();
 
 ob_start(); ?>
 
@@ -24,11 +27,11 @@ ob_start(); ?>
 			
 			// CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
-			$message = is_alertMessage();
+			$message = $messagedisplay->is_alertMessage();
 
 			if (($message) && ($message != "")){
 
-				echo $cleanobject->escapeoutput($message);
+				echo $message;
 
 				$SessionManager->sessionvarUnset('actionmessage');
 				$SessionManager->sessionvarUnset('alert_flag');
@@ -44,9 +47,9 @@ ob_start(); ?>
 							
 								foreach($SessionManager->get('errors') as $key=>$value){
 		
-									echo $cleanobject->escapeoutput($value).'<BR>';
+									echo $value.'<BR>';
 								}
-							//}
+							
 						?>
 			  			</em>
 		  				<button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -65,7 +68,6 @@ ob_start(); ?>
             <label for="password">Password</label>
             <input class="form-control" type="password" placeholder="Mot de passe" name="password" required>
 			
-			
           </div>
 
 		  <?= $token_field;?>
@@ -73,7 +75,7 @@ ob_start(); ?>
 							
           <button type="submit" class="btn btn-primary my-3">Se connecter</button>
 		  <div class="content-fluid alert-info  py-1 px-1 ">
-		  <p><small><a class="text-secondary mx-2 " href="passresetrequest-user.html#passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></small></p>
+		  <p><small><a class="text-secondary mx-2 " href="passresetrequest-user.html#passresetrequest">J'ai oubli&eacute; mon Mot de Passe</a>Vous n'avez pas encore de compte <!-- <a class=" text-secondary mx-2" href="index.php?action=signinview"> --><a class=" text-secondary mx-2" href="signinview-user.html#inscription">Inscrivez Vous</a></small></p>
 
 		   </div>
 
@@ -85,6 +87,8 @@ ob_start(); ?>
   </div>
   </div>
  
+
+
 <?php $content = ob_get_clean(); 
 require'template.php';
 ?>

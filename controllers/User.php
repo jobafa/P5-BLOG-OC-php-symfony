@@ -5,10 +5,19 @@ namespace Controllers;
 require_once'Controllers/Controller.php';
 
 use Inc\SessionManager;
+use Inc\MessageDisplay;
+use Inc\FileUpload;
+
 
 class User extends Controller{
 
+	private $errors = [];
 	
+
+	protected $model;
+	
+    protected $modelName = \Models\UserManager::class;
+
 	private static $filters = array(
 	'string' => FILTER_SANITIZE_STRING,
 	'string[]' => [
@@ -24,15 +33,75 @@ class User extends Controller{
 	'url' => FILTER_SANITIZE_URL,
 	);
 
-	private $errors = [];
-	
+	/*private $messagedisplay;
 
-	protected $model;
-	
-    protected $modelName = \Models\UserManager::class;
+	public function __construct()
+	{
+		$this->$messagedisplay = new \Inc\MessageDisplay();
+	}*/
 
+	/*****************************************
+	#CHECK IS LOGGED 
+
+	*****************************************/
+
+	public function is_Logged(){
+
+		//if(isset($_SESSION['USERTYPEID'])){
+		if(null !== SessionManager::getInstance()->get('USERTYPEID')){
+
+			return true;
+
+		}else{
+
+			return false;
+
+		}
+	}
+
+
+
+	/*****************************************
+	#CHECK IS LOGGED ADMIN
+
+	*****************************************/
+
+	public function is_Admin(){
+
+		//if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
+		if((null !== SessionManager::getInstance()->get('USERTYPEID')) && (SessionManager::getInstance()->get('USERTYPEID') == 1)){
+
+			return true;
+
+		}else{
+
+			return false;
+
+		}
+	}
+
+	/*****************************************
+	#CHECK IS LOGGED ADMIN
+
+	*****************************************/
+
+	public function is_Guest(){
+
+		//if(isset($_SESSION['USERTYPEID']) && ($_SESSION['USERTYPEID'] == 1)){
+		if((null !== SessionManager::getInstance()->get('USERTYPEID')) && (SessionManager::getInstance()->get('USERTYPEID') == 3)){
+
+			return true;
+
+		}else{
+
+			return false;
+
+		}
+	}
+
+	
    
-    	/***********************************************
+    /***********************************************
 	 * Checking  contact form csrf token and sending the mail ***
 	 * @param  Parameter $contact-post, $URL, $token_name***
 	 * ***********************************************/
@@ -87,7 +156,7 @@ class User extends Controller{
 		
 	}
 
-		/**
+	/**
 	 * Sending  contact email  ****************
 	 * @param   $post, post inputs data
 	 * ***********************************/
@@ -96,8 +165,6 @@ class User extends Controller{
 	public function sendContactEmail($data)
 
 	{
-		
-
 		$name= $data['name'];
 		$email = $data['email'];
 		$subject = $data['subject'];
@@ -119,181 +186,179 @@ class User extends Controller{
 			$email_ok = false;	
 		}
 
-		
-		$action = SessionManager::getInstance()->get('ACTION');
+		$action = $_GET['action'];
 
 			//generate a message according to the action processed
 			
-		initmessage($action,$email_ok);
+		$this->$messagedisplay->initmessage($action,$email_ok);
 		
-		\Http::redirect('home.php#contact');
+		\Http::redirect('accueil.html#contact');
 		
 		
 	}
 
-			# **************
-        # User Add View
-        # **************
+	# **************
+	# User Add View
+	# **************
 
-		public function adduserview($action){
+	public function adduserview($action){
 
-			
-			if(isset($action) && ($action == "signinview")){
-						
-					require'view/frontend/signinView.php';
+		
+		if(isset($action) && ($action == "signinview")){
+					
+				require'view/frontend/signinView.php';
 
-			}elseif(isset($action) && ($action == "adduserview")){
+		}elseif(isset($action) && ($action == "adduserview")){
 
-					require'view/backend/adduserView.php';
+				require'view/backend/adduserView.php';
 
-			}
-
-			
 		}
+
+		
+	}
         
 		
 
-		# *****************************
-        # User Add : this function can be called
-		# from both front and back end
-		#@params $post, $URL, $token_name
-        # *****************************
+	# *****************************
+	# User Add : this function can be called
+	# from both front and back end
+	#@params $post, $URL, $token_name
+	# *****************************
 
-        public function adduser($post, $URL, $token_name) {
+	public function adduser($post, $URL, $token_name) {
+		
+		//  errors is the array that contains data input validation errors
+		
+		SessionManager::getInstance()->sessionvarUnset('errors');
+		$cleanobject = new \Inc\Clean();
+		$action = SessionManager::getInstance()->get('ACTION');
+
+		if($action == 'usersignin'){
+		
+			$usertypeid = "3"; // USER ROLE
+
 			
-			//  errors is the array that contains data input validation errors
+			$check_token = $cleanobject->check_token(600,  $URL.'signinview-user.html', $token_name);
+
+		}
+		if($action == 'useradd'){ // for admin user
+
+			$check_token = "ras";
+			$usertypeid = $post->get('usertype_id'); // USER ROLE
 			
-			SessionManager::getInstance()->sessionvarUnset('errors');
+		}
+		
+		$pseudo =  $post->get('pseudo');
+		$email =  $post->get('email');
+		$password =  $post->get('password');
 
-			$action = SessionManager::getInstance()->get('ACTION');
-
-			if($action == 'usersignin'){
-			
-				$usertypeid = "3"; // USER ROLE
-
-				$cleanobject = new \Inc\Clean();
-				$check_token = $cleanobject->check_token(600,  $URL.'signinview-user.html', $token_name);
- 
-			}
-			if($action == 'useradd'){ // for admin user
-
-				$check_token = "ras";
-				$usertypeid = $post->get('usertype_id'); // USER ROLE
-			}
-			
-			$pseudo =  $post->get('pseudo');
-			$email =  $post->get('email');
-			$password =  $post->get('password');
-
-			$inputs = [
-				'pseudo' => $pseudo,
-				'email' => $email,
-				'password' => $password,
-				'usertype_id' => $usertypeid
-				];
-
-			$fields = [
-				'pseudo' => 'string',
-				'email' => 'email',
-				'password' => 'string',
-				'usertype_id' => 'string'
-				
+		$inputs = [
+			'pseudo' => $pseudo,
+			'email' => $email,
+			'password' => $password,
+			'usertype_id' => $usertypeid
 			];
-			
-			$rules = [
-				'pseudo' => 'required',
-				//'email' => 'required',
-				'email' => 'required|email|unique:user,email',
-				'password' => 'required',
-				//'password' => 'required | secure',
-				'usertype_id' => 'required'
-			];				
-					
-					
 
-			$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'signinview', 'inscription');
+		$fields = [
+			'pseudo' => 'string',
+			'email' => 'email',
+			'password' => 'string',
+			'usertype_id' => 'string'
+			
+		];
+		
+		$rules = [
+			'pseudo' => 'required',
+			//'email' => 'required',
+			'email' => 'required|email|unique:user,email',
+			'password' => 'required',
+			//'password' => 'required | secure',
+			'usertype_id' => 'required'
+		];				
+				
+				
+
+		$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'signinview', 'inscription');
+
+		
+		
+		if(empty($this->errors)){ // NO ERRORS GO ON PROCESS
+
+				
+		// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
+
+		$pseudo =  $data['pseudo'];
+		$email =  $data['email'];
+		$password =  $data['password'];
+		$usertypeid = $data['usertype_id'];
+		
+		
+			
+		// CHECKING FILE UPLOAD
+		$request = new \Inc\Request();
+
+		
+		if( null !== $request->getFile()){
+
+			$file = new \Inc\File($_FILES);
+			$fileupload = new \Inc\FileUpload();
+			
+			
+
+			$status = $file->get('photo','error');
+			$post_image = $file->get('photo');
+
+
+			$photo = $fileupload->checkUploadStatus($status, $post_image);
+			
 
 			
+			if($photo == false){
+
+				$action = SessionManager::getInstance()->get('ACTION');
+
+				$this->UserRedirect($action);	
+
+			}
 			
-			if(empty($this->errors)){ // NO ERRORS GO ON PROCESS
-	
+		} // END OF  FILE UPLOAD CHECKING
+
+		try{
+
+					// Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
+								
+					
+					$is_enabled="1";
+
+					// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
+					
+					$token = $cleanobject->get_token('activation');
+					
+					$result = $this->model->registerUser($usertypeid, $pseudo, $email, $password, $photo, $token);
+
+					if ($result ) {
 						
-			// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
-
-          	$pseudo =  $data['pseudo'];
-			$email =  $data['email'];
-			$password =  $data['password'];
-			$usertypeid = $data['usertype_id'];
-			
-			
-				
-			// CHECKING FILE UPLOAD
-			$request = new \Inc\Request();
-
-			
-			if( null !== $request->getFile()){
-
-				$file = new \Inc\File();
-				
-				
-
-				$status = $file->get('photo','error');
-				$post_image = $file->get('photo');
-
-
-				$photo = checkUploadStatus($status, $post_image);
-				
-
-				
-				if($photo == false){
-
+						
+						$id = SessionManager::getInstance()->get('LASTUSERID');
+						
+						$this->UserActivationEmail( $email,$pseudo, $id,  $token);
+						
+						}
+						
+					
 					$action = SessionManager::getInstance()->get('ACTION');
 
-					$this->UserRedirect($action);	
-
+					$this->$messagedisplay->initmessage($action,$result); //generate a message according to the action in process
+					$this->UserRedirect($action);									 
+						
 				}
+				catch(Exception $e) {
+					$errorMessage = $e->getMessage();
+					require'view/errorView.php';
+			}
 				
-			} // END OF  FILE UPLOAD CHECKING
-
-			try{
-	
-						/*****************
-						** Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
-						**********************/
-
-					
-						
-						$is_enabled="1";
-
-						// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
-						
-						$token = $cleanobject->get_token('activation');
-					   
-						$result = $this->model->registerUser($usertypeid, $pseudo, $email, $password, $photo, $token);
-
-						if ($result ) {
-							
-							
-							$id = SessionManager::getInstance()->get('LASTUSERID');
-							
-							$this->UserActivationEmail( $email,$pseudo, $id,  $token);
-							
-						 }
-						 
-						
-						$action = SessionManager::getInstance()->get('ACTION');
-
-						initmessage($action,$result); //generate a message according to the action in process
-						$this->UserRedirect($action);									 
-						 
-					}
-					catch(Exception $e) {
-						$errorMessage = $e->getMessage();
-						require'view/errorView.php';
-				}
-				
+		}
 	}
-}
    
 	/**
 	 * Process data sanitize and validate 
@@ -332,6 +397,8 @@ class User extends Controller{
 
 				   // IF ADMIN LOGGED REDIRECT TO ADMIN ADDUSER VIEW
 				   $action = SessionManager::getInstance()->get('ACTION');
+				   //var_dump($action);
+				   //exit;
 				   $this->UserRedirect($action);	
 				   
 				   
@@ -345,7 +412,7 @@ class User extends Controller{
 			   $action = "tokenlife";
 			   
 			   //  INITIATE DISPLAY MESSAGE
-			   initmessage($action,$check_token);
+			   $this->$messagedisplay->initmessage($action,$check_token);
 			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token');
 			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token_time');
 			   
@@ -366,7 +433,8 @@ class User extends Controller{
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-				
+		//$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=useractivation&id=" . $id . "&link_emaill=" . $email . "&token=" . $token . "\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		
 		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/useractivation-".$id."-".$token. "-user.html\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		mail($email, $subject, $message, $headers);
@@ -482,7 +550,7 @@ class User extends Controller{
 
 	   }elseif($action == 'useradd'){
 
-		   \Http::redirect(' index.php?action=adduserview');
+		   \Http::redirect(' index.php?action=adduserview&controller=user');
 
 	   }elseif($action === "newpass"){
 
@@ -502,95 +570,95 @@ class User extends Controller{
 
 
 
-        public function loginView( ) {
+	public function loginView( ) {
 
-			require'view/frontend/loginView.php';
+		require'view/frontend/loginView.php';
 
-        }
-
-
-		# *********************************************
-        # Verify User  Login
-		#$post : form data , $URL : to check referer , $token_name
-        # ***********************************************
+	}
 
 
+	# *********************************************
+	# Verify User  Login
+	#$post : form data , $URL : to check referer , $token_name
+	# ***********************************************
 
-        public function verifyLogin($post, $URL, $token_name) {
 
+
+	public function verifyLogin($post, $URL, $token_name) {
+
+		$request =  new \Inc\Request;
+		SessionManager::getInstance()->sessionvarUnset('errors');
+		
+		// CHECK LOGIN CSRF TOKEN
+		$cleanobject = new \Inc\Clean();
+		$check_token = $cleanobject->check_token(600,  $URL.'loginview-user.html', $token_name);
+		
+		$email =  $post['email'];
+		$password =  $post['password'];
+
+		$inputs = [
+			'email' => $email,
+			'password' => $password
+		];
+
+		$fields = [
+			'email' => 'email',
+			'password' => 'string'
+		];
+
+		
+
+		$rules = [
+			'email' => 'required',
+			'password' => 'required'
+			//'email' => 'required|email|unique:user,email'
+		];
+		
+		$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'loginview','login');
+		
+		
+		
+		// VALIDATION OF FORM DATA IS OK / VERIFY USER  LOGIN AND PASSWORD
+		
+
+		if(empty($this->errors)){
+		
+
+			$action = SessionManager::getInstance()->get('ACTION');
 			
-			SessionManager::getInstance()->sessionvarUnset('errors');
-			
-			// CHECK LOGIN CSRF TOKEN
-			$cleanobject = new \Inc\Clean();
-			$check_token = $cleanobject->check_token(600,  $URL.'loginview-user.html', $token_name);
-			
-			$email =  $post['email'];
-			$password =  $post['password'];
 
-			$inputs = [
-				'email' => $email,
-				'password' => $password
-			];
-
-			$fields = [
-				'email' => 'email',
-				'password' => 'string'
-			];
-
+			$result = $this->model->loginUser($email, $password) ;	
 			
+			if( ($result) &&  ($result == 'not_activated') ){ // USER ACCOUNT NOT ACTIVATED
 
-			$rules = [
-				'email' => 'required',
-				'password' => 'required'
-				//'email' => 'required|email|unique:user,email'
-			];
-			
-			$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'loginview','login');
-			
-			
-			
-			// VALIDATION OF FORM DATA IS OK / VERIFY USER  LOGIN AND PASSWORD
-            
-
-			if(empty($this->errors)){
-			
-
-				$action = SessionManager::getInstance()->get('ACTION');
-                
-
-				$result = $this->model->loginUser($email, $password) ;	
+				$result = 'account_not_activated';
+				$this->$messagedisplay->initmessage($action,$result);
 				
-				if( ($result) &&  ($result == 'not_activated') ){ // USER ACCOUNT NOT ACTIVATED
-
-					$result = 'account_not_activated';
-					initmessage($action,$result);
-					
-					\Http::redirect('loginview-user.html#login');
-					
-
-				}elseif (($result) &&  ($result != 'not_activated')){ // LOGIN AND PASSWORD MATCH IN DB
+				\Http::redirect('loginview-user.html#login');
 				
-					
-					$this->SetUserSessionVars($result);
 
-					
-
-					if(SessionManager::getInstance()->get('actionmessage')) SessionManager::getInstance()->sessionvarUnset('actionmessage');
-
-					$this->verifyType(); // Verify type of user ( level ) : Admin or Guest  and redirect to Post view or dashboard
+			}elseif (($result) &&  ($result != 'not_activated')){ // LOGIN AND PASSWORD MATCH IN DB
+			
+				
+				$this->SetUserSessionVars($result);
 
 				
-				}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
 
-					initmessage($action,$result);
-					
-					\Http::redirect('loginview-user.html#login');
-					
-				}
+				if(SessionManager::getInstance()->get('actionmessage')) SessionManager::getInstance()->sessionvarUnset('actionmessage');
+
+				$this->verifyType(); // Verify type of user ( level ) : Admin or Guest  and redirect to Post view or dashboard
+
+			
+			}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
+
+				$this->$messagedisplay->initmessage($action,$result);
+				
+				\Http::redirect('loginview-user.html#login');
+				
 			}
-
 		}
+
+	}
 
 		/**
 	 * set user's session variables (USERID, USERTYPEID, PSEUDO, PHOTO, RESULT)
@@ -610,107 +678,107 @@ class User extends Controller{
 
 	}
 
-        # ********************************
-        # Verify type of user ( level ) : Admin or Guest 
-		# and redirect to Post view or dashboard
-        # *********************************
+	# ********************************
+	# Verify type of user ( level ) : Admin or Guest 
+	# and redirect to Post view or dashboard
+	# *********************************
 
-		public function verifyType(){
+	public function verifyType(){
+
+		
+		$from = SessionManager::getInstance()->get('FROM');
+		
+		
+		$pseudo = SessionManager::getInstance()->get('PSEUDO');
+		$action = SessionManager::getInstance()->get('ACTION');
+		$result = SessionManager::getInstance()->get('RESULT');
+
+		//if(SessionManager::getInstance()->get('USERTYPEID') == 3){ // IF GUEST 
+		if($this->is_Guest()){ // IF GUEST 
+
+			if(null !== SessionManager::getInstance()->get('POSTID')){// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
+				$postid = SessionManager::getInstance()->get('POSTID');
+				
+				\Http::redirect(' frontpost-'.$postid.'.html#post');
+				//exit;
+				
+			}else{// IF  DOES NOT COME FROM A POST VIEW : SEND TO GUEST DASHBOARD PAGE
+
+				\Http::redirect(' index.php?action=mycomments');
+				
+			}
 
 			
-			$from = SessionManager::getInstance()->get('FROM');
+		//}elseif(SessionManager::getInstance()->get('USERTYPEID') == 1){ // IF ADMIN
+		}elseif($this->is_Admin()){ // IF ADMIN
+
+			// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
+
+			if(null !== SessionManager::getInstance()->get('POSTID')){
+
+				$postid = SessionManager::getInstance()->get('POSTID');
+				
+				
+				\Http::redirect(' frontpost-'.$postid.'.html#post');
+			}else{
+
+				// IF DOES NOT COME FROM A POST VIEW : SEND TO ADMIN DASHBOARD PAGE
+
+				\Http::redirect(' index.php?action=adminposts');
+				
+			}
+
 			
-			
-			$pseudo = SessionManager::getInstance()->get('PSEUDO');
-			$action = SessionManager::getInstance()->get('ACTION');
-			$result = SessionManager::getInstance()->get('RESULT');
 
-			if(SessionManager::getInstance()->get('USERTYPEID') == 3){ // IF GUEST 
+		}
+		
+		
+		
+	}
 
-					
+	# **************
+	# User logout
+	# **************
 
-					if(null !== SessionManager::getInstance()->get('POSTID')){// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
-						$postid = SessionManager::getInstance()->get('POSTID');
-						
-						\Http::redirect(' frontpost-'.$postid.'.html#post');
-						
-						
-					}else{// IF  DOES NOT COME FROM A POST VIEW : SEND TO GUEST DASHBOARD PAGE
+	public function userlogout() {        
+		
+		if( SessionManager::getInstance() ){
+			SessionManager::getInstance()->sessionvarUnset('USERID');
+			SessionManager::getInstance()->sessionvarUnset('USERTYPEID');
+			SessionManager::getInstance()->sessionUnset();
+			SessionManager::getInstance()->sessionDestroy();
 
-						\Http::redirect(' index.php?action=mycomments');
-						
-					}
-
-					
-				}elseif(SessionManager::getInstance()->get('USERTYPEID') == 1){ // IF ADMIN
-
-					// IF COMES FROM A POST VIEW THEN SEND BACK TO THE POST VIEW
-
-					if(null !== SessionManager::getInstance()->get('POSTID')){
-
-						$postid = SessionManager::getInstance()->get('POSTID');
-						
-						
-						\Http::redirect(' frontpost-'.$postid.'.html#post');
-					}else{
-
-						// IF DOES NOT COME FROM A POST VIEW : SEND TO ADMIN DASHBOARD PAGE
-
-						\Http::redirect(' index.php?action=adminposts');
-						
-					}
-
-					
-
-				}
-			
+			\Http::redirect('accueil.html');
 			
 			
 		}
-	
-        # **************
-        # User logout
-        # **************
+		
+	}
 
-		public function userlogout() {        
-			
-			if( SessionManager::getInstance() ){
-				SessionManager::getInstance()->sessionvarUnset('USERID');
-				SessionManager::getInstance()->sessionvarUnset('USERTYPEID');
-				SessionManager::getInstance()->sessionUnset();
-				SessionManager::getInstance()->sessionDestroy();
-
-				\Http::redirect('accueil.html');
-				
-				
-			}
-			
-        }
-
-		# **************
-        # Display user's password reset Requesting form
-        # **************
+	# **************
+	# Display user's password reset Requesting form
+	# **************
 
 
 
-        public function passresetRequest() {
+	public function passresetRequest() {
 
-			require'view/frontend/passresetView.php';
+		require'view/frontend/passresetView.php';
 
-        }
-
-
-		# **************
-        # Display user's new password  form
-        # **************
+	}
 
 
+	# **************
+	# Display user's new password  form
+	# **************
 
-        public function passreinitNew() {
 
-			require'view/frontend/passreinitView.php';
 
-        }
+	public function passreinitNew() {
+
+		require'view/frontend/passreinitView.php';
+
+	}
 
 	/***************************************************
 	 * Get user's email 
@@ -722,7 +790,7 @@ class User extends Controller{
 
 			// CHECK LOGIN CSRF TOKEN
 
-			
+			//$check_token = check_token(600,  $URL.'passresetrequest.html', $token_name);
 			SessionManager::getInstance()->sessionvarUnset('errors');
 		
 			// CHECK LOGIN CSRF TOKEN
@@ -730,6 +798,7 @@ class User extends Controller{
 			$check_token = $cleanobject->check_token(600,  $URL.'passresetrequest-user.html', $token_name);
 
 			$email =  $post['email'];
+			//$email = $post->get('email');
 					
 			$inputs = [
 				'email' => $email
@@ -739,7 +808,7 @@ class User extends Controller{
 				'email' => 'email'
 				];
 
-			
+			//$data = sanitize_inputs($inputs,$fields);
 
 			$rules = [
 				'email' => 'required'
@@ -781,73 +850,74 @@ class User extends Controller{
 						$passreset = false;
 						
 				}
-						initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
+						$this->$messagedisplay->initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
 						
 						\Http::redirect('passresetrequest-user.html#passresetrequest');
 			}
-        }
+    }
 
 
-		/**
-		 * Get email and reset password token from users email link and verify if the same token in user's record and if it is not expired
-		 *if OK displays reset password form
-		* @param  Parameter $link_email $link_token
-		* 
-		*/
+	/**
+	 * Get email and reset password token from users email link and verify if the same token in user's record and if it is not expired
+	 *if OK displays reset password form
+	* @param  Parameter $link_email $link_token
+	* 
+	*/
 
-        public function verifyPassresetToken($link_email,$link_token){
-			
-			
-			$errors =array();
-			
-			$rules = [
-						'link_email' => 'required',
-						'link_token' => 'required'
-						];
-
-			$data = [
-						'link_email' => $link_email,
-						'link_token' => $link_token
+	public function verifyPassresetToken($link_email,$link_token){
+		
+		
+		$errors =array();
+		
+		$rules = [
+					'link_email' => 'required',
+					'link_token' => 'required'
 					];
+
+		$data = [
+					'link_email' => $link_email,
+					'link_token' => $link_token
+				];
+		
+		$cleanobject = new \Inc\Clean();
+		$errors = $cleanobject->validate($data, $rules);	
+		
+		if(!empty($errors)){
 			
-			$cleanobject = new \Inc\Clean();
-			$errors = $cleanobject->validate($data, $rules);	
+			SessionManager::getInstance()->set('errors', $errors);
 			
-			if(!empty($errors)){
-				
-				SessionManager::getInstance()->set('errors', $errors);
-				
-				\Http::redirect('passresetrequest-user.html');
-				
-				
+			\Http::redirect('passresetrequest-user.html');
+			
+			
+		}else{
+
+			
+						
+			$verifyemailtoken = $this->model->VerifyEmailToken($link_email, $link_token);
+			
+			$action = SessionManager::getInstance()->get('ACTION');
+
+
+			if ($verifyemailtoken === true){ 
+
+					SessionManager::getInstance()->set('LINK_EMAIL', $link_email);
+					SessionManager::getInstance()->set('LINK_TOKEN', $link_token);
+					
+					//header('Location: passreinitnew.html');
+					\Http::redirect('passreinitnew-user.html');
+					//require('view/frontend/passreinitView.php');
 			}else{
+					
+					$this->$messagedisplay->initmessage($action,$verifyemailtoken);
+					//require('view/frontend/passresetView.php');
+					\Http::redirect('passresetrequest-user.html');
 
-				
-							
-				$verifyemailtoken = $this->model->VerifyEmailToken($link_email, $link_token);
-				
-				$action = SessionManager::getInstance()->get('ACTION');
-
-
-				if ($verifyemailtoken === true){ 
-
-						SessionManager::getInstance()->set('LINK_EMAIL', $link_email);
-						SessionManager::getInstance()->set('LINK_TOKEN', $link_token);
-						
-						\Http::redirect('passreinitnew-user.html');
-						
-				}else{
-						
-						initmessage($action,$verifyemailtoken);
-						
-						\Http::redirect('passresetrequest-user.html');
-
-				}
-
-				
 			}
 
-        }
+			
+		}
+
+	}
 
 	/**
 	 * Get data of new password form and verify if password and confirmed password are equal
@@ -864,6 +934,11 @@ class User extends Controller{
 			$cleanobject = new \Inc\Clean();
 			$check_token = $cleanobject->check_token(600,  $URL.'passreinitnew-user.html', $token_name);
 			
+			/*$newpassword = $post->get('newpassword');
+			$confirmnewpassword =  $post->get('confirmnewpassword');
+			$link_token = $post->get('reset_link_token');
+			$email = $post->get('email');*/
+
 			$newpassword = $post['newpassword'];
 			$confirmnewpassword =  $post['confirmnewpassword'];
 			$link_token = $post['reset_link_token'];
@@ -908,26 +983,29 @@ class User extends Controller{
 						
 						$newpass = $hash;
 
+						//$userManager = new \Model\UserManager(); // Creation of objet
+
+
 						$updateNewPass = $this->model->updatePass($newpass, $link_email, $link_token);
 
 						
 						$action  = SessionManager::getInstance()->get('ACTION');
 
-						initmessage($action,$insertNewPass);
+						$this->$messagedisplay->initmessage($action,$insertNewPass);
 
 						if ($updateNewPass) 
 						{ 
 							
 							$action  = SessionManager::getInstance()->get('ACTION');
 
-							initmessage($action,$updateNewPass);
+							$this->$messagedisplay->initmessage($action,$updateNewPass);
 							
 							\Http::redirect('loginview-user.html#login');
 
 						}else{
 						
 						$action  = SessionManager::getInstance()->get('ACTION');
-						initmessage($action,$updateNewPass = false);
+						$this->$messagedisplay->initmessage($action,$updateNewPass = false);
 
 						
 						\Http::redirect('passreinitview-user.html#newpass');
@@ -946,9 +1024,9 @@ class User extends Controller{
 		$subject = "Réinitialisation de votre Mot de Passe";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		
+		//$message = "Bonjour " . $pseudo. ", Pour Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/index.php?action=passreinitialisation&email=". $email."&token=" . $passreset_token . "\r\n\r\n----------------------.";
 		$message = "Bonjour " . $pseudo. ", Afin de procéder à la Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/passreinitialisation-". $email."-". $passreset_token . "-user.html\r\n\r\n----------------------.";
-		
+		//$message = wordwrap($message, 70, "\r\n");
 		mail($email, $subject, $message, $headers);
 		
 	}

@@ -1,4 +1,4 @@
-<?php 
+﻿<?php 
 $cleanobject = new \Inc\Clean();
 
 while ($data = $posts->fetch())

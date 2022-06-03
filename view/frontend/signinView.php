@@ -1,6 +1,7 @@
-<?php
+﻿<?php
 use Inc\SessionManager;
-
+//use Inc\MessageDisplay;
+$messagedisplay = new \Inc\MessageDisplay();
 
 // GET THE HIDEN FIELD WITH CRSF TOKEN
 $SessionManager = new \Inc\SessionManager($_SESSION);
@@ -25,7 +26,7 @@ $title = "Inscription Utilisateur";
 
 // CALL TO FUNCTION is_alertMessage() TO CHECK IF WE HAVE AN ALERT MESSAGE
 
-$message = is_alertMessage();
+$message = $messagedisplay->is_alertMessage();
 
 if (($message) && ($message != "")){
 
@@ -33,10 +34,9 @@ if (($message) && ($message != "")){
 
 	$SessionManager->sessionvarUnset('actionmessage');
 	$SessionManager->sessionvarUnset('alert_flag');
-	//unset($_SESSION['actionmessage']);
-	//unset($_SESSION['alert_flag']);
+	
 }
-//}
+
 ?>
 
 

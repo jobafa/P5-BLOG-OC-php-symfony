@@ -9,7 +9,7 @@ require_once __DIR__.'/Inc/functions.php';
 //require_once __DIR__.'/inc/sanitization.php';
 //require_once __DIR__.'/inc/validation.php';
 require_once __DIR__.'/config/config.php';
-//require_once __DIR__.'/controllers/backend.php';
+require_once __DIR__.'/Controllers/backend.php';
 //require_once __DIR__.'/controllers/frontend.php';
 //require_once __DIR__.'/controllers/Post.php';
 //require_once __DIR__.'/controllers/Comment.php';
@@ -134,7 +134,7 @@ if($request->getGet()->get('from')){
 if ( ( $request->getGet()->get('idcomment') ) && ( $request->getGet()->get('idcomment') > 0 )){
 	
 	//$id =  $_GET['idcomment'];
-	$id = $request->getGet()->get('usertypeid');
+	$id = $request->getGet()->get('idcomment');
 	
 }
 
@@ -209,7 +209,7 @@ try {
 				// CONTACT FORM
 				elseif ( ($action == 'contactform')) {
 
-					$controller->checkContactdata($request->getPost(), $URL, 'blogcontact');
+					$controller->checkContactdata($request->getPost()->all(), $URL, 'blogcontact');
 
 				}
 				elseif ($action == 'addcomment') {
@@ -271,7 +271,7 @@ try {
 
 				elseif ($action == 'passreset') {
 					//$controller = new \Controllers\User();
-					$controller->passReset($request->getPost(), $URL, 'passreset');
+					$controller->passReset($request->getPost()->all(), $URL, 'passreset');
 					
 				}
 
@@ -300,9 +300,9 @@ try {
 
 				elseif ($action == 'newpass') {
 
-					if(null !== $request->getPost()){
+					if(null !== $request->getPost()->all()){
 						//$controller = new \Controllers\User();
-					$controller->getNewPass($request->getPost(), $URL, 'newpass');
+					$controller->getNewPass($request->getPost()->all(), $URL, 'newpass');
 						
 					}
 					
@@ -456,6 +456,7 @@ try {
 				elseif ($action == 'commentdelete') {
 
 						//$commentid = $id;
+						
 						deleteComment($id);
 				}
 
@@ -492,8 +493,10 @@ try {
 
 				elseif ($action == 'userupdate') {
 				
-						//$post = $_POST;
-						userUpdate($request->getPost(),$id);
+						$post = $_POST;
+						userUpdate($request->getPost()->all(),$id);
+						//userUpdate($post,$id);
+						//userUpdate($request->getPost()->all(),$id);
 				}
 
 				elseif ($action == 'userdelete') {

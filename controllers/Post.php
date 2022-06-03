@@ -1,10 +1,13 @@
 <?php
 namespace Controllers;
 
+use Inc\SessionManager;
+use Controllers\User;
+
 
 class Post extends Controller{
 
-    /
+    
     protected $model;
 	
     protected $modelName = \Models\PostManager::class;
@@ -53,11 +56,11 @@ class Post extends Controller{
 
 	public function post($id, $page)
 	{
-		//$postManager = new \Models\PostManager();
+		
 		$commentManager = new \Models\CommentManager();
-		//$session = new \inc\SessionManager($_SESSION); // create session instance
+		$cleanobject = new \Inc\Clean();
+		$user = new \Controllers\User();
 
-		//$action  = $session->get('ACTION');
 		$action  = SessionManager::getInstance()->get('ACTION');
 
 		if($action === "frontpost"){
@@ -69,8 +72,9 @@ class Post extends Controller{
 		
 		$post = $this->model->get($id, $is_published );
 
-		if((null !== SessionManager::getInstance()->get('USERTYPEID') ) && (SessionManager::getInstance()->get('USERTYPEID' == 1))){ // IF ADMIN
-
+		//if((null !== SessionManager::getInstance()->get('USERTYPEID') ) && (SessionManager::getInstance()->get('USERTYPEID') == 1)){ // IF ADMIN
+		if(($user->is_Logged() ) && ($user->is_Admin())){ // IF ADMIN
+			
 			if(SessionManager::getInstance()->get('ACTION') != 'frontpost'){ // IF COMING FROM ADMIN DASHBOARD
 
 				require'view/backend/postView.php';
@@ -112,7 +116,7 @@ class Post extends Controller{
 			throw new Exception('Impossible d\'ajouter le commentaire !');
 		}
 		else {
-			//header('Location: index.php?action=frontpost&id=' . $postId);
+			
             \Http::redirect('index.php?action=frontpost&id=' . $postId);
 		}
 	}

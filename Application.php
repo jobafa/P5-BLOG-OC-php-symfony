@@ -1,5 +1,6 @@
 <?php
 use Inc\Request;
+
 class Application {
 
     public static function process(){
@@ -22,8 +23,7 @@ class Application {
 
         $controllerName = "\Controllers\\" . $controllerName;
         $controller = new $controllerName();
-        /*var_dump($controller);
-        exit;*/
+        
         return $controller;
         
             

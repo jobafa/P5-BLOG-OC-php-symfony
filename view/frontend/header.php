@@ -1,9 +1,8 @@
-<?php
-//if( ! isset($_SESSION) ) session_start();
-if( null !== $request->getSession()) {
-	session_start();
-	//$session = new \Inc\SessionManager($_SESSION); // create session instance
-}
+﻿<?php
+//use \Inc\SessionManager;
+
+
+if( ! isset($_SESSION) ) session_start();
 ?>
 <!DOCTYPE html>
 <html lang="FR">
@@ -18,7 +17,6 @@ if( null !== $request->getSession()) {
 		<!-- Font Awesome icons (free version)-->
         <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
 
-
 		  <link href="public/startbootstrap-sb-admin-2-gh-pages/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
 
         <!-- Bootstrap Icons-->
@@ -31,14 +29,12 @@ if( null !== $request->getSession()) {
         rel="stylesheet">
   <link href="public/startbootstrap-sb-admin-2-gh-pages/fontawesome-free/css/all.min.css" rel="stylesheet">
 
-
         <!-- SimpleLightbox plugin CSS-->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)-->
 		         <link href="public/css/styles.css" rel="stylesheet" />
  <!--<link href="css/styles.css" rel="stylesheet" />
  -->
-
 
 <style> 
 	.date {
@@ -99,6 +95,5 @@ if( null !== $request->getSession()) {
       box-shadow: 0px 0px 3px 1px #72bf3b;
 }
 </style>
-
 
     </head> 

@@ -7,5 +7,9 @@ class Http{
         header("Location: $url");
         //exit();
         die();
+    
     }
+
+
+    
 }
