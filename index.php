@@ -493,10 +493,10 @@ try {
 
 				elseif ($action == 'userupdate') {
 				
-						$post = $_POST;
+						//$post = $_POST;
 						userUpdate($request->getPost()->all(),$id);
 						//userUpdate($post,$id);
-						//userUpdate($request->getPost()->all(),$id);
+						
 				}
 
 				elseif ($action == 'userdelete') {
