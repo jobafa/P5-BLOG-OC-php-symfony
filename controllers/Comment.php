@@ -2,7 +2,7 @@
 
 namespace Controllers;
 use Inc\SessionManager;
-
+use Inc\MessageDisplay;
 
 class Comment extends Controller{
 
@@ -28,7 +28,7 @@ class Comment extends Controller{
 		$action = SessionManager::getInstance()->get('ACTION');
 		
 				//generate a message according to the action processed
-				initmessage($action,$affectedLines);
+				$this->$messagedisplay->initmessage($action,$affectedLines);
 
 		if ($affectedLines === false) {
 			throw new Exception('Impossible d\'ajouter le commentaire !');
