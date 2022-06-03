@@ -1,12 +1,12 @@
 ﻿<?php
+
 use Inc\SessionManager;
 //use Inc\MessageDisplay;
 $messagedisplay = new \Inc\MessageDisplay();
 
 // GET THE HIDEN FIELD WITH CRSF TOKEN
-$SessionManager = new \Inc\SessionManager($_SESSION);
+//$SessionManager = new \Inc\SessionManager($_SESSION);
 $signuptoken = new \Inc\Clean();
-
 
 $token_field = $signuptoken->get_token_field('newuser');
 
@@ -32,8 +32,10 @@ if (($message) && ($message != "")){
 
 	echo $message;
 
-	$SessionManager->sessionvarUnset('actionmessage');
-	$SessionManager->sessionvarUnset('alert_flag');
+	//$SessionManager->sessionvarUnset('actionmessage');
+	//$SessionManager->sessionvarUnset('alert_flag');
+	SessionManager::getInstance()->sessionvarUnset('actionmessage');
+	SessionManager::getInstance()->sessionvarUnset('alert_flag');
 	
 }
 
@@ -45,13 +47,13 @@ if (($message) && ($message != "")){
       <div class="card-body">
 			<?php
 
-		if(null !== $SessionManager->get('errors')){
+		if(null !== SessionManager::getInstance()->get('errors')){
 			?>
 				<div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
 					<em>
 				<?php
 						
-							foreach($SessionManager->get('errors') as $key=>$value){
+							foreach(SessionManager::getInstance()->get('errors') as $key=>$value){
 
 								echo $value.'<BR>';
 							}

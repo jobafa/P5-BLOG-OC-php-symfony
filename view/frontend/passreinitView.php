@@ -1,17 +1,18 @@
 ﻿<?php 
-
+use Inc\SessionManager;
 // GET THE HIDEN FIELD WITH CRSF TOKEN
 
 $passreinitnewtoken = new \Inc\Clean();
 //use Inc\MessageDisplay;
 $messagedisplay = new \Inc\MessageDisplay();
+
 $token_field = $passreinitnewtoken->get_token_field('newpass');
 
-$SessionManager = new \Inc\SessionManager($_SESSION);
+//$SessionManager = new \Inc\SessionManager($_SESSION);
 
-if((null !== $SessionManager->get('LINK_EMAIL')) && (null !== $SessionManager->get('LINK_TOKEN'))){
-	$link_email = $SessionManager->get('LINK_EMAIL');
-	$link_token = $SessionManager->get('LINK_TOKEN');
+if((null !== SessionManager::getInstance()->get('LINK_EMAIL')) && (null !== SessionManager::getInstance()->get('LINK_TOKEN'))){
+	$link_email = SessionManager::getInstance()->get('LINK_EMAIL');
+	$link_token = SessionManager::getInstance()->get('LINK_TOKEN');
 
 }
 
@@ -26,13 +27,13 @@ ob_start(); ?>
        <div class="card-body">
 		<?php
 		
-			if(null !== $SessionManager->get('errors')){
+			if(null !== SessionManager::getInstance()->get('errors')){
 				?>
 					<div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
 					    <em>
 					  <?php
 							
-								foreach($SessionManager->get('errors') as $key=>$value){
+								foreach(SessionManager::getInstance()->get('errors') as $key=>$value){
 		
 									echo $value.'<BR>';
 								}
@@ -52,8 +53,10 @@ ob_start(); ?>
 
 			echo $message;
 
-			$SessionManager->sessionvarUnset('actionmessage');
-			$SessionManager->sessionvarUnset('alert_flag');
+			//$SessionManager->sessionvarUnset('actionmessage');
+			//$SessionManager->sessionvarUnset('alert_flag');
+			SessionManager::getInstance()->sessionvarUnset('actionmessage');
+			SessionManager::getInstance()->sessionvarUnset('alert_flag');
 			
 		}
 		

@@ -1,8 +1,8 @@
 ﻿<?php
-//use \Inc\SessionManager;
+use \Inc\SessionManager;
 
-
-if( ! isset($_SESSION) ) session_start();
+//if( ! isset($_SESSION) ) session_start();
+if( null === SessionManager::getInstance() ) session_start();
 ?>
 <!DOCTYPE html>
 <html lang="FR">

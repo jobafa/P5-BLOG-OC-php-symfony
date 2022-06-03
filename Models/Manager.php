@@ -18,13 +18,28 @@ public static function getPdo()
               \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
               \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
               ]);
-              
+              /*//PREPROD
+              if(self::$instance === null){
+                self::$instance = new \PDO('mysql:host=localhost;dbname=poo_ocp5;charset=utf8', 'poo_ocp5_usr', '*O15p16', [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+                ]);
+               */
+             /*// PREPROD
+                $db = new \PDO('mysql:host=localhost;dbname=poo_ocp5;charset=utf8', 'poo_ocp5_usr', '*O15p16', [
+              \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+              \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+              ]);
+              */
+						//$db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             }
 						
 				}
 				catch (PDOException $e)
 				{
-				echo 'Connexion échouée : ' . $e->getMessage();
+				  //echo 'Connexion échouée : ' . $e->getMessage();
+          $errorMessage = $e->getMessage();
+    		require'view/errorView.php';
 				}				    
 				return self::$instance;
 			}
