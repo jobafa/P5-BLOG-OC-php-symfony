@@ -29,7 +29,7 @@ ob_start(); ?>
 
 			if (($message) && ($message != "")){
 
-				echo $message;
+				print_r( $message);
 
 				//$SessionManager->sessionvarUnset('actionmessage');
 				//$SessionManager->sessionvarUnset('alert_flag');
@@ -47,7 +47,7 @@ ob_start(); ?>
 							
 								foreach(SessionManager::getInstance()->get('errors') as $key=>$value){
 		
-									echo $value.'<BR>';
+									print_r( $value.'<BR>');
 								}
 							
 						?>
