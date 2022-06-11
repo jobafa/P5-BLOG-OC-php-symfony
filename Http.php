@@ -5,11 +5,6 @@ class Http{
     public static  function redirect(string $url) {
      	
         header("Location: $url");
-        //exit();
-        die();
-    
-    }
-
-
-    
+        exit();
+    }   
 }

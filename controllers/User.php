@@ -5,7 +5,7 @@ namespace Controllers;
 require_once'Controllers/Controller.php';
 
 use Inc\SessionManager;
-use Inc\MessageDisplay;
+use Inc\Clean;
 use Inc\FileUpload;
 
 class User extends Controller{
@@ -13,6 +13,8 @@ class User extends Controller{
 	private $errors = [];
 	protected $model;
 	protected $modelName = \Models\UserManager::class;
+	protected $messageDisplay;
+
 	private static $filters = array(
 	'string' => FILTER_SANITIZE_STRING,
 	'string[]' => [
@@ -29,74 +31,19 @@ class User extends Controller{
 	);
 
 
-	/*****************************************
-	#CHECK IS LOGGED 
-
-	*****************************************/
-
-	public function is_Logged(){
-
-		if(null !== SessionManager::getInstance()->get('USERTYPEID')){
-
-			return true;
-
-		}else{
-
-			return false;
-
-		}
-	}
-
-
-	/*****************************************
-	#CHECK IS LOGGED ADMIN
-
-	*****************************************/
-
-	public function is_Admin(){
-
-		if((null !== SessionManager::getInstance()->get('USERTYPEID')) && (SessionManager::getInstance()->get('USERTYPEID') == 1)){
-
-			return true;
-
-		}else{
-
-			return false;
-
-		}
-	}
-
-	/*****************************************
-	#CHECK IS LOGGED ADMIN
-
-	*****************************************/
-
-	public function is_Guest(){
-
-		if((null !== SessionManager::getInstance()->get('USERTYPEID')) && (SessionManager::getInstance()->get('USERTYPEID') == 3)){
-
-			return true;
-
-		}else{
-
-			return false;
-
-		}
-	}
-
 	   
     /***********************************************
 	 * Checking  contact form csrf token and sending the mail ***
-	 * @param  Parameter $contact-post, $URL, $token_name***
+	 * @param  Parameter $contact-post, $URL, $tokenName***
 	 * ***********************************************/
 	 
-	public function checkContactdata($post, $URL, $token_name){
+	public function checkContactData($post, $URL, $tokenName){
 
 		SessionManager::getInstance()->sessionvarUnset('errors');
 		$action = SessionManager::getInstance()->get('ACTION');
 
-		$cleanobject = new \Inc\Clean();
-		$check_token = $cleanobject->check_token(600,  $URL.'accueil.html', $token_name);
+		$cleanObject = new \Inc\Clean();
+		$checkToken = $cleanObject->checkToken(600,  $URL.'accueil.html', $tokenName);
 		
 		$name =  $post->get('name');
 		$email =  $post->get('email');
@@ -126,7 +73,7 @@ class User extends Controller{
 			'message' => 'required'
 		];
 
-		$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'accueil', 'contact');
+		$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'accueil', 'contact');
 		
 		if(empty($this->errors)){
 
@@ -170,7 +117,7 @@ class User extends Controller{
 
 			//generate a message according to the action processed
 			
-		$this->$messagedisplay->initmessage($action,$email_ok);
+		$this->$messageDisplay->initmessage($action,$email_ok);
 		
 		\Http::redirect('accueil.html#contact');
 				
@@ -180,15 +127,20 @@ class User extends Controller{
 	# User Add View
 	# **************
 
-	public function adduserview($action){
+	public function addUserView($action){
 		
 		if(isset($action) && ($action == "signinview")){
-					
-				require'view/frontend/signinView.php';
+
+			// GET THE HIDEN FIELD WITH CRSF TOKEN
+			$signuptoken = new \Inc\Clean();
+			$tokenField = $signuptoken->get_token_field('newuser');
+		
+			require'view/frontend/signinView.php';
 
 		}elseif(isset($action) && ($action == "adduserview")){
 
-				require'view/backend/adduserView.php';
+			if( !$this->is_Admin() ) $this->redirectLogin();
+			require'view/backend/adduserView.php';
 
 		}
 		
@@ -197,29 +149,29 @@ class User extends Controller{
 	# *****************************
 	# User Add : this function can be called
 	# from both front and back end
-	#@params $post, $URL, $token_name
+	#@params $post, $URL, $tokenName
 	# *****************************
 
-	public function adduser($post, $URL, $token_name) {
+	public function addUser($post, $URL, $tokenName) {
 		
 		//  errors is the array that contains data input validation errors
 		
-		$cleanobject = new \Inc\Clean();
+		$cleanObject = new \Inc\Clean();
 		
 		SessionManager::getInstance()->sessionvarUnset('errors');
 		$action = SessionManager::getInstance()->get('ACTION');
 
 		if($action == 'usersignin'){
 		
-			$usertypeid = "3"; // USER ROLE
+			$userTypeId = "3"; // USER ROLE
 
-			$check_token = $cleanobject->check_token(600,  $URL.'signinview-user.html', $token_name);
+			$checkToken = $cleanObject->check_token(600,  $URL.'signinview-user.html', $tokenName);
 
 		}
 		if($action == 'useradd'){ // for admin user
 
-			$check_token = "ras";
-			$usertypeid = $post->get('usertype_id'); // USER ROLE
+			$checkToken = "ras";
+			$userTypeId = $post->get('usertype_id'); // USER ROLE
 			
 		}
 		
@@ -231,7 +183,7 @@ class User extends Controller{
 			'pseudo' => $pseudo,
 			'email' => $email,
 			'password' => $password,
-			'usertype_id' => $usertypeid
+			'usertype_id' => $userTypeId
 			];
 
 		$fields = [
@@ -251,37 +203,29 @@ class User extends Controller{
 			'usertype_id' => 'required'
 		];				
 		
-		$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'signinview', 'inscription');
+		$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'signinview', 'inscription');
 		
 		if(empty($this->errors)){ // NO ERRORS GO ON PROCESS
 			
 		// GET DATA FROM THE SANITIZED AND VALDATED POST DATA ARRAY
 
-		$pseudo =  $data['pseudo'];
-		$email =  $data['email'];
-		$password =  $data['password'];
-		$usertypeid = $data['usertype_id'];
-		
-		
-			
-		// CHECKING FILE UPLOAD
-		$request = new \Inc\Request();
+			$pseudo =  $data['pseudo'];
+			$email =  $data['email'];
+			$password =  $data['password'];
+			$userTypeId = $data['usertype_id'];
 
-		
+			// CHECKING FILE UPLOAD
+			$request = new \Inc\Request();
+			
 			if( null !== $request->getFile()){
 
 				$file = new \Inc\File();
-				$fileupload = new \Inc\FileUpload();
-				
-				
+				$fileUpload = new \Inc\FileUpload();
 
 				$status = $file->get('photo','error');
-				$post_image = $file->get('photo');
+				$postImage = $file->get('photo');
 
-
-				$photo = $fileupload->checkUploadStatus($status, $post_image);
-				
-
+				$photo = $fileUpload->checkUploadStatus($status, $postImage);
 				
 				if($photo == false){
 
@@ -295,38 +239,35 @@ class User extends Controller{
 
 			try{
 
-						// Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
+				// Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
+													
+				$isEnabled="1";
+
+				// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
+				
+				$token = $cleanObject->get_token('activation');
+				
+				$result = $this->model->registerUser($userTypeId, $pseudo, $email, $password, $photo, $token);
+
+				if ($result ) {
 									
-						
-						$is_enabled="1";
+					$id = SessionManager::getInstance()->get('LASTUSERID');
+					
+					$this->UserActivationEmail( $email,$pseudo, $id,  $token);
+					
+				}
+								
+				$action = SessionManager::getInstance()->get('ACTION');
 
-						// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
-						
-						$token = $cleanobject->get_token('activation');
-						
-						$result = $this->model->registerUser($usertypeid, $pseudo, $email, $password, $photo, $token);
-
-						if ($result ) {
-							
-							
-							$id = SessionManager::getInstance()->get('LASTUSERID');
-							
-							$this->UserActivationEmail( $email,$pseudo, $id,  $token);
-							
-							}
-							
-						
-						$action = SessionManager::getInstance()->get('ACTION');
-
-						$this->$messagedisplay->initmessage($action,$result); //generate a message according to the action in process
-						$this->UserRedirect($action);									 
+				$this->messageDisplay->initmessage($action,$result); //generate a message according to the action in process
+				$this->UserRedirect($action);									 
 							
 			}
 			catch(Exception $e) {
 				$errorMessage = $e->getMessage();
 				require'view/errorView.php';
 			}
-				
+			
 		}
 	}
    
@@ -336,24 +277,24 @@ class User extends Controller{
 	 * @ Return 
 	 */
 
-	 public function CleanData($inputs, $fields, $rules, $check_token, $token_name, $path, $form){
+	 public function CleanData($inputs, $fields, $rules, $checkToken, $tokenName, $path, $form){
 		
-		$cleanobject = new \Inc\Clean();
+		$cleanObject = new \Inc\Clean();
 
-		if($check_token)
+		if($checkToken)
 		{
 			
-		   if($check_token == "ras"){ // WE HAVE A MATCH OF TOKENS 
+		   if($checkToken == "ras"){ // WE HAVE A MATCH OF TOKENS 
 			   			   
-			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token');
-			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token_time');
+			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token');
+			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token_time');
 			   
 			   // SANITIZE DATA
 			   
-			   $data = $cleanobject->sanitize_inputs($inputs, $fields, FILTER_SANITIZE_STRING, self::$filters, $trim = true);
+			   $data = $cleanObject->sanitize_inputs($inputs, $fields, FILTER_SANITIZE_STRING, self::$filters, $trim = true);
 			   
 			   //VALIDATE DATA
-			   $this->errors = $cleanobject->validate($data, $rules);	
+			   $this->errors = $cleanObject->validate($data, $rules);	
 			   
 			   if(!empty($this->errors)){
 				   
@@ -370,16 +311,19 @@ class User extends Controller{
 				   
 		   }else{ // IN CASE OF CSRF PROBLEM
 
-
 			   $action = "tokenlife";
 			   
 			   //  INITIATE DISPLAY MESSAGE
-			   $this->$messagedisplay->initmessage($action,$check_token);
-			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token');
-			   SessionManager::getInstance()->sessionvarUnset($token_name.'_token_time');
-			   
+			   $this->messageDisplay->initmessage($action,$checkToken);
 
-			   \Http::redirect("$path-user.html#$form");
+			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token');
+			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token_time');
+			   
+			   if(SessionManager::getInstance()->get('ACTION') == 'userupdate'){
+			   		\Http::redirect("$path-useradmin.html#$form");
+			   }else{
+					\Http::redirect("$path-user.html#$form");
+			   }
 		   }
 	   }
 	 }
@@ -395,105 +339,12 @@ class User extends Controller{
 		$subject = "Activation de votre compte";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-				
-		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/useractivation-".$id."-".$token. "-user.html\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
+		$message = "Bonjour " . $pseudo. ", bienvenue sur mon blog !\r\n\r\nPour activer votre compte, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/useractivation-".$id."-".$token. "-useradmin.html\r\n\r\n----------------------\r\n\r\nCeci est un mail automatique, Merci de ne pas y r&eacute;pondre.";
 
 		mail($email, $subject, $message, $headers);
-		
 	}
 
-	 /** FUNCTION USED TO ACTIVATE USER'S ACCOUNT FROM MAIL LINK
-	*	  ALSO USED TO ACTIVATE OR DISACIVATE USER'S ACCOUNT FROM ADMIN DASHBOARD
-	* Get email and activation key from activation link and call userManager tocheck correspondance in database.
-	*  Delete activation_code from database to activate user account.
-	* @param   $userid, $email, $token, $isactivated
-	* 
-	*/
-
-   public function userActivation($link_userid, $link_email, $link_token, $isactivated)
-	{
-	   
-	   //  USER ACTIVATION PROCESSED FROM ADMIN DASHBOARD
-	   
-	   if( $link_token === NULL){
-			   
-			   if($isactivated == 'on'){
-
-				   $token = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-				   $token = password_hash($token,PASSWORD_DEFAULT);
-			   
-			   }elseif($isactivated == 'off'){
-
-				   $token = null;
-				   
-			   }
-
-				$adminactivation = $this->model->userActivate($link_userid, $token); 
-
-		   		
-		   		\Http::redirect('index.php?action=usersadmin');
-
-		   	 	// END OF USER' ACTIVATION FROM ADMIN DASHBOARD	
-
-		
-	   }else{ // USER ACTIVATION PROCESSED FROM USER'S MAIL LINK
-		
-				$getactivationcode = $this->model->getUseractivationcode($link_userid);
-						   
-	   }
-		
-	   // IF WE HAVE AN ACIVATION CODE MATCH : ACTIVATE ACCOUNT
-	  
-	   if ( ($getactivationcode) && ( $getactivationcode['is_activated'] === $link_token) )  {
-			   
-			   $activatedaccount = $this->model->userActivate($link_userid);
-		}
-
-	 	$this->DisplayActivationMessage($getactivationcode, $activatedaccount);
-	}   		
-
-	 /**************************************************************************
-	#DISPLAY ACCOUNT ACTIVATION MESSAGE
-	#PARAMS $getactivationcode : GET ACTIVATION CODE, $activatedaccount : is account activated
-	*****************************************************************************/
-
-	public function DisplayActivationMessage($getactivationcode, $activatedaccount){
-
-		// TEST ACTIVATION RESULT TO GENERATE ACTION MESSAGE TO BE DISPLAYAED TO USER
-
-		if( isset($activatedaccount ) && ($activatedaccount == true)){ // USER'ACTIVATION FROM MAIL LINK IS OK
-
-			SessionManager::getInstance()->set('actionmessage', 'F&eacute;licitations ! Votre compte vient d\'&ecirc;tre  activ&eacute;');
-			SessionManager::getInstance()->set('alert_flag', 1);
-			\Http::redirect('loginview-user.html#login');
-			
-		}elseif( isset($activatedaccount ) && ($activatedaccount == false)){
-
-			SessionManager::getInstance()->set('actionmessage', 'D&eacute;sol&eacute; ! Probl&egrave;me lors de l\'activation de votre compte. <BR>Merci de contacter l\'administrateur via le formulaire de contact ');
-			SessionManager::getInstance()->set('alert_flag', 0);
-			\Http::redirect('signinview-user.html#inscription');
-			
-		}
-
-		elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] == NULL )){
-
-			SessionManager::getInstance()->set('actionmessage', 'Votre compte est d&egrave;j&agrave;  activ&eacute; ');
-			SessionManager::getInstance()->set('alert_flag', 1);
-			\Http::redirect('loginview-user.html#login');
-			
-		}
-		elseif(( $getactivationcode ) && ( $getactivationcode['is_activated'] != NULL )){
-
-			SessionManager::getInstance()->set('actionmessage', 'Mauvaise cl&eacute; d\'activativation');
-			SessionManager::getInstance()->set('alert_flag', 0);
-			\Http::redirect('signinview-user.html#inscription');
-			
-		}
-
-	}
-
- 
+	
 	# **************
     # Redirect User to Frontend or backend  signup form 
     # @Param $action : user action **************
@@ -506,7 +357,11 @@ class User extends Controller{
 
 	   }elseif($action == 'useradd'){
 
-		   \Http::redirect(' index.php?action=adduserview&controller=user');
+		\Http::redirect(' index.php?action=adduserview&controller=user');
+
+	   }elseif($action == 'userupdate'){
+
+		   \Http::redirect('index.php?action=myprofile&controller=useradmin&id='.SessionManager::getInstance()->get('UPDATEUSERID'));
 
 	   }elseif($action === "newpass"){
 
@@ -524,23 +379,28 @@ class User extends Controller{
 
 	public function loginView( ) {
 
+		// GET THE HIDEN FIELD WITH CRSF TOKEN
+		$loginToken = new \Inc\Clean();
+		$tokenField = $loginToken->get_token_field('login');
+
 		require'view/frontend/loginView.php';
 
 	}
 
 	# *********************************************
 	# Verify User  Login
-	#$post : form data , $URL : to check referer , $token_name
+	#$post : form data , $URL : to check referer , $tokenName
 	# ***********************************************
 
-	public function verifyLogin($post, $URL, $token_name) {
+	public function verifyLogin($post, $URL, $tokenName) {
 
 		$request =  new \Inc\Request;
+		//$messageDisplay = new \Inc\MessageDisplay();
 		SessionManager::getInstance()->sessionvarUnset('errors');
 		
 		// CHECK LOGIN CSRF TOKEN
-		$cleanobject = new \Inc\Clean();
-		$check_token = $cleanobject->check_token(600,  $URL.'loginview-user.html', $token_name);
+		$cleanObject = new \Inc\Clean();
+		$checkToken = $cleanObject->check_token(600,  $URL.'loginview-user.html', $tokenName);
 		
 		$email =  $post['email'];
 		$password =  $post['password'];
@@ -555,15 +415,13 @@ class User extends Controller{
 			'password' => 'string'
 		];
 
-		
-
 		$rules = [
 			'email' => 'required',
 			'password' => 'required'
 			//'email' => 'required|email|unique:user,email'
 		];
 		
-		$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'loginview','login');
+		$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'loginview','login');
 				
 		// VALIDATION OF FORM DATA IS OK / VERIFY USER  LOGIN AND PASSWORD
 		
@@ -576,7 +434,7 @@ class User extends Controller{
 			if( ($result) &&  ($result == 'not_activated') ){ // USER ACCOUNT NOT ACTIVATED
 
 				$result = 'account_not_activated';
-				$this->$messagedisplay->initmessage($action,$result);
+				$this->messageDisplay->initmessage($action,$result);
 				
 				\Http::redirect('loginview-user.html#login');
 				
@@ -590,7 +448,7 @@ class User extends Controller{
 			
 			}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
 
-				$this->$messagedisplay->initmessage($action,$result);
+				$this->messageDisplay->initmessage($action,$result);
 				
 				\Http::redirect('loginview-user.html#login');
 				
@@ -636,7 +494,7 @@ class User extends Controller{
 								
 			}else{// IF  DOES NOT COME FROM A POST VIEW : SEND TO GUEST DASHBOARD PAGE
 
-				\Http::redirect(' index.php?action=mycomments');
+				\Http::redirect(' index.php?action=mycomments&controller=commentadmin');
 			}
 
 		}elseif($this->is_Admin()){ // IF ADMIN
@@ -650,7 +508,7 @@ class User extends Controller{
 				\Http::redirect(' frontpost-'.$postid.'.html#post');
 			}else{// IF DOES NOT COME FROM A POST VIEW : SEND TO ADMIN DASHBOARD PAGE
 
-				\Http::redirect(' index.php?action=adminposts');
+				\Http::redirect(' index.php?action=adminposts&controller=postadmin');
 				
 			}
 
@@ -670,20 +528,20 @@ class User extends Controller{
 			SessionManager::getInstance()->sessionDestroy();
 
 			\Http::redirect('accueil.html');
-			
-			
 		}
-		
 	}
 
 	# **************
 	# Display user's password reset Requesting form
 	# **************
 
-	public function passresetRequest() {
+	public function passResetRequest() {
+
+		// GET THE HIDEN FIELD WITH CRSF TOKEN
+		$loginToken = new \Inc\Clean();
+		$tokenField = $loginToken->get_token_field('passreset');
 
 		require'view/frontend/passresetView.php';
-
 	}
 
 
@@ -693,102 +551,106 @@ class User extends Controller{
 
 
 
-	public function passreinitNew() {
+	public function passReinitNew() {
+		
+		$passReinitnewToken = new \Inc\Clean();
+		//$messageDisplay = new \Inc\MessageDisplay();
 
+		$tokenField = $passReinitnewToken->get_token_field('newpass');
+
+		if((null !== SessionManager::getInstance()->get('LINK_EMAIL')) && (null !== SessionManager::getInstance()->get('LINK_TOKEN'))){
+			$linkEmail = SessionManager::getInstance()->get('LINK_EMAIL');
+			$linkToken = SessionManager::getInstance()->get('LINK_TOKEN');
+
+		}
 		require'view/frontend/passreinitView.php';
 
 	}
 
 	/***************************************************
 	 * Get user's email 
-	 * @param $post : form data, $URL to check referer, $token_name
+	 * @param $post : form data, $URL to check referer, $tokenName
 	 ************************************************** */
 	 
-    public function passReset($post, $URL, $token_name) {
+    public function passReset($post, $URL, $tokenName) {
 
-			// CHECK LOGIN CSRF TOKEN
+		SessionManager::getInstance()->sessionvarUnset('errors');
+	
+		// CHECK LOGIN CSRF TOKEN
+		$cleanObject = new \Inc\Clean();
+		$checkToken = $cleanObject->check_token(600,  $URL.'passresetrequest-user.html', $tokenName);
 
-			SessionManager::getInstance()->sessionvarUnset('errors');
+		$email =  $post['email'];
+		//$email = $post->get('email');
+				
+		$inputs = [
+			'email' => $email
+			];
+
+		$fields = [
+			'email' => 'email'
+			];
+
+		$rules = [
+			'email' => 'required'
+			];
 		
-			// CHECK LOGIN CSRF TOKEN
-			$cleanobject = new \Inc\Clean();
-			$check_token = $cleanobject->check_token(600,  $URL.'passresetrequest-user.html', $token_name);
-
-			$email =  $post['email'];
-			//$email = $post->get('email');
-					
-			$inputs = [
-				'email' => $email
-				];
-
-			$fields = [
-				'email' => 'email'
-				];
-
-			$rules = [
-				'email' => 'required'
-				];
+		$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'passresetrequest','passresetrequest');
+				
+		if(empty($this->errors)){
 			
-			$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'passresetrequest','passresetrequest');
-					
-			if(empty($this->errors)){
-				
-				$action = SessionManager::getInstance()->get('ACTION');
-
-				$email =  $data['email'];
-								
-				// TESTS IF EMAIL  EXISTS
-				$verifyemail = $this->model->VerifyUserEmail($email);
-				
-
-				if ($verifyemail) 
-					{ 
-						$token = $cleanobject->get_token('passreset');
-						
-						$userid = $verifyemail['id'];
+			$action = SessionManager::getInstance()->get('ACTION');
+			$email =  $data['email'];
 							
-						$passreset = $this->model->resetPassTokenInsert($userid, $token);
-												
-						if ($passreset ) {
+			// TESTS IF EMAIL  EXISTS
+			$verifyEmail = $this->model->VerifyUserEmail($email);
+			
 
-							$pseudo = $verifyemail['pseudo'];
-							
-							$this->PassResetEmail( $email,$pseudo, $userid,  $token);
-										
-						}
-				}else{
-						$passreset = false;
-				}
-						$this->$messagedisplay->initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
-						
-						\Http::redirect('passresetrequest-user.html#passresetrequest');
+			if ($verifyEmail) 
+				{ 
+					$token = $cleanObject->get_token('passreset');
+					$userid = $verifyEmail['id'];
+					$passreset = $this->model->resetPassTokenInsert($userid, $token);
+											
+					if ($passreset ) {
+
+						$pseudo = $verifyEmail['pseudo'];
+						$this->PassResetEmail( $email,$pseudo, $userid,  $token);
+									
+					}
+			}else{
+					$passreset = false;
 			}
+			$this->messageDisplay->initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
+			
+			\Http::redirect('passresetrequest-user.html#passresetrequest');
+		}
     }
 
 
 	/**
 	 * Get email and reset password token from users email link and verify if the same token in user's record and if it is not expired
 	 *if OK displays reset password form
-	* @param  Parameter $link_email $link_token
+	* @param  Parameter $linkEmail $linkToken
 	* 
 	*/
 
-	public function verifyPassresetToken($link_email,$link_token){
+	public function verifyPassresetToken($linkEmail,$linkToken){
 				
 		$errors =array();
 		
 		$rules = [
-					'link_email' => 'required',
-					'link_token' => 'required'
+					'linkEmail' => 'required',
+					'linkToken' => 'required'
 					];
 
 		$data = [
-					'link_email' => $link_email,
-					'link_token' => $link_token
+					'linkEmail' => $linkEmail,
+					'linkToken' => $linkToken
 				];
 		
-		$cleanobject = new \Inc\Clean();
-		$errors = $cleanobject->validate($data, $rules);	
+		$cleanObject = new \Inc\Clean();
+		$errors = $cleanObject->validate($data, $rules);	
 		
 		if(!empty($errors)){
 			
@@ -798,21 +660,21 @@ class User extends Controller{
 						
 		}else{			
 						
-			$verifyemailtoken = $this->model->VerifyEmailToken($link_email, $link_token);
+			$verifyEmailToken = $this->model->VerifyEmailToken($linkEmail, $linkToken);
 			
 			$action = SessionManager::getInstance()->get('ACTION');
 
-			if ($verifyemailtoken === true){ 
+			if ($verifyEmailToken === true){ 
 
-					SessionManager::getInstance()->set('LINK_EMAIL', $link_email);
-					SessionManager::getInstance()->set('LINK_TOKEN', $link_token);
+					SessionManager::getInstance()->set('LINK_EMAIL', $linkEmail);
+					SessionManager::getInstance()->set('LINK_TOKEN', $linkToken);
 					
 					
 					\Http::redirect('passreinitnew-user.html');
 					
 			}else{
-					
-					$this->$messagedisplay->initmessage($action,$verifyemailtoken);
+					//$messageDisplay = new \Inc\MessageDisplay();
+					$this->messageDisplay->initmessage($action,$verifyEmailToken);
 					
 					\Http::redirect('passresetrequest-user.html');
 
@@ -825,33 +687,33 @@ class User extends Controller{
 
 	/**
 	 * Get data of new password form and verify if password and confirmed password are equal
-	 * @param  Parameter $post : form data, $URL to check referer , $token_name
+	 * @param  Parameter $post : form data, $URL to check referer , $tokenName
 	 * 
 	 */
 
-    public function getNewPass($post, $URL, $token_name){
+    public function getNewPass($post, $URL, $tokenName){
 			
 			SessionManager::getInstance()->sessionvarUnset('errors');
 		
 			// CHECK LOGIN CSRF TOKEN
-			$cleanobject = new \Inc\Clean();
-			$check_token = $cleanobject->check_token(600,  $URL.'passreinitnew-user.html', $token_name);
+			$cleanObject = new \Inc\Clean();
+			$checkToken = $cleanObject->checkToken(600,  $URL.'passreinitnew-user.html', $tokenName);
 			
-			/*$newpassword = $post->get('newpassword');
-			$confirmnewpassword =  $post->get('confirmnewpassword');
-			$link_token = $post->get('reset_link_token');
+			/*$newPassword = $post->get('newpassword');
+			$confirmNewPassword =  $post->get('confirmnewpassword');
+			$linkToken = $post->get('reset_link_token');
 			$email = $post->get('email');*/
 
-			$newpassword = $post['newpassword'];
-			$confirmnewpassword =  $post['confirmnewpassword'];
-			$link_token = $post['reset_link_token'];
+			$newPassword = $post['newpassword'];
+			$confirmNewPassword =  $post['confirmnewpassword'];
+			$linkToken = $post['reset_link_token'];
 			$email = $post['email'];
 
 			$inputs = [
-				'newpassword' => $newpassword,
-				'confirmnewpassword' => $confirmnewpassword,
+				'newpassword' => $newPassword,
+				'confirmnewpassword' => $confirmNewPassword,
 				'email' => $email,
-				'reset_link_token' => $link_token
+				'reset_link_token' => $linkToken
 				];
 
 			$fields = [
@@ -870,42 +732,43 @@ class User extends Controller{
 				'confirmnewpassword' => 'required | same:newpassword'
 				];
 
-			$data = $this->CleanData($inputs, $fields, $rules, $check_token, $token_name, 'passreinitnew','newpass');
+			$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'passreinitnew','newpass');
 						
 			if(empty($this->errors)){
 					
-						$newpass = $data['newpassword'];
-						$link_email = $data['email'];
-						$link_token = $data['reset_link_token'];
-						
-						$hash = password_hash($newpass,PASSWORD_DEFAULT);
-						
-						$newpass = $hash;
+				$newPass = $data['newpassword'];
+				$linkEmail = $data['email'];
+				$linkToken = $data['reset_link_token'];
+				
+				$hash = password_hash($newPass,PASSWORD_DEFAULT);
+				
+				$newPass = $hash;
 
-						$updateNewPass = $this->model->updatePass($newpass, $link_email, $link_token);
-						
-						$action  = SessionManager::getInstance()->get('ACTION');
+				$updateNewPass = $this->model->updatePass($newPass, $linkEmail, $linkToken);
+				
+				//$action  = SessionManager::getInstance()->get('ACTION');
 
-						$this->$messagedisplay->initmessage($action,$insertNewPass);
+				//$this->$messageDisplay->initmessage($action,$updateNewPass);
 
-						if ($updateNewPass) 
-						{ 
-							
-							$action  = SessionManager::getInstance()->get('ACTION');
+				//$messageDisplay = new \Inc\MessageDisplay();
+				$action  = SessionManager::getInstance()->get('ACTION');
 
-							$this->$messagedisplay->initmessage($action,$updateNewPass);
-							
-							\Http::redirect('loginview-user.html#login');
+				if ($updateNewPass) 
+				{ 
+					
+					$this->messageDisplay->initmessage($action,$updateNewPass);
+					
+					\Http::redirect('loginview-user.html#login');
 
-						}else{
-						
-						$action  = SessionManager::getInstance()->get('ACTION');
-						$this->$messagedisplay->initmessage($action,$updateNewPass = false);
+				}else{
+				
+					//$action  = SessionManager::getInstance()->get('ACTION');
+					$this->messageDisplay->initmessage($action,$updateNewPass = false);
 
-						
-						\Http::redirect('passreinitview-user.html#newpass');
-					}
+				
+				\Http::redirect('passreinitview-user.html#newpass');
 				}
+			}
 		}
 
 	/**
@@ -914,12 +777,12 @@ class User extends Controller{
 	 * 
 	 */
 
-	public function PassResetEmail( $email,$pseudo, $id, $passreset_token)
+	public function PassResetEmail( $email,$pseudo, $id, $passResetToken)
 	{
 		$subject = "Réinitialisation de votre Mot de Passe";
 		$headers = "From: " . CF_EMAIL . "\r\n";
 		$headers .= "Content-type: text; charset=UTF-8\r\n";
-		$message = "Bonjour " . $pseudo. ", Afin de procéder à la Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/passreinitialisation-". $email."-". $passreset_token . "-user.html\r\n\r\n----------------------.";
+		$message = "Bonjour " . $pseudo. ", Afin de procéder à la Réinitialisation de votre Mot de Passe, veuillez cliquer sur le lien ci-dessous ou copier/coller dans votre navigateur Internet.\r\n\r\nhttps://ocblog.capdeco.com/poo/passreinitialisation-". $email."-". $passResetToken . "-user.html\r\n\r\n----------------------.";
 		
 		mail($email, $subject, $message, $headers);
 		
