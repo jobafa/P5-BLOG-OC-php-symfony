@@ -11,31 +11,16 @@ use Controllers\User;
 
 class Postadmin extends Controller{
 
-	//private $errors = [];
+	
 	protected $model;
-    //protected $messageDisplay;
-	protected $modelName = \Models\PostManager::class;
+    protected $modelName = \Models\PostManager::class;
 
-	/*private static $filters = array(
-	'string' => FILTER_SANITIZE_STRING,
-	'string[]' => [
-		'filter' => FILTER_SANITIZE_STRING,
-		'flags' => FILTER_REQUIRE_ARRAY
-	],
-	'email' => FILTER_SANITIZE_EMAIL,
-	'password' => FILTER_UNSAFE_RAW,
-	'int' => [
-		'filter' => FILTER_SANITIZE_NUMBER_INT,
-		'flags' => FILTER_REQUIRE_SCALAR
-	],
-	'url' => FILTER_SANITIZE_URL,
-	);*/
 
     public function modifyPostView($postId)
     {
         if( !$this->is_Admin() ) $this->redirectLogin();
 
-        $post = $this->model->get($postId, $is_published = null);
+        $post = $this->model->get($postId, $isPublished = null);
         SessionManager::getInstance()->set('photo', $post['image']);
 
         $messageDisplay = new \Inc\MessageDisplay();
@@ -56,7 +41,7 @@ class Postadmin extends Controller{
         if( !$this->is_Admin() ) $this->redirectLogin();
 
         $file = new \Inc\File();
-        $fileupload = new \Inc\FileUpload();
+        $fileUpload = new \Inc\FileUpload();
             
         
         if( $file->get('pimage','error') !== 4){    // NO FILE UPLOADED
@@ -64,7 +49,7 @@ class Postadmin extends Controller{
             $status = $file->get('pimage','error');
             $postPhoto = $file->get('pimage');
 
-            $photo = $fileupload->checkUploadStatus($status, $postPhoto, $postId);
+            $photo = $fileUpload->checkUploadStatus($status, $postPhoto, $postId);
             
             if($photo == false){
 
@@ -183,12 +168,14 @@ class Postadmin extends Controller{
             $messageDisplay->initmessage($action,$result);
             
             if ($result === false) {
-                $_SESSION['postaddmessage'] = 0;
+                SessionManager::getInstance()->set('postaddmessage', 0);
+                //$_SESSION['postaddmessage'] = 0;
             throw new Exception('Impossible d\'ajouter le post !');
             }
             else {
                 
-            $_SESSION['postaddmessage'] = 1;
+                SessionManager::getInstance()->set('postaddmessage', 1);//
+                //$_SESSION['postaddmessage'] = 1;
                 \Http::redirect('index.php?action=addpostview&controller=postadmin');
                 //header('Location: index.php?action=addpostview');
             }
@@ -212,7 +199,7 @@ class Postadmin extends Controller{
         $posts = $this->model->getAll($userId,$from = null, $is_published = null, $paginationStart = null, $limit = null);
 
         $title = 'Gestion des Articles';
-        $cleanobject = new \Inc\Clean();// FOR ESCAPE OUTPUT FUNCTION
+        $cleanObject = new \Inc\Clean();// FOR ESCAPE OUTPUT FUNCTION
 
         if( null === SessionManager::getInstance() ) session_start();
 
@@ -221,13 +208,13 @@ class Postadmin extends Controller{
         $action = SessionManager::getInstance()->get('ACTION');
         SessionManager::getInstance()->Set('MYPOST', $action);
          
-        if( !$this->is_Logged()){
+        /*if( !$this->is_Logged()){
             SessionManager::getInstance()->Set('actionmessage', 'Accès non authorisé, Veuillez vous  connecter !');
             SessionManager::getInstance()->Set('alert_flag', 0);
             
             \Http::redirect('loginview-user.html#login');
             
-        }
+        }*/
 
         require'view/backend/backblogmanage_OK.php';
         
@@ -239,11 +226,12 @@ class Postadmin extends Controller{
     #  Post Acivation
     # **************
 
-    public function postPublish(int $postId, int $ispublished)
+    public function postPublish(int $postId, int $isPublished)
     {
         if( !$this->is_Admin() ) $this->redirectLogin();
 
-        $publishpost = $this->model->publishPost($postId, $ispublished);
+        //$publishPost = $this->model->publishPost($postId, $isPublished);
+        $this->model->publishPost($postId, $isPublished);
 
          // whitch post was deleted  : admin post or any post : helps sending the user back to where he comes from = adminposts or adminmyposts
          $whosePost = SessionManager::getInstance()->get('MYPOST');
@@ -265,12 +253,12 @@ class Postadmin extends Controller{
 
         $commentManager = new \Models\CommentManager();
 
-        $deletecomment = $commentManager->deleteCommentPost($postId,$idcomment = null, $userId = null); // DELETE COMMENTS RELATED TO THE POST
-        $deletepost = $this->model->deletePost($postId); // DELETE POST
+        $commentManager->deleteCommentPost($postId,$idComment = null, $userId = null); // DELETE COMMENTS RELATED TO THE POST
+        $deletePost = $this->model->deletePost($postId); // DELETE POST
 
         //gerate a message according to the action process
         $messageDisplay = new \Inc\MessageDisplay();
-        $messageDisplay->initmessage($action,$deletepost);        
+        $messageDisplay->initmessage($action,$deletePost);        
         
         // whitch post was deleted  : admin post or any post : helps sending the user back to where he comes from = adminposts or adminmyposts
         $whosePost = SessionManager::getInstance()->get('MYPOST');
