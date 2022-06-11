@@ -3,7 +3,7 @@ namespace Inc;
 
 class SessionManager
 {
-   private $session ;
+   private $session;
    static $instance;
 
    static function getInstance()
@@ -14,10 +14,14 @@ class SessionManager
         return self::$instance;
     }
 
-  
-    public function __construct()
+   /* public function __construct($session)
     {
-        $this->session = $_SESSION;
+        session_start();
+    }
+*/
+    public function __construct($session)
+    {
+        $this->session = $session;
     }
 
     public function set($name, $value)
@@ -48,6 +52,14 @@ class SessionManager
         session_destroy();
     }
 
-  
+  /*   public function show($name)
+    {
+        if(isset($_SESSION[$name]))
+        {
+            $key = $this->get($name);
+            $this->remove($name);
+            return $key;
+        }
+    }*/
 
 }

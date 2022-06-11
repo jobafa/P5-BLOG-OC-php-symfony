@@ -1,6 +1,10 @@
 <?php
 namespace Inc;
 
+//require_once('Models/Model.php');
+//use Models\Manager;
+//require_once("Models/Model.php");
+
 use Models\Model;
 use Inc\SessionManager;
 
@@ -44,11 +48,13 @@ class Clean  {
         private static $validation_errors = array(
             'required' => 'le champ %s est requis',
             'email' => ' %s n\'est pas une adresse email valide',
+            'size' => 'Le champ %s doit contenir  %s chiffres',
             'min' => 'Le champ %s doit avoir au moins %s caract&eacute;res',
             'max' => 'Le champ %s doit avoir au plus %s caract&eacute;res',
             'between' => 'Le champ %s doit avoir entre %d et %d caract&eacute;res',
             'same' => 'Les champs Mot de Passe et Confirmer Mot de Passe doivent avoir la m&ecirc;me valeur !',
             'alphanumeric' => 'Le champ %s doit contenir, uniquement, des chiffres et des lettres',
+            'numeric' => 'Le champ %s doit contenir, uniquement, des chiffres',
             'secure' => 'Le champ %s doit contenir entre 8 et 64 caract&eacute;res avec au moins un chiffre, une majiscule, une miniscule et un caract&eacute;re sp&eacute;cial',
             'unique' => 'L\'adresse  %s existe d&egrave;j&agrave;',
         );
@@ -361,6 +367,23 @@ class Clean  {
         
             return mb_strlen($data[$field]) <= $max;
         }
+
+         /**
+         * Return true if a string  length equals size
+         * @param array $data
+         * @param string $field
+         * @param int $size
+         * @return bool
+         */
+
+        public function is_size(array $data, string $field, int $size): bool
+        {
+            if (!isset($data[$field])) {
+                return true;
+            }
+        
+            return mb_strlen($data[$field]) === $size;
+        }
         
         /**
          * @param array $data
@@ -415,6 +438,22 @@ class Clean  {
             }
         
             return ctype_alnum($data[$field]);
+        }
+
+          /**
+         * Return true if a string is numeric
+         * @param array $data
+         * @param string $field
+         * @return bool
+         */
+
+        public function is_numeric(array $data, string $field): bool
+        {
+            if (!isset($data[$field])) {
+                return true;
+            }
+       
+            return ctype_digit($data[$field]);
         }
         
         /**
@@ -500,7 +539,7 @@ class Clean  {
         //*@param string $name
         /* @return  string**/
 
-          public function get_token($nom = '')
+        public function get_token($nom = '')
         {
             
             if (SessionManager::getInstance()->get($nom.'_token')) {
@@ -526,7 +565,7 @@ class Clean  {
         /* @return  bool**/
 
 
-        public function check_token($temps, $referer, $nom = '')
+        public function check_token($temps, $referer = null, $nom = '')
         {
                 $expiredtime = (time() - $temps);
                 
@@ -534,16 +573,16 @@ class Clean  {
                 SessionManager::getInstance()->set('expired_time', $expiredtime);
 
                 $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
-		
-		 $server = new \Inc\Server();
+
+                $server = new \Inc\Server();
 
                 if((SessionManager::getInstance()->get($nom.'_token')) && (SessionManager::getInstance()->get($nom.'_token_time')) && isset($token)){
                     if(SessionManager::getInstance()->get($nom.'_token') == $token){
                         if(SessionManager::getInstance()->get($nom.'_token_time') >= $expiredtime){
                             
-                            
+                            //if(SessionManager::getInstance()->get('ACTION') !== 'userupdate'){
                                 //if($_SERVER['HTTP_REFERER'] == $referer){
-				if($server->get_SERVER('HTTP_REFERER') == $referer){
+                                if($server->get_SERVER('HTTP_REFERER') == $referer){
                                     $error = "ras";
                                     return $error ;
                                 }else{
@@ -551,6 +590,10 @@ class Clean  {
                                     $error = "referer";
                                     return $error;
                                 }
+                            /*}else{
+                                $error = "ras";
+                                return $error;
+                            }*/
                         }else{
 
                                 
@@ -566,8 +609,9 @@ class Clean  {
                     return false;
                 }
 
-            
+                
         }
+
         //**************************************************************************//
         //*generates the hidden input field for the token*/
         //*@param string $name
@@ -577,10 +621,12 @@ class Clean  {
             
             $token = $this->get_token($nom);
 
+            /*var_dump($token);
+            exit;*/
+
             return '<input type="hidden" name="token" value="' . $token . '">';
         
         }
-
 
 
         //**************************************************************************//
@@ -591,7 +637,6 @@ class Clean  {
         public function escapeoutput($output){
             return htmlentities($output, ENT_QUOTES);
         }
-
 
 
 

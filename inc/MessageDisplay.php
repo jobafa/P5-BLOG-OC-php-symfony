@@ -35,11 +35,11 @@ class MessageDisplay
 
         case 'addpost':
             if (! $result) {
-                SessionManager::getInstance()->set('actionmessage','Post Adding failed !');
+                SessionManager::getInstance()->set('actionmessage','Echec ajout Article!');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             else {
-                SessionManager::getInstance()->set('actionmessage','Success Post Added !');
+                SessionManager::getInstance()->set('actionmessage','Article ajouté avec succès !');
                 SessionManager::getInstance()->set('alert_flag',  1);
             }
             
@@ -47,11 +47,11 @@ class MessageDisplay
         
         case 'updatepost':
             if (! $result) {
-                SessionManager::getInstance()->set('actionmessage','Post Update failed !');
+                SessionManager::getInstance()->set('actionmessage','Echec mise à jour  Article  !');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             else {
-                SessionManager::getInstance()->set('actionmessage','Success Post Updated !');
+                SessionManager::getInstance()->set('actionmessage','Article mis à jour avec  succès!');
                 SessionManager::getInstance()->set('alert_flag',  1);
             }
             
@@ -59,11 +59,11 @@ class MessageDisplay
         //}
         case 'deletepost':
             if (! $result) {
-                SessionManager::getInstance()->set('actionmessage','Post Delete failed !');
+                SessionManager::getInstance()->set('actionmessage','Echec suppression Article !');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             else {
-                SessionManager::getInstance()->set('actionmessage','Success Post Deleteted !');
+                SessionManager::getInstance()->set('actionmessage','Article supprimé avec succès !');
                 SessionManager::getInstance()->set('alert_flag',  1);
             }
             
@@ -80,7 +80,7 @@ class MessageDisplay
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             elseif ( ($result != 1) && ($result != 'email')) {
-                SessionManager::getInstance()->set('actionmessage','Failed to Add User !');
+                SessionManager::getInstance()->set('actionmessage','Echec d\'ajout utilisateur !');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             
@@ -99,7 +99,7 @@ class MessageDisplay
             }
             elseif ( ($result != 1) && ($result != 'email')) {
 
-                SessionManager::getInstance()->set('actionmessage','Failed to Add User !');
+                SessionManager::getInstance()->set('actionmessage','Echec d\'ajout utilisateur !');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             
@@ -114,7 +114,7 @@ class MessageDisplay
 
             }elseif(!$result ) {
 
-                SessionManager::getInstance()->set('actionmessage','Failed Bad Login Or Password !');
+                SessionManager::getInstance()->set('actionmessage','Mauvais  Login ou mot de Passe !');
                 SessionManager::getInstance()->set('alert_flag',  0);
             }
             else {
@@ -127,11 +127,11 @@ class MessageDisplay
 
             case 'backblogmanage':
             if ( $result == 1) {
-                SessionManager::getInstance()->set('actionmessage','Success Welcome to the BackEnd Management  !');
+                SessionManager::getInstance()->set('actionmessage','Bienvenue dans le menu d\'administration  !');
                 SessionManager::getInstance()->set('alert_flag',  1);
             }
             elseif ( $result == 0) {
-                SessionManager::getInstance()->set('actionmessage','Success you Are connected !');
+                SessionManager::getInstance()->set('actionmessage','Connexion avec succès !');
                 SessionManager::getInstance()->set('alert_flag',  1);
             }
             
