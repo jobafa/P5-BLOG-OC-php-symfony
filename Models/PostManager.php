@@ -7,154 +7,148 @@ require_once('Models/Model.php');
 
 class PostManager extends Model
 {
-		
-		private $post_userid ;
-		private $post_title;
-		private $post_lede;
-		private $post_content ;
-		private $is_enabled ;
-
-		
+	
 
 	/**
 	 * Get total of Posts for Pagination
-	 * @param   $ispublished = post is or not published
+	 * @param   $isPublished = post is or not published
 	 */
 
-	public function gettotalPosts( $ispublished)
+	public function gettotalPosts( $isPublished)
     {
 			
-			try
-				{	
-					$sql = $this->db->query('SELECT count(id) AS id FROM posts WHERE is_published = "'.$ispublished.'"')->fetchAll();
-					$totalRecrods = $sql[0]['id'];
-
-					return $totalRecrods;
-								
-				}
-			catch (Exception $e)
-				{
-					//echo 'Connexion échouée : ' . $e->getMessage();
-					$errorMessage = $e->getMessage();
-    				require'view/errorView.php';
-				}					
+		try{	
+			
+			$req = $this->db->prepare('SELECT count(id) AS id FROM posts WHERE is_published = :Published ');
+			$req->bindParam(':Published', $isPublished, \PDO::PARAM_INT);
+			$req->execute();
+			$posts = $req->fetchColumn();
+			
+			return $posts;
+						
+			}
+		catch (Exception $e){
+			
+			$errorMessage = $e->getMessage();
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
+			}					
 					
 	}									
 	
 	/**
 	 * Get Posts list
-	 * @param   $post_userid,  $ispublished = post is or not published
+	 * @param   $postUserId,  $isPublished = post is or not published
 	 */
 
-    public function getAll($post_userid = null, $from, $is_published = null, $paginationStart, $limit)
-    {
-        
-		try
-		{
-			$req =('
-						SELECT id, title, author, lede, image, content, is_published, DATE_FORMAT(update_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS update_date_fr 
-						FROM posts '
-						);
+    public function getAll($postUserId = null, $from, $isPublished = null, $paginationStart, $limit)
+    {        
+		try{
+			
+			$sql =('SELECT id, title, author, lede, image, content, is_published, DATE_FORMAT(update_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS update_date_fr 
+					FROM posts '
+					);
 
-						if ( isset($post_userid) && ($post_userid > 0) && ( ! isset  ($from))) {
-	
-							$req.= ' WHERE user_id = "'.$post_userid.'" ORDER BY creation_date DESC ';
-							$result = $this->db->query($req);
-							
-						}elseif( isset($is_published) && ($is_published != null)){
+			if ( isset($postUserId) && ($postUserId > 0) && ( ! isset  ($from))) {
 
-							$req.= ' WHERE is_published = '.$is_published.' ORDER BY update_date DESC LIMIT '.$paginationStart.', '.$limit;
-							
-							$result = $this->db->query($req);
-						
+				$sql.= ' WHERE user_id = ? ORDER BY creation_date DESC ';
+				$req = $this->db->prepare($sql);
+				$req->execute(array($postUserId));
+				
+				$result = $req->fetchAll();
+								
+			}elseif( isset($isPublished) && ($isPublished != null)){
 
-						}
-						else{
-							$req.= ' ORDER BY update_date DESC ';
-							$result = $this->db->query($req);
-							
-							
-						}
+				$sql.= ' WHERE is_published = ? ORDER BY update_date DESC LIMIT ?, ? ';
+				$req = $this->db->prepare($sql);
+
+				$req->bindParam(1, $isPublished, \PDO::PARAM_INT);
+				$req->bindParam(2, $paginationStart, \PDO::PARAM_INT);
+				$req->bindParam(3, $limit, \PDO::PARAM_INT);
+
+				$result = $req->execute();
+				
+				$result = $req->fetchAll();
+				
+			}
+			else{
+				$sql.= ' ORDER BY update_date DESC ';
+				$result = $this->db->query($sql);
+				
+			}
 		}
 		catch (Exception $e)
-		{
-			//echo 'Connexion échouée : ' . $e->getMessage();
+		{			
 			$errorMessage = $e->getMessage();
-    		require'view/errorView.php';
-		}					
+    		\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
 			
+		}					
+		
 		return $result;			
 	}									
 
-
 	/**
 	 * Get one Post
-	 * @params  string $postid and $ispublished = post is or not published
+	 * @params  string $postid and $isPublished = post is or not published
 	 */
 
-  	public function get($postId, $is_published)
-    {
-        
-		 
-		if($is_published == '1'){			
+  	public function get($postId, $isPublished)
+    {		 
+		if($isPublished == '1'){			
 
 			$req = $this->db->prepare('SELECT posts.id, title,lede, author, image, content, is_published, photo, DATE_FORMAT(posts.update_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS update_date_fr FROM posts  JOIN user ON posts.user_id = user.id WHERE posts.id = ? AND posts.is_published = ?');
-			$req->execute(array($postId, $is_published));
+			$req->execute(array($postId, $isPublished));
 		}else{
 			$req = $this->db->prepare('SELECT id, title,lede, author, image, content, is_published, DATE_FORMAT(creation_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS creation_date_fr FROM posts WHERE id = ? ');
 			$req->execute(array($postId));
 		}
         
         $post = $req->fetch();
-
+		
         return $post;
     }
 
-	
-
-		/**
+	/**
 	 * Add Post
 	 * @params  post form data
 	 */
 
-	public function addPost( $post_userid,$post_title, $post_lede,$post_author,$post_content, $pimage_name,$is_published) 
-		{
-			
-       
-           
-			$req = $this->db->prepare('INSERT INTO posts(user_id, title, lede, author, content,image, is_published, creation_date, update_date) VALUES( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
-			$resultat = $req->execute(array($post_userid,$post_title,$post_lede,$post_author,$post_content, $pimage_name,$is_published));
+	public function addPost( $postUserId,$postTitle, $postLede,$post_author,$postContent, $photoName,$isPublished) 
+		{      
+			$req = $this->db->prepare('INSERT INTO posts(user_id, title, lede, author, content, image, is_published, creation_date, update_date) VALUES( ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())');
+			$resultat = $req->execute(array($postUserId,$postTitle,$postLede,$post_author,$postContent, $photoName,$isPublished));
 							
 			return $resultat;
-				
-            
+
         }
 
+	/**
+	 * Update Post
+	 * @params  idPost, form data, uploaded $photo
+	 */
 
-		 public function updatePost($idpost, $data, $postimage = '') {
-	
-			
+	public function updatePost($idPost, $data, $postImage = '') {
 
-			try
-		{
-            $sql = ('UPDATE posts SET title = :title, 
-													lede = :lede, 
-													author = :author, 
-													content = :content, 
-													update_date= NOW() '
-													);
-			if($postimage != '')	{
-				$sql.= ', image = :postimage ';
+		try{
+
+			$sql = ('UPDATE posts SET title = :title, 
+									  lede = :lede, 
+									  author = :author, 
+									  content = :content, 
+									  update_date= NOW() '
+					);
+
+			if($postImage != '')	{
+				$sql.= ', image = :postImage ';
 			}
-			$sql.= ' WHERE id = :id'	;
-			
+			$sql.= ' WHERE id = :id';			
 
-            $req = $this->db->prepare($sql);
+			$req = $this->db->prepare($sql);
 			
-			if($postimage == '')	{
+			if($postImage == '')	{
 				
 				$resultat = $req->execute(array(
-					":id" => $idpost,
+					":id" => $idPost,
 					":title" => $data["title"],
 					":lede" => $data["lede"],
 					":author" => $data["author"],
@@ -162,69 +156,69 @@ class PostManager extends Model
 				));
 			}else{
 				$resultat = $req->execute(array(
-					":id" => $idpost,
+					":id" => $idPost,
 					":title" => $data["title"],
 					":lede" => $data["lede"],
 					":author" => $data["author"],
 					":content" => $data["content"],
-					":postimage"=>$postimage
+					":postImage"=>$postImage
 				));
 			}
 		}
-			catch (Exception $e)
-		{
-			//echo 'Connexion échouée : ' . $e->getMessage();
+		catch (Exception $e){
+			
 			$errorMessage = $e->getMessage();
-    		require'view/errorView.php';
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
 		}	
-			return $resultat;
-        }
+		
+		return $resultat;
+	}
 
 
-		/**
+	/**
 	 * ActivatePost
-	 * @param  string $id and $ispublished = post is or not published
+	 * @param  string $id and $isPublished = post is or not published
 	 */
 
-	public function publishPost($id, $ispublished)
+	public function publishPost(int $id, string $isPublished)
 	{
 		
-	 try
-	{
-		
-		$sql = 'UPDATE posts SET is_published = "'.$ispublished.'"  WHERE id = '.$id;
-		$resultat = $this->db->query($sql);
-		
+	 try{
+
+		$req = $this->db->prepare('UPDATE posts SET is_published = ?  WHERE id = ?');
+		$req->bindValue(1, $isPublished, \PDO::PARAM_STR);
+		$req->bindValue(2, $id, \PDO::PARAM_INT);
+		$resultat = $req->execute();
 		
 	}
 	catch (Exception $e)
 	{
-		//echo 'Connexion échouée : ' . $e->getMessage();
+		
 		$errorMessage = $e->getMessage();
-    	require'view/errorView.php';
+    	\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+		
 	}	
 		return $resultat;
 	}
 
 	/**
 	 * DELETE Post
-	 * @param  string $userid and $postid
+	 * @param  string $userid and $postId
 	 */
 
-	public function deletePost($postId, $userid) {
-
-		
+	public function deletePost($postId = 0) {
 		
 		$query = 'DELETE FROM posts';
 		if ($postId != null) {
 			$query.= ' WHERE posts.id = ? ';
-			$deleteposts = $this->db->prepare($query);
-			$resultat = $deleteposts->execute(array($idpost));
+			$deletePosts = $this->db->prepare($query);
+			$resultat = $deletePosts->execute(array($postId));
 			
 		}elseif ($userid != null) {
 			$query.= '  WHERE posts.user_id = ? ';
-			$deleteposts = $this->db->prepare($query);
-			$resultat = $deleteposts->execute(array($userid));
+			$deletePosts = $this->db->prepare($query);
+			$resultat = $deletePosts->execute(array($userid));
 		}
 		
 		return $resultat;
