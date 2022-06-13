@@ -22,8 +22,8 @@ public static function getPdo()
 		}
 		catch (PDOException $e)
 		{
-				$errorMessage = $e->getMessage();
-				require'view/errorView.php';
+			$errorMessage = $e->getMessage();
+          		\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
 		}				    
 		return self::$instance;
 	}
