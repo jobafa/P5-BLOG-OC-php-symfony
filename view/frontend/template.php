@@ -102,7 +102,7 @@ if( null !== SessionManager::getInstance()->get('PHOTO') ){
     <div class="container"  id="posts">
         <h2 class="page-section-heading text-center text-capitalize text-bluedev mb-0">Mon Blog Formation</h2>
         <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-10 mb-5">
+            <div class="col mb-5">
                 <?= $content ?>
             </div>
         </div>

@@ -40,7 +40,7 @@ if($post['photo'] == Null){
 			<div class="col mb-5">
 				<div class="profile-card mb-lg-4 justify-content-left">
 					<div class=".profile-content justify-content-left">
-						<div class="profile-img">
+						<div class="profile-img img-fluid justify-content-left">
 							<IMG SRC="uploads/images/<?= $cleanObject->escapeoutput($post['image']) ?>"   BORDER=0 ALT="">
 						</div>
 					</div>

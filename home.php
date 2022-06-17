@@ -253,6 +253,27 @@ if( null !== $session->get('PHOTO')){
     
                     <div class="card-body">
                         <div class="col-lg-10 "> 
+                            <?php
+
+                            if(null !== SessionManager::getInstance()->get('errors')){
+                                ?>
+                                <div class="alert  text-danger my-2 alert-dismissible fade show" role="alert">
+                                    <em>
+                                <?php
+                                        
+                                            foreach(SessionManager::getInstance()->get('errors') as $key=>$value){
+
+                                                echo $value.'<BR>';
+                                            }
+                                            SessionManager::getInstance()->sessionvarUnset('errors');
+                                    ?>
+                                    </em>
+                                    <button type="button" class="btn-close justify-content-end" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php	
+                            }
+                            ?>
+
                             <form action="index.php?action=contactform&controller=user" method="post" id="contactForm" data-sb-form-api-token="API_TOKEN">
                                 <!-- Name input-->
                                 <div class="form-floating mb-3">
