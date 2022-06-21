@@ -1,33 +1,11 @@
 <?php
 namespace Inc;
 
-//require_once('Models/Model.php');
-//use Models\Manager;
-//require_once("Models/Model.php");
 
 use Models\Model;
 use Inc\SessionManager;
 
 class Clean  {
-
-
-   /* public function __construct(){
-        $this->model = new Models\Manager();
-    }
-
-    //protected $commentManager;
-	//protected $modelName ;
-    //private $ispublished = '1';
-
-	protected $model;
-	//protected $modelName = "\Models\PostManager";
-    //protected $modelName = \Models\UserManager::class;
-
-    public function __construct(){
-
-    $this->model = new \Inc\Clean();
-
-    }*/
 
 
     /**/private static $filters = array(
@@ -59,25 +37,7 @@ class Clean  {
             'unique' => 'L\'adresse  %s existe d&egrave;j&agrave;',
         );
 
-        
-
-        /*define('FILTERS' = [
-            'string' => FILTER_SANITIZE_STRING,
-            'string[]' => [
-                'filter' => FILTER_SANITIZE_STRING,
-                'flags' => FILTER_REQUIRE_ARRAY
-            ],
-            'email' => FILTER_SANITIZE_EMAIL,
-            'password' => FILTER_UNSAFE_RAW,
-            'int' => [
-                'filter' => FILTER_SANITIZE_NUMBER_INT,
-                'flags' => FILTER_REQUIRE_SCALAR
-            ],
-            'url' => FILTER_SANITIZE_URL
-        ]);*/
-
-
-            /**************************************************************************/
+        /**************************************************************************/
         //*sanitize $GET data*/
         //*@param string $data = $_GET
         /* @return ARRAY **/
@@ -207,25 +167,6 @@ class Clean  {
         }
 
 
-
-        /**
-        * VALIDATION
-        */
-
-        /*const DEFAULT_VALIDATION_ERRORS = [
-            'required' => 'le champ %s est requis',
-            'email' => ' %s n\'est pas une adresse email valide',
-            'min' => 'Le champ %s doit avoir au moins %s caract&eacute;res',
-            'max' => 'Le champ %s doit avoir au plus %s caract&eacute;res',
-            'between' => 'Le champ %s doit avoir entre %d et %d caract&eacute;res',
-            'same' => 'Le champ %s doit avoir la m&ecirc;me valeur que %s',
-            'alphanumeric' => 'Le champ %s doit contenir, uniquement, des chiffres et des lettres',
-            'secure' => 'Le champ %s doit contenir entre 8 et 64 caract&eacute;res avec au moins un chiffre, une majiscule, une miniscule et un caract&eacute;re sp&eacute;cial',
-            'unique' => 'L\'adresse  %s existe d&egrave;j&agrave;',
-        ];*/
-        
-        
-
         /**
          * Validate
          * @param array $data
@@ -235,12 +176,6 @@ class Clean  {
          */
         public function validate(array $data, array $fields, array $messages = []): array
         {
-
-            /*var_dump($fields);
-            var_dump($data);
-                        exit;*/
-
-
             // Split the array by a separator, trim each element
             // and return the array
         
@@ -475,29 +410,6 @@ class Clean  {
         
         
         /**
-         * Connect to the database and returns an instance of PDO class
-         * or false if the connection fails
-         *
-         * @return PDO
-         */
-        
-      /*  public function db(): PDO
-        {
-            static $pdo;
-            // if the connection is not initialized
-            // connect to the database
-            if (!$pdo) {
-                return new \PDO(
-                    sprintf("mysql:host=%s;dbname=%s;charset=UTF8", DB_HOST, DB_NAME),
-                    DB_USER,
-                    DB_PASSWORD,
-                    [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
-                );
-            }
-            return $pdo;
-        }*/
-        
-        /**
          * Return true if the $value is unique in the column of a table
          * @param array $data
          * @param string $field
@@ -514,18 +426,14 @@ class Clean  {
             
             $db = \Manager::getPdo();
 
-            //require_once('/Models/Model.php');
-            //var_dump($data[$field]);
             $sql = "SELECT $column FROM $table WHERE $column = :value";
-            //$db = $this->db();
-            
+               
             $stmt = $db->prepare($sql);
             $stmt->bindValue(":value", $data[$field]);
         
             $stmt->execute();
             $res = $stmt->fetchColumn();
         
-            //return $stmt->fetchColumn() === false;
             if($res){
                 return false;
             }else{
@@ -569,19 +477,25 @@ class Clean  {
         {
                 $expiredtime = (time() - $temps);
                 
-                //$_SESSION['expired_time'] = $expiredtime;
+
                 SessionManager::getInstance()->set('expired_time', $expiredtime);
 
                 $token = filter_input(INPUT_POST, 'token', FILTER_SANITIZE_STRING);
 
                 $server = new \Inc\Server();
+                if(SessionManager::getInstance()->get('ACTION') === 'contactform'){
+
+                    if (!stristr($server->get_SERVER('SERVER_NAME') , "#contact")){
+                        $referer .= 'accueil.html';
+                    }else{
+                        $referer .= 'accueil.html#contact';
+                    }
+                }
 
                 if((SessionManager::getInstance()->get($nom.'_token')) && (SessionManager::getInstance()->get($nom.'_token_time')) && isset($token)){
                     if(SessionManager::getInstance()->get($nom.'_token') == $token){
                         if(SessionManager::getInstance()->get($nom.'_token_time') >= $expiredtime){
                             
-                            //if(SessionManager::getInstance()->get('ACTION') !== 'userupdate'){
-                                //if($_SERVER['HTTP_REFERER'] == $referer){
                                 if($server->get_SERVER('HTTP_REFERER') == $referer){
                                     $error = "ras";
                                     return $error ;
@@ -590,10 +504,7 @@ class Clean  {
                                     $error = "referer";
                                     return $error;
                                 }
-                            /*}else{
-                                $error = "ras";
-                                return $error;
-                            }*/
+                            
                         }else{
 
                                 
@@ -620,9 +531,6 @@ class Clean  {
         public function get_token_field($nom) {
             
             $token = $this->get_token($nom);
-
-            /*var_dump($token);
-            exit;*/
 
             return '<input type="hidden" name="token" value="' . $token . '">';
         
