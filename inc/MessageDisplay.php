@@ -12,7 +12,7 @@ class MessageDisplay
     # @Param $result : user's action result
     # **************
 
-    public function initmessage($action,$result) {
+    public function initMessage($action,$result) {
         
         switch ($action) {
         
