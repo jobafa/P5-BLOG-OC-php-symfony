@@ -7,13 +7,14 @@ require_once'Controllers/Controller.php';
 use Inc\SessionManager;
 use Inc\Clean;
 use Inc\FileUpload;
+use Inc\MessageDisplay;
 
 class User extends Controller{
 
 	private $errors = [];
 	protected $model;
 	protected $modelName = \Models\UserManager::class;
-	protected $messageDisplay;
+	//protected $messageDisplay;
 
 	private static $filters = array(
 	'string' => FILTER_SANITIZE_STRING,
@@ -29,26 +30,24 @@ class User extends Controller{
 	],
 	'url' => FILTER_SANITIZE_URL,
 	);
-
-
-	   
+ 
     /***********************************************
 	 * Checking  contact form csrf token and sending the mail ***
 	 * @param  Parameter $contact-post, $URL, $tokenName***
 	 * ***********************************************/
 	 
 	public function checkContactData($post, $URL, $tokenName){
-
+		
 		SessionManager::getInstance()->sessionvarUnset('errors');
-		$action = SessionManager::getInstance()->get('ACTION');
 
 		$cleanObject = new \Inc\Clean();
-		$checkToken = $cleanObject->checkToken(600,  $URL.'accueil.html', $tokenName);
+		//$checkToken = $cleanObject->check_token(600,  $URL.'accueil.html', $tokenName);
+		$checkToken = $cleanObject->check_token(600,  $URL, $tokenName);
 		
-		$name =  $post->get('name');
-		$email =  $post->get('email');
-		$subject =  $post->get('subject');
-		$message =  $post->get('message');
+		$name =  $post['name'];
+		$email =  $post['email'];
+		$subject =  $post['subject'];
+		$message =  $post['message'];
 		
 		$inputs = [
 			'name' => $name,
@@ -105,7 +104,7 @@ class User extends Controller{
 		$headers .= "Content-type: text/html; charset=UTF-8\r\n";
 		
 		if(mail(CF_EMAIL, $subject, $message, $headers)){
-
+			
 			$email_ok = true;
 
 		}else{
@@ -115,9 +114,9 @@ class User extends Controller{
 
 		$action = SessionManager::getInstance()->get('ACTION');
 
-			//generate a message according to the action processed
-			
-		$this->$messageDisplay->initmessage($action,$email_ok);
+		//generate a message according to the action processed
+		$messageDisplay = new \Inc\MessageDisplay();	
+		$messageDisplay->initmessage($action,$email_ok);
 		
 		\Http::redirect('accueil.html#contact');
 				
@@ -238,11 +237,6 @@ class User extends Controller{
 			} // END OF  FILE UPLOAD CHECKING
 
 			try{
-
-				// Initialize $usertype_id according to wether we are comming from the frontend or the backend  user AddForm		
-													
-				$isEnabled="1";
-
 				// GENERATE TOKEN FOR ACCOUNT ACTIVATION ,MUST ADD TOKEN EXPIRATION DATE TO USER'S ACTIVATION 
 				
 				$token = $cleanObject->get_token('activation');
@@ -258,8 +252,8 @@ class User extends Controller{
 				}
 								
 				$action = SessionManager::getInstance()->get('ACTION');
-
-				$this->messageDisplay->initmessage($action,$result); //generate a message according to the action in process
+				$messageDisplay = new \Inc\MessageDisplay();	
+				$messageDisplay->initmessage($action,$result); //generate a message according to the action in process
 				$this->UserRedirect($action);									 
 							
 			}
@@ -314,16 +308,19 @@ class User extends Controller{
 			   $action = "tokenlife";
 			   
 			   //  INITIATE DISPLAY MESSAGE
-			   $this->messageDisplay->initmessage($action,$checkToken);
+			   $messageDisplay = new \Inc\MessageDisplay();	
+			   $messageDisplay->initmessage($action,$checkToken);
 
 			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token');
 			   SessionManager::getInstance()->sessionvarUnset($tokenName.'_token_time');
 			   
 			   if(SessionManager::getInstance()->get('ACTION') == 'userupdate'){
 			   		\Http::redirect("$path-useradmin.html#$form");
+			   }elseif(SessionManager::getInstance()->get('ACTION') == 'contactform'){
+					\Http::redirect("$path.html#$form");
 			   }else{
-					\Http::redirect("$path-user.html#$form");
-			   }
+				\Http::redirect("$path-user.html#$form");
+		   }
 		   }
 	   }
 	 }
@@ -353,11 +350,11 @@ class User extends Controller{
 		
 		if($action == 'usersignin'){
 							 
-			\Http::redirect(' signinview-user.html#inscription');
+			\Http::redirect('signinview-user.html#inscription');
 
 	   }elseif($action == 'useradd'){
 
-		\Http::redirect(' index.php?action=adduserview&controller=user');
+		\Http::redirect('index.php?action=adduserview&controller=user');
 
 	   }elseif($action == 'userupdate'){
 
@@ -370,6 +367,9 @@ class User extends Controller{
 	   }elseif($action === "passresetrequest"){
 
 		\Http::redirect('passresetrequest-user.html#passresetrequest');
+   	   }elseif($action === "contactform"){
+
+		\Http::redirect('accueil.html#contact');
    	   }
 	}
 	
@@ -394,7 +394,7 @@ class User extends Controller{
 
 	public function verifyLogin($post, $URL, $tokenName) {
 
-		$request =  new \Inc\Request;
+		//$request =  new \Inc\Request;
 		//$messageDisplay = new \Inc\MessageDisplay();
 		SessionManager::getInstance()->sessionvarUnset('errors');
 		
@@ -421,7 +421,7 @@ class User extends Controller{
 			//'email' => 'required|email|unique:user,email'
 		];
 		
-		$data = $this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'loginview','login');
+		$this->CleanData($inputs, $fields, $rules, $checkToken, $tokenName, 'loginview','login');
 				
 		// VALIDATION OF FORM DATA IS OK / VERIFY USER  LOGIN AND PASSWORD
 		
@@ -434,7 +434,8 @@ class User extends Controller{
 			if( ($result) &&  ($result == 'not_activated') ){ // USER ACCOUNT NOT ACTIVATED
 
 				$result = 'account_not_activated';
-				$this->messageDisplay->initmessage($action,$result);
+				$messageDisplay = new \Inc\MessageDisplay();	
+				$messageDisplay->initmessage($action,$result);
 				
 				\Http::redirect('loginview-user.html#login');
 				
@@ -448,7 +449,8 @@ class User extends Controller{
 			
 			}else{ // LOGIN OR PASSWORD OR BOTH DON'T MATCH
 
-				$this->messageDisplay->initmessage($action,$result);
+				$messageDisplay = new \Inc\MessageDisplay();	
+				$messageDisplay->initmessage($action,$result);
 				
 				\Http::redirect('loginview-user.html#login');
 				
@@ -480,10 +482,10 @@ class User extends Controller{
 
 	public function verifyType(){
 		
-		$from = SessionManager::getInstance()->get('FROM');
-		$pseudo = SessionManager::getInstance()->get('PSEUDO');
-		$action = SessionManager::getInstance()->get('ACTION');
-		$result = SessionManager::getInstance()->get('RESULT');
+		//$from = SessionManager::getInstance()->get('FROM');
+		//$pseudo = SessionManager::getInstance()->get('PSEUDO');
+		//$action = SessionManager::getInstance()->get('ACTION');
+		//$result = SessionManager::getInstance()->get('RESULT');
 
 		if($this->is_Guest()){ // IF GUEST 
 
@@ -621,7 +623,8 @@ class User extends Controller{
 			}else{
 					$passreset = false;
 			}
-			$this->messageDisplay->initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
+			$messageDisplay = new \Inc\MessageDisplay();	
+			$messageDisplay->initmessage($action,$passreset);// SET THE MESSAGE TO BE DISPLAYED TO THE USER
 			
 			\Http::redirect('passresetrequest-user.html#passresetrequest');
 		}
@@ -673,8 +676,8 @@ class User extends Controller{
 					\Http::redirect('passreinitnew-user.html');
 					
 			}else{
-					//$messageDisplay = new \Inc\MessageDisplay();
-					$this->messageDisplay->initmessage($action,$verifyEmailToken);
+					$messageDisplay = new \Inc\MessageDisplay();
+					$messageDisplay->initmessage($action,$verifyEmailToken);
 					
 					\Http::redirect('passresetrequest-user.html');
 
@@ -697,7 +700,7 @@ class User extends Controller{
 		
 			// CHECK LOGIN CSRF TOKEN
 			$cleanObject = new \Inc\Clean();
-			$checkToken = $cleanObject->checkToken(600,  $URL.'passreinitnew-user.html', $tokenName);
+			$checkToken = $cleanObject->check_token(600,  $URL.'passreinitnew-user.html', $tokenName);
 			
 			/*$newPassword = $post->get('newpassword');
 			$confirmNewPassword =  $post->get('confirmnewpassword');
@@ -750,20 +753,20 @@ class User extends Controller{
 
 				//$this->$messageDisplay->initmessage($action,$updateNewPass);
 
-				//$messageDisplay = new \Inc\MessageDisplay();
+				$messageDisplay = new \Inc\MessageDisplay();
 				$action  = SessionManager::getInstance()->get('ACTION');
 
 				if ($updateNewPass) 
 				{ 
 					
-					$this->messageDisplay->initmessage($action,$updateNewPass);
+					$messageDisplay->initmessage($action,$updateNewPass);
 					
 					\Http::redirect('loginview-user.html#login');
 
 				}else{
 				
 					//$action  = SessionManager::getInstance()->get('ACTION');
-					$this->messageDisplay->initmessage($action,$updateNewPass = false);
+					$messageDisplay->initmessage($action,$updateNewPass = false);
 
 				
 				\Http::redirect('passreinitview-user.html#newpass');
