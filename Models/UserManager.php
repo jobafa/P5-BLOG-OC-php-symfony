@@ -6,87 +6,70 @@ require_once'Models/Model.php';
 use Inc\SessionManager;
 
 class UserManager extends Model {
-		
-		/*private $usertype_id;
-		private $pseudo;
-		private $email;
-		private $token;
-		private $password;
-		private $userId;
-		private $id;
-		private $is_enabled ;*/
-
-
-		/**
+				
+	/**
 	 * Register new user 
 	 * @param  post sign in  form  data
 	 * @return object User
 	 */
 
-		public function registerUser($usertype_id, $pseudo, $email, $user_password, $photo, $token) {
+		public function registerUser($userTypeId, $pseudo, $email, $userPassword, $photo, $token) {
 		$is_enabled = 1;
 		
-
-		$userpassword = $user_password;
-
-        $hash = password_hash($userpassword,PASSWORD_DEFAULT);
+        $hash = password_hash($userPassword,PASSWORD_DEFAULT);
         
-        $userpassword = $hash;
-try
-				{
-        $sql = 'INSERT INTO user(usertype_id, pseudo, email, password, photo, is_enabled, is_activated, creation_date, update_date) VALUES (:usertype_id, :pseudo, :email, :userpassword, :photo,  :is_enabled, :token, NOW(), NOW())';
+        $userPassword = $hash;
+		try{
+			$sql = 'INSERT INTO user(usertype_id, pseudo, email, password, photo, is_enabled, is_activated, creation_date, update_date) VALUES (:userTypeId, :pseudo, :email, :userPassword, :photo,  :is_enabled, :token, NOW(), NOW())';
 
-        $req = $this->db->prepare($sql);
+			$req = $this->db->prepare($sql);
 
-        $resultat = $req->execute(array(
-			'usertype_id' => $usertype_id,
-            'pseudo' => $pseudo,
-            'email' => $email,
-            'userpassword' => $userpassword,
-			'photo' => $photo,
-            'is_enabled' => $is_enabled,
-			'token'=> $token
-        )); 
+			$resultat = $req->execute(array(
+				'userTypeId' => $userTypeId,
+				'pseudo' => $pseudo,
+				'email' => $email,
+				'userPassword' => $userPassword,
+				'photo' => $photo,
+				'is_enabled' => $is_enabled,
+				'token'=> $token
+			)); 
 		}
-				catch (Exception $e)
-				{
-					//echo 'Connexion échouée : ' . $e->getMessage();
-					$errorMessage = $e->getMessage();
-    				require'view/errorView.php';
-				}			
-		
-		
+		catch (Exception $e){
+			
+			$errorMessage = $e->getMessage();
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
+		}			
+				
 		SessionManager::getInstance()->set('LASTUSERID', $this->db->lastInsertId());
 		
 		return $resultat;
     }
 
-    public function loginUser($post_email, $post_password) {
+    public function loginUser($postEmail, $postPassword) {
 
-        $userEntry = $this->VerifyUserEmail($post_email);
+        $userEntry = $this->VerifyUserEmail($postEmail);
 
         if (!$userEntry){ 
 			return false;
 
 		}else{ // if user login exists check if user account is not activated then return its value
-
 			
-					if($userEntry['is_activated'] != NULL){
-						
-						$is_activated = 'not_activated';
-						return $is_activated;
-						
-					}
+			if($userEntry['is_activated'] != NULL){
+				
+				$isActivated = 'not_activated';
+				return $isActivated;
+				
+			}
 		}
 		
         //Get password and hash
 
-        //$password = $post_password;
         $hash = $userEntry['password'];
 
         //Verify password
 
-        if (password_verify($post_password, $hash)){
+        if (password_verify($postPassword, $hash)){
 			
 			return $userEntry;
 		}else{
@@ -103,22 +86,21 @@ try
 	 */
 
 	
-	public function getUseractivationcode($userid)
+	public function getUseractivationcode($userId)
 	{
 		
-	try
-	{
-		 $req = $this->db->prepare('SELECT id, is_activated FROM user WHERE  id = :userid');
+	try{
+		 $req = $this->db->prepare('SELECT id, is_activated FROM user WHERE  id = :userId');
          
-		 $resultat =$req->execute(array(":userid" => $userid)); 
+		 $resultat =$req->execute(array(":userId" => $userId)); 
 	}
-	catch (Exception $e)
-	{
-		//echo 'Connexion échouée : ' . $e->getMessage();
+	catch (Exception $e){
+		
 		$errorMessage = $e->getMessage();
-    	require'view/errorView.php';
+    	\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+		
 	}	
-		 $resultat = $req->fetch();
+		$resultat = $req->fetch();
 		
 		return $resultat;
 
@@ -129,29 +111,23 @@ try
 	 * @param  string $id 
 	 */
 
-	public function userActivate($userid, $token = NULL)
+	public function userActivate($userId, $token = NULL)
 	{
 		
-	 try
-	{
-		
-		
+	 try{
 			
-			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userid';
+			$sql = 'UPDATE user SET is_activated = :token WHERE user.id = :userId';
+			$req = $this->db->prepare($sql);
 
-		
-
-		$req = $this->db->prepare($sql);
-
-        $resultat = $req->execute(array('userid' => $userid,
-										'token' => $token
-										)); 
+			$resultat = $req->execute(array('userId' => $userId,
+											'token' => $token
+											)); 
 	}
-	catch (Exception $e)
-	{
-		//echo 'Connexion échouée : ' . $e->getMessage();
+	catch (Exception $e){
+		
 		$errorMessage = $e->getMessage();
-    	require'view/errorView.php';
+    	\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+		
 	}	
 	
 	return $resultat;
@@ -166,23 +142,17 @@ try
 
     public function VerifyUserEmail($email) {
 
-
-		
-    try
-	{
+    try{
 		$sql = 'SELECT * FROM user WHERE email = :email ';
-        
-
         $obj = $this->db->prepare($sql);
-
         $obj->execute(array('email' => $email));
 	}
-				catch (Exception $e)
-				{
-					//echo 'Connexion �chou�e : ' . $e->getMessage();
-					$errorMessage = $e->getMessage();
-					require'view/errorView.php';
-				}	
+	catch (Exception $e){
+		
+		$errorMessage = $e->getMessage();
+		\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+		
+	}	
         $result = $obj->fetch();
 		
         return $result;
@@ -190,51 +160,49 @@ try
 
 	/**
 	 * Check if  new user reset password token exists in database and if not expired
-	 * @param  string $link_email $link_token
+	 * @param  string $linkEmail $linkToken
 	 * @return result]
 	 */
 
-    public function VerifyEmailToken($link_email, $link_token) {
+    public function VerifyEmailToken($linkEmail, $linkToken) {
+    
+		try{
 
+			$sql = 'SELECT pass_resetcode, pass_resetdate FROM user WHERE email = :linkEmail ';
+			
 
+			$obj = $this->db->prepare($sql);
+
+			$obj->execute(array('linkEmail' => $linkEmail));
 		
-    try
-	{
-		$sql = 'SELECT pass_resetcode, pass_resetdate FROM user WHERE email = :link_email ';
-        
+			$result = $obj->fetch();
 
-        $obj = $this->db->prepare($sql);
+			if($result){
 
-        $obj->execute(array('link_email' => $link_email));
-	
-        $result = $obj->fetch();
-
-		if($result){
-
-			if($result['pass_resetcode'] == $link_token){
-				$curDate = date("Y-m-d H:i:s");
-				if( $result['pass_resetdate'] >= $curDate ){
-					$result = true;
+				if($result['pass_resetcode'] == $linkToken){
+					$curDate = date("Y-m-d H:i:s");
+					if( $result['pass_resetdate'] >= $curDate ){
+						$result = true;
+					}else{
+						$result = false;
+					}
 				}else{
-					$result = false;
+
+					$result = "tokenissue";
 				}
 			}else{
 
-				$result = "tokenissue";
+				$result = "emailissue";
 			}
-		}else{
+			
 
-			$result = "emailissue";
-		}
-		
-
-        return $result;
-		}
-		catch (Exception $e)
-		{
-			//echo 'Connexion �chou�e : ' . $e->getMessage();
+			return $result;
+			}
+		catch (Exception $e){
+			
 			$errorMessage = $e->getMessage();
-			require'view/errorView.php';
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
 		}	
     }
 
@@ -244,64 +212,56 @@ try
 	 * @return request's result]
 	 */
 
-	 public function resetPassTokenInsert($userid, $token)
-		{
+	 public function resetPassTokenInsert($userId, $token)
+		{			
+			try{
+				$sql = 'UPDATE user SET pass_resetcode = ?, pass_resetdate = ? WHERE id = ? ';
 
-			
-			try
-			{
-					$sql = 'UPDATE user SET pass_resetcode = ?, pass_resetdate = ? WHERE id = ? ';
+				$expFormat = mktime(
+					date("H"), date("i"), date("s"), date("m") ,date("d")+1, date("Y")
+					);
+				
+				$expDate = date("Y-m-d H:i:s",$expFormat);
 
+				$req = $this->db->prepare($sql);
+				$resultat = $req->execute(array($token,$expDate,$userId));
 
-					$expFormat = mktime(
-					 date("H"), date("i"), date("s"), date("m") ,date("d")+1, date("Y")
-					 );
-				 
-					$expDate = date("Y-m-d H:i:s",$expFormat);
- 
-					$req = $this->db->prepare($sql);
-					$resultat = $req->execute(array($token,$expDate,$userid));
-	
-					return $resultat;
+				return $resultat;
 			}
-			catch (Exception $e)
-			{
-				//echo 'Connexion échouée : ' . $e->getMessage();
+			catch (Exception $e){
+				
 				$errorMessage = $e->getMessage();
-				require'view/errorView.php';
+				\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+				
 			}			
 			
 			
 		}
 
 
-		/**
+	/**
 	 * UPDATE PASSWORD IN USER'S RECORD
-	 * @param  ParameterS  NEWPASS, EMAIL AND TOKEN
+	 * @param  ParameterS  newPass, EMAIL AND TOKEN
 	 * 
 	 */
-	public function updatePass($newpass, $link_email, $link_token)
+	public function updatePass($newPass, $linkEmail, $linkToken)
 	{
-		
-
-			
-		try
-		{
-			$req = 'UPDATE user SET password = :newpass where email = :link_email AND pass_resetcode = :link_token ';
+		try{
+			$req = 'UPDATE user SET password = :newPass, pass_resetcode = NULL where email = :linkEmail AND pass_resetcode = :linkToken ';
 		
 			$res = $this->db->prepare($req);
 			$result = $res->execute(array(
-															'newpass' => $newpass,
-															'link_email' => $link_email,
-															'link_token' => $link_token
-														)); 
+											'newPass' => $newPass,
+											'linkEmail' => $linkEmail,
+											'linkToken' => $linkToken
+										)); 
 			
 		}
-		catch (Exception $e)
-		{
-			//echo 'Connexion �chou�e : ' . $e->getMessage();
+		catch (Exception $e){
+			
 			$errorMessage = $e->getMessage();
-			require'view/errorView.php';
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
 		}	
 		
 		
@@ -312,50 +272,48 @@ try
 	/*GET USER'S RECORD FOR EDITING PROFILE
 	@PARAM USER ID*/
 
-	public function getUser($userid = null)
+	public function getUser($userId = null)
 	{
+		try{
 
-		
-	try
-	{
-		$sql = ('
-			SELECT 
-				user.id, 
-				user.usertype_id,
-				user_type.usertype,
-				user.lastname, 
-				user.firstname, 
-				user.phone_number, 
-				user.pseudo , 
-				user.email, 
-				user.photo, 
-				user.is_enabled, 
-				user.is_activated, 
-				DATE_FORMAT(user.creation_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS creation_date_fr 
-			FROM user 
-			JOIN user_type 
-			ON user.usertype_id = user_type.id  '
-			);
-		if($userid != null){
-			$sql.= 'WHERE user.id = :id ';
-			$req = $this->db->prepare($sql);
-			$req->execute(array(':id' => $userid));
-			$result = $req->fetch();
-		}else{
-			$sql.= ' ORDER BY creation_date DESC ';
-			$req = $this->db->query($sql);
-			return $req;
-			
+			$sql = ('
+				SELECT 
+					user.id, 
+					user.usertype_id,
+					user_type.usertype,
+					user.lastname, 
+					user.firstname, 
+					user.phone_number, 
+					user.pseudo , 
+					user.email, 
+					user.photo, 
+					user.is_enabled, 
+					user.is_activated, 
+					DATE_FORMAT(user.creation_date, \'%d/%m/%Y &agrave; %Hh%imin%ss\') AS creation_date_fr 
+				FROM user 
+				JOIN user_type 
+				ON user.usertype_id = user_type.id  '
+				);
+			if($userId != null){
+				$sql.= 'WHERE user.id = :id ';
+				$req = $this->db->prepare($sql);
+				$req->execute(array(':id' => $userId));
+				$result = $req->fetch();
+			}else{
+				$sql.= ' ORDER BY creation_date DESC ';
+				$req = $this->db->query($sql);
+				return $req;
+				
+			}
 		}
-	}
-	catch (Exception $e)
-	{
-		//echo 'Connexion échouée : ' . $e->getMessage();
-		$errorMessage = $e->getMessage();
-    	require'view/errorView.php';
-	}	
-		
-		return $result;
+		catch (Exception $e){
+			
+			$errorMessage = $e->getMessage();
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
+		}	
+			
+			return $result;
 	}
 
 
@@ -365,11 +323,9 @@ try
 	 * @return void
 	 */
 
-	public function userUpdateProfile($userid, $post, $photo)
+	public function userUpdateProfile($userId, $post, $photo)
 	{
-		
-		try
-		{
+		try{
 			$req = 'UPDATE user SET  ';
 
 			foreach ($post as $key => $value) {
@@ -384,13 +340,13 @@ try
 			$req .= ' WHERE id = ?';
 			$res = $this->db->prepare($req);
 			
-			$result = $res->execute(array( $userid));
+			$result = $res->execute(array( $userId));
 		}
-		catch (Exception $e)
-		{
-			//echo 'Connexion échouée : ' . $e->getMessage();
+		catch (Exception $e){
+			
 			$errorMessage = $e->getMessage();
-			require'view/errorView.php';
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
 		}	
 	
 		return $result;
@@ -401,24 +357,21 @@ try
 
 	@PARAM USERID****/
 
-	public function deleteUser($userid) {
-
-            
-			
-		try
-		{
+	public function deleteUser($userId) {
+		
+		try{
 			$query = 'DELETE FROM user WHERE user.id = ? ';
-			$deleteuser = $this->db->prepare($query);
-			$resultat = $deleteuser->execute(array($userid));
-			}
-				catch (Exception $e)
-				{
-					//echo 'Connexion �chou�e : ' . $e->getMessage();
-					$errorMessage = $e->getMessage();
-					require'view/errorView.php';
-				}	
+			$deleteUser = $this->db->prepare($query);
+			$resultat = $deleteUser->execute(array($userId));
+		}
+		catch (Exception $e){
 			
-            return $resultat;
-        }
+			$errorMessage = $e->getMessage();
+			\Http::redirect("view/errorView.php?errorMessage = $errorMessage");
+			
+		}	
+	
+		return $resultat;
+    }
    
 }// END CLASS

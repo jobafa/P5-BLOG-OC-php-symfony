@@ -69,33 +69,27 @@ class FileUpload
 
                                     case 'updatepost':
 
-                                        //header('Location: index.php?action=modifypost&id=' . $id);
-                                        //exit;
+                                       
                                         \Http::redirect(' index.php?action=modifypost&controller=postadmin&id=' . $id);
 
                                         break;
                                     case 'myprofile':
                                         
-                                        //header('Location: index.php?action=myprofile&id=' . $id);
-                                        //exit;
+                                        
                                         \Http::redirect(' index.php?action=myprofile&controller=useradmin&id=' . $id);
                                         
                                         break;
 
                                     case 'adduserview':
                                     
-                                        //header('Location: index.php?action=myprofile&id=' . $id);
-                                        //exit;
+                                       
                                         \Http::redirect(' index.php?action=myprofile&controller=useradmin&id=' . $id);
                                     
                                     break;
 
                                     case 'usersignin':
                                     
-                                        //header('Location: index.php?action=myprofile&id=' . $id);
-                                        //header('Location: signinview-user.html#inscription');
-                                        //exit;
-                                        \Http::redirect('Location: signinview-user.html#inscription');
+                                        \Http::redirect('signinview-user.html#inscription');
                                     
                                     break;
 
@@ -109,13 +103,7 @@ class FileUpload
                     
                     
                 }else{
-                    /*if (move_uploaded_file($image["tmp_name"], $target)) {
-                        return $file_name;
-                    } else {
-
-                        return false;
-                        
-                    }*/
+                    
                 }
             
             }
@@ -129,19 +117,7 @@ class FileUpload
 
     public function checkUploadStatus($status, $image, $id = 0){
 
-        /*if($status == UPLOAD_ERR_OK){
-            
-                
-                $photo = $this->addImage($image, $id);
-                
-                return $photo;
-        }elseif	($status == UPLOAD_ERR_NO_FILE){ // NO FILE UPLOADED : NO PHOTO
         
-                $photo = 'undraw_profile.svg';
-                return $photo;
-        }else {// THERE ARE UPLOAD ERRORS : CHECKING ERRORS
-            */
-                
             switch ($status) {
 
                 case UPLOAD_ERR_OK:
