@@ -14,11 +14,6 @@ class SessionManager
         return self::$instance;
     }
 
-   /* public function __construct($session)
-    {
-        session_start();
-    }
-*/
     public function __construct($session)
     {
         $this->session = $session;
@@ -36,7 +31,6 @@ class SessionManager
         }
     }
 
-
     public function sessionvarUnset($name)
     {
         unset($_SESSION[$name]);
@@ -51,15 +45,5 @@ class SessionManager
     {
         session_destroy();
     }
-
-  /*   public function show($name)
-    {
-        if(isset($_SESSION[$name]))
-        {
-            $key = $this->get($name);
-            $this->remove($name);
-            return $key;
-        }
-    }*/
-
+    
 }

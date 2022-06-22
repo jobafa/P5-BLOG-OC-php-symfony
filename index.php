@@ -4,7 +4,7 @@ require_once __DIR__.'/autoload.php';
 require_once __DIR__.'/config/config.php';
 
 use Inc\SessionManager;
-//use EXCEPTION;
+
 
 $controller = \Application::process();
 $request =  new \Inc\Request;
@@ -24,7 +24,6 @@ if (null !== $request->getGet()->all()){
 
 }
 
-
 if($request->getGet()->get('action')){
 	
 	$action = strtolower($request->getGet()->get('action'));
@@ -32,13 +31,10 @@ if($request->getGet()->get('action')){
 
 }
 
-
 if ( ( $request->getGet()->get('id') ) && ( $request->getGet()->get('id') > 0 )){
 
 	$id = $request->getGet()->get('id');
-
 }
-
 
 if($request->getGet()->get('email')){
 	
@@ -56,14 +52,12 @@ if ( ( $request->getGet()->get('usertypeid') ) && ( $request->getGet()->get('use
 			
 }
 
-
 // flag to check , after connection, where the user comes from and redirect him : post view or dashboard
 
 if($request->getGet()->get('from')){
 	$from = sessionmanager::getinstance()->set('FROM', $request->getGet()->get('from'));
 	
 }
-
 
 if ( ( $request->getGet()->get('idcomment') ) && ( $request->getGet()->get('idcomment') > 0 )){
 
@@ -96,10 +90,10 @@ if (sessionmanager::getinstance()->get('USERID')){
 	
 }
 
+
 try {
     if ( isset($action) )
-		{
-
+		{//FRONTEND ROUTING START
 			if ($action == 'listposts') {
 
 				$controller->listposts($from, $getPage);
@@ -114,7 +108,7 @@ try {
 				}
 			}			
 			elseif ( ($action == 'contactform')) {// CONTACT FORM
-				//$controller = new \Controllers\User();
+				
 				$controller->checkContactData($request->getPost()->all(), $URL, 'blogcontact');
 			}
 			elseif ($action == 'addcomment') {
@@ -160,8 +154,7 @@ try {
 					$controller->verifyPassresetToken($linkEmail,$linkToken);
 					
 				}
-				
-					
+
 			}
 			
 			elseif ($action == 'passreinitview') {
@@ -181,13 +174,12 @@ try {
 					$controller->getNewPass($request->getPost()->all(), $URL, 'newpass');
 					
 				}
-				
-					
+		
 			}
 			
 			/*****************************************************/ 
-					/*********** Common Routing **************/
-					/*****************************************************/
+			/*********** Common Routing **************/
+			/*****************************************************/
 
 			elseif (($action == 'adduserview') || ($action == 'signinview')) {
 			
@@ -215,7 +207,7 @@ try {
 
 
 			/*****************************************************/ 
-			/*********** Backend Routing **************/
+			/*********** BACKEND ROUTING START **************/
 			/*****************************************************/
 			
 
@@ -247,7 +239,6 @@ try {
 			}
 			elseif ($action == 'addpost') {
 					if ((null !== $request->getPost()->all())) {
-
 
 						$controller->addPost($request->getPost()->all());
 						
@@ -331,8 +322,7 @@ try {
 			}
 	
 	}else{
-					
-
+			
 			\Http::redirect('accueil.html');
 		}
 }

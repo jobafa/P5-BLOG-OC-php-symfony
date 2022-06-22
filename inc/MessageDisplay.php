@@ -4,17 +4,13 @@ namespace Inc;
 use Inc\SessionManager;
 
 class MessageDisplay 
-{
-        
-    
-    
+{   
+ 
     # **************
     # Initialize Display Action Message
     # @Param $action : user's action 
     # @Param $result : user's action result
     # **************
-
-
 
     public function initmessage($action,$result) {
         
